@@ -1,4 +1,4 @@
-import { LayoutDashboard, TrendingUp, Table2, FileText, Bot, Network } from "lucide-react";
+import { LayoutDashboard, TrendingUp, Droplets, Table2, FileText, Bot, Network } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -16,6 +16,7 @@ import {
 const navItems = [
   { title: "Portfolio Overview", url: "/", icon: LayoutDashboard },
   { title: "Performance", url: "/performance", icon: TrendingUp },
+  { title: "Liquidity", url: "/liquidity", icon: Droplets },
   { title: "Manager Grid", url: "/managers", icon: Table2 },
   { title: "Manager Detail", url: "/manager/4", icon: FileText },
   { title: "AI Analyst", url: "/analyst", icon: Bot },

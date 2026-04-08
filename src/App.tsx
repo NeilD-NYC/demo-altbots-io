@@ -13,6 +13,7 @@ import ManagerDetail from "./pages/ManagerDetail";
 import AIAnalyst from "./pages/AIAnalyst";
 import ConnectionGraph from "./pages/ConnectionGraph";
 import Performance from "./pages/Performance";
+import Liquidity from "./pages/Liquidity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/performance" element={<Performance />} />
+                  <Route path="/liquidity" element={<Liquidity />} />
                   <Route path="/managers" element={<ManagerGrid />} />
                   <Route path="/manager/:id" element={<ManagerDetail />} />
                   <Route path="/analyst" element={<AIAnalyst />} />
