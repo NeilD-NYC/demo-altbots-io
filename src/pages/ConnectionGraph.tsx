@@ -38,10 +38,19 @@ export default function ConnectionGraph() {
     });
   }, []);
 
-  // Add UnrealBloomPass for neon glow effect
+  // Configure d3 forces for wider spacing
   useEffect(() => {
     const fg = fgRef.current;
     if (!fg) return;
+
+    // Increase repulsion between nodes
+    fg.d3Force('charge')?.strength(-350).distanceMax(600);
+    // Increase link distance
+    fg.d3Force('link')?.distance(120);
+    // Add center force to keep graph from drifting
+    fg.d3Force('center')?.strength(0.03);
+
+    // Add UnrealBloomPass for neon glow effect
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       1.8,  // strength
@@ -195,10 +204,10 @@ export default function ConnectionGraph() {
         }
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
-        warmupTicks={80}
-        cooldownTicks={150}
-        d3AlphaDecay={0.02}
-        d3VelocityDecay={0.3}
+        warmupTicks={120}
+        cooldownTicks={200}
+        d3AlphaDecay={0.015}
+        d3VelocityDecay={0.25}
       />
     </div>
   );
