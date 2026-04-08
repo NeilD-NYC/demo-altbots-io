@@ -24,6 +24,27 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredNodes = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return graphData.nodes.filter(n => n.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [searchQuery]);
+
+  const handleSearchSelect = useCallback((node: any) => {
+    // Find the runtime node object from the graph
+    const fg = fgRef.current;
+    if (!fg) return;
+    const runtimeNode = fg.graphData().nodes.find((n: any) => n.id === node.id);
+    if (!runtimeNode) return;
+
+    setSearchQuery(node.name);
+    setShowDropdown(false);
+    handleNodeClick(runtimeNode);
+  }, []);
 
   const neighborMap = useRef<Record<string, Set<string>>>({});
   const linkSet = useRef(new Set<any>());
