@@ -1,4 +1,5 @@
 import { Landmark, Radio, Users, Shield, Globe, AlertTriangle, CheckCircle, TrendingUp, TrendingDown } from "lucide-react";
+import IntelligenceSections6to13 from "./IntelligenceSections6to13";
 import { cn } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, Cell } from "recharts";
 
@@ -156,12 +157,19 @@ const helixIntelligence: ManagerIntelligence = {
       "Social crisis signal: redemption narrative forming",
       "3 senior departures in 12 months including CRO",
       "AUM declined 39% from 2021 peak",
+      "PB downgrade from Tier 1 to Tier 2 with simultaneous de-grossing",
+      "Founder new LLC formation during fund stress period",
+      "Redemption queue probability score 74/100",
     ],
     operationalFlags: [
       "ADV amended 4x in 12 months (3x above norm)",
       "Non-tier-1 prime broker (Deutsche Bank)",
       "Non-Big 4 auditor (BDO)",
       "New fund launch during flagship underperformance",
+      "Fee drag 103bps above peer composite (3.41% vs 2.38%)",
+      "Alt data moat score 28/100 — below peer median",
+      "SEC comment letter open on UNH (top holding)",
+      "Key Man clause does not trigger automatic wind-down",
     ],
     recommendedActions: [
       "Schedule GP call within 7 days",
@@ -169,9 +177,13 @@ const helixIntelligence: ManagerIntelligence = {
       "Confirm Apr 15 capital call funding plan",
       "Review redemption gate provisions",
       "Activate standby credit facility monitoring",
+      "Negotiate hard Key Man redemption trigger at next side letter",
+      "Request GP co-investment disclosure for Redwood Holdings LLC",
+      "Monitor Robert Vance new LLC (Vance Capital Advisors) for ADV filing",
+      "Review Deutsche Bank counterparty exposure across portfolio",
     ],
     overallAssessment: "Overall Assessment: ELEVATED CONCERN — Recommend active monitoring and board-level discussion before next commitment.",
-    signalsProcessed: 47,
+    signalsProcessed: 134,
     confidence: "High",
     generatedDate: "Apr 8, 2026",
   },
@@ -600,11 +612,14 @@ const IntelligenceTab = ({ managerId }: { managerId: number }) => {
         </div>
       </SectionCard>
 
+      {/* ═══ SECTIONS 6-13 ═══ */}
+      <IntelligenceSections6to13 />
+
       {/* ═══ INTELLIGENCE SUMMARY BANNER ═══ */}
       <div className="bg-[#1e0a0a] border border-[#EF4444]/30 rounded-lg overflow-hidden" style={{ borderLeftWidth: 3, borderLeftColor: "#EF4444" }}>
         <div className="px-5 py-4 border-b border-[#30363D]">
           <h3 className="text-sm font-bold text-foreground">AltBots Intelligence Assessment — Helix Credit Opportunities</h3>
-          <p className="text-[10px] text-[#8B949E] mt-0.5">Generated {summary.generatedDate} | Confidence: {summary.confidence} | {summary.signalsProcessed} signals processed</p>
+          <p className="text-[10px] text-[#8B949E] mt-0.5">Generated {summary.generatedDate} | Confidence: {summary.confidence} | {summary.signalsProcessed} signals processed across 13 intelligence modules</p>
         </div>
         <div className="p-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div>
