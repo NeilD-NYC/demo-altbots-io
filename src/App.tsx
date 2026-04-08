@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import ManagerGrid from "./pages/ManagerGrid";
 import ManagerDetail from "./pages/ManagerDetail";
 import AIAnalyst from "./pages/AIAnalyst";
+import ConnectionGraph from "./pages/ConnectionGraph";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
                   <Route path="/managers" element={<ManagerGrid />} />
                   <Route path="/manager/:id" element={<ManagerDetail />} />
                   <Route path="/analyst" element={<AIAnalyst />} />
+                  <Route path="/connections" element={<ConnectionGraph />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
