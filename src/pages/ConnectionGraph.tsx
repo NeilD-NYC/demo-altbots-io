@@ -222,7 +222,7 @@ export default function ConnectionGraph() {
         </div>
         {[
           { color: "#EF4444", shape: "●", label: "Fund Manager" },
-          { color: "#3B82F6", shape: "■", label: "13F Holding" },
+          { color: "#3B82F6", shape: "■", label: "Top Positions" },
           { color: "#C9A84C", shape: "◆", label: "Custodian / Prime Broker" },
         ].map(({ color, shape, label }) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
