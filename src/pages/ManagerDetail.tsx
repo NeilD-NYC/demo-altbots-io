@@ -72,6 +72,7 @@ const AnimatedGauge = ({ score, managerId }: { score: number; managerId: number 
   );
 };
 
+const ManagerDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("Identity");
