@@ -1,4 +1,4 @@
-import { LayoutDashboard, Table2, FileText, Bot, Network } from "lucide-react";
+import { LayoutDashboard, TrendingUp, Table2, FileText, Bot, Network } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {

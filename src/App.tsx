@@ -12,6 +12,7 @@ import ManagerGrid from "./pages/ManagerGrid";
 import ManagerDetail from "./pages/ManagerDetail";
 import AIAnalyst from "./pages/AIAnalyst";
 import ConnectionGraph from "./pages/ConnectionGraph";
+import Performance from "./pages/Performance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
