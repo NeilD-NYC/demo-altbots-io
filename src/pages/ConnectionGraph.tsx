@@ -234,7 +234,7 @@ export default function ConnectionGraph() {
       {/* @ts-ignore */}
       <ForceGraph3D
         ref={fgRef}
-        graphData={graphData}
+        graphData={filteredGraphData}
         backgroundColor="#0D1117"
         nodeThreeObject={getNodeObject}
         nodeLabel={getNodeLabel}
