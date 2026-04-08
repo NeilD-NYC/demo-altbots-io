@@ -1,8 +1,53 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { managers } from "@/data/managers";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { AlertTriangle, TrendingUp, Users, Shield, DollarSign } from "lucide-react";
 import FlagDot from "@/components/FlagDot";
+
+const HealthGauge = ({ score }: { score: number }) => {
+  const [animated, setAnimated] = useState(0);
+  useEffect(() => {
+    setAnimated(0);
+    const duration = 1200;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setAnimated(Math.round(eased * score));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [score]);
+
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference - (animated / 100) * circumference;
+
+  return (
+    <div className="relative w-28 h-28">
+      <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#30363D" strokeWidth="8" />
+        <circle
+          cx="60" cy="60" r="54" fill="none"
+          stroke="url(#health-grad)" strokeWidth="8" strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+        />
+        <defs>
+          <linearGradient id="health-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22C55E" />
+            <stop offset="50%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#EF4444" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-3xl font-bold text-warning">{animated}</span>
+        <span className="text-[9px] text-muted-foreground">/100</span>
+      </div>
+    </div>
+  );
+};
 
 const COLORS = {
   "Global Macro": "#C9A84C",
@@ -59,12 +104,20 @@ const PortfolioOverview = () => {
 
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
-      {/* KPI Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard icon={DollarSign} label="Total AUM Under Monitoring" value={`$${totalAUM.toFixed(1)}B`} />
-        <KPICard icon={Users} label="Managers Monitored" value={managers.length} />
-        <KPICard icon={AlertTriangle} label="Active Alerts" value={1} accent />
-        <KPICard icon={Shield} label="Avg Risk Score" value={`${avgRisk} / 100`} />
+      {/* KPI Row + Health Gauge */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
+          <KPICard icon={DollarSign} label="Total AUM Under Monitoring" value={`$${totalAUM.toFixed(1)}B`} />
+          <KPICard icon={Users} label="Managers Monitored" value={managers.length} />
+          <KPICard icon={AlertTriangle} label="Active Alerts" value={1} accent />
+          <KPICard icon={Shield} label="Avg Risk Score" value={`${avgRisk} / 100`} />
+        </div>
+        {/* Portfolio Health Score */}
+        <div className="bg-card border border-border rounded-lg p-5 flex flex-col items-center justify-center min-w-[180px]">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">Portfolio Health Score</p>
+          <HealthGauge score={71} />
+          <span className="text-[11px] font-bold tracking-widest text-warning mt-2">MODERATE RISK</span>
+        </div>
       </div>
 
       {/* Three Panels */}
