@@ -91,9 +91,6 @@ const ManagerDetail = () => {
     { label: "Adverse Media", value: manager.adverse_media === "None", display: manager.adverse_media },
   ];
 
-  // Risk gauge calculation
-  const angle = (manager.risk_score / 100) * 180;
-  const gaugeColor = manager.risk_score > 50 ? "#EF4444" : manager.risk_score >= 30 ? "#F59E0B" : "#22C55E";
 
   return (
     <div className="p-6 space-y-6 max-w-[1000px] mx-auto">
