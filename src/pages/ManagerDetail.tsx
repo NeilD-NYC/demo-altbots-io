@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { managers, signalEvents } from "@/data/managers";
 import IntelligenceTab from "@/components/IntelligenceTab";
+import SignalsTab from "@/components/SignalsTab";
 import { useState, useEffect } from "react";
 import FlagDot from "@/components/FlagDot";
 import RiskScoreBadge from "@/components/RiskScoreBadge";
@@ -463,26 +464,7 @@ const ManagerDetail = () => {
           )}
 
           {activeTab === "Signals" && (
-            <div>
-              {signals ? (
-                <div className="space-y-4">
-                  {signals.map((s, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="flex flex-col items-center">
-                        <span className="h-3 w-3 rounded-full bg-destructive" />
-                        {i < signals.length - 1 && <span className="w-px h-8 bg-border mt-1" />}
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-destructive">{s.year}</p>
-                        <p className="text-sm text-foreground">{s.event}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-success">No adverse signals detected.</p>
-              )}
-            </div>
+            <SignalsTab managerId={manager.id} />
           )}
         </div>
       </div>
