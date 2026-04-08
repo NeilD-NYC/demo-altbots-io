@@ -38,6 +38,19 @@ export default function ConnectionGraph() {
     });
   }, []);
 
+  // Add UnrealBloomPass for neon glow effect
+  useEffect(() => {
+    const fg = fgRef.current;
+    if (!fg) return;
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.8,  // strength
+      0.6,  // radius
+      0.1   // threshold
+    );
+    fg.postProcessingComposer().addPass(bloomPass);
+  }, []);
+
   const handleNodeClick = useCallback((node: any) => {
     const distance = 120;
     const distRatio = 1 + distance / Math.hypot(node.x || 1, node.y || 1, node.z || 1);
