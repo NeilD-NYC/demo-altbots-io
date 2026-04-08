@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import DashboardHeader from "@/components/DashboardHeader";
+import AlertBanner from "@/components/AlertBanner";
 import Index from "./pages/Index";
 import ManagerGrid from "./pages/ManagerGrid";
 import ManagerDetail from "./pages/ManagerDetail";
@@ -24,6 +25,7 @@ const App = () => (
           <div className="min-h-screen flex w-full">
             <AppSidebar />
             <div className="flex-1 flex flex-col min-w-0">
+              <AlertBanner />
               <DashboardHeader />
               <div className="flex items-center h-10 px-4 border-b border-border bg-card/50">
                 <SidebarTrigger />
