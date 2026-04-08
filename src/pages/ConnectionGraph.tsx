@@ -205,9 +205,60 @@ export default function ConnectionGraph() {
         <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, color: "#888" }}>
           Click any node to focus
         </div>
+        {/* Search bar */}
+        <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#0D1117", border: "1px solid #30363D", borderRadius: 6, padding: "4px 8px" }}>
+            <Search size={14} color="#888" />
+            <input
+              type="text"
+              placeholder="Search nodes..."
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowDropdown(true); }}
+              onFocus={() => setShowDropdown(true)}
+              style={{
+                background: "transparent", border: "none", outline: "none",
+                color: "#fff", fontSize: 12, width: "100%", fontFamily: "Inter, sans-serif"
+              }}
+            />
+            {searchQuery && (
+              <X size={14} color="#888" style={{ cursor: "pointer" }} onClick={() => {
+                setSearchQuery("");
+                setShowDropdown(false);
+                setFocusedNode(null);
+                setHighlightNodes(new Set());
+                setHighlightLinks(new Set());
+              }} />
+            )}
+          </div>
+          {showDropdown && filteredNodes.length > 0 && (
+            <div style={{
+              position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4,
+              background: "rgba(10,10,30,0.95)", border: "1px solid #30363D",
+              borderRadius: 6, overflow: "hidden", zIndex: 20
+            }}>
+              {filteredNodes.map((node) => (
+                <div
+                  key={node.id}
+                  onClick={() => handleSearchSelect(node)}
+                  style={{
+                    padding: "6px 10px", cursor: "pointer", fontSize: 12,
+                    color: "#ccc", display: "flex", alignItems: "center", gap: 8,
+                    borderBottom: "1px solid #1a1f2b"
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1a2332")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <span style={{ color: TYPE_COLORS[node.type] || "#C9A84C", fontSize: 14 }}>
+                    {node.type === "fund_manager" ? "●" : node.type === "holding" ? "■" : "◆"}
+                  </span>
+                  {node.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Focus panel */}
       {focusedNode && focusedNode.type === "fund_manager" && (
         <div style={{
           position: "absolute", top: 16, right: 16, zIndex: 10, width: 220,
