@@ -26,6 +26,13 @@ export default function ConnectionGraph() {
   const [showManagers, setShowManagers] = useState(true);
   const [showHoldings, setShowHoldings] = useState(true);
   const [showCustodians, setShowCustodians] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchMatchIds = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const q = searchQuery.toLowerCase();
+    return new Set(graphData.nodes.filter(n => n.name.toLowerCase().includes(q)).map(n => n.id));
+  }, [searchQuery]);
 
   const managerCount = useMemo(() => graphData.nodes.filter(n => n.type === "fund_manager").length, []);
   const holdingCount = useMemo(() => graphData.nodes.filter(n => n.type === "holding").length, []);
