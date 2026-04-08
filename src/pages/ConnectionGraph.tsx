@@ -26,6 +26,13 @@ export default function ConnectionGraph() {
   const [showManagers, setShowManagers] = useState(true);
   const [showHoldings, setShowHoldings] = useState(true);
   const [showCustodians, setShowCustodians] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchMatchIds = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const q = searchQuery.toLowerCase();
+    return new Set(graphData.nodes.filter(n => n.name.toLowerCase().includes(q)).map(n => n.id));
+  }, [searchQuery]);
 
   const managerCount = useMemo(() => graphData.nodes.filter(n => n.type === "fund_manager").length, []);
   const holdingCount = useMemo(() => graphData.nodes.filter(n => n.type === "holding").length, []);
@@ -115,14 +122,19 @@ export default function ConnectionGraph() {
   }, []);
 
   const getNodeObject = useCallback((node: any) => {
-    const color = focusedNode
-      ? (highlightNodes.has(node) ? (node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type]) : "#222233")
+    const isSearching = searchMatchIds !== null;
+    const isMatch = isSearching && searchMatchIds.has(node.id);
+    const isFocusDimmed = focusedNode && !highlightNodes.has(node);
+    const isSearchDimmed = isSearching && !isMatch;
+
+    const color = (isFocusDimmed || isSearchDimmed)
+      ? "#222233"
       : (node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type]);
 
     const material = new THREE.MeshLambertMaterial({
       color,
       transparent: true,
-      opacity: focusedNode && !highlightNodes.has(node) ? 0.15 : 0.9,
+      opacity: (isFocusDimmed || isSearchDimmed) ? 0.1 : 0.9,
     });
 
     let geometry;
@@ -135,7 +147,7 @@ export default function ConnectionGraph() {
     }
 
     return new THREE.Mesh(geometry, material);
-  }, [focusedNode, highlightNodes]);
+  }, [focusedNode, highlightNodes, searchMatchIds]);
 
   const getNodeLabel = useCallback((node: any) => {
     const color = TYPE_COLORS[node.type];
@@ -163,6 +175,25 @@ export default function ConnectionGraph() {
         <div style={{ color: "#C9A84C", fontWeight: 700, marginBottom: 8 }}>
           INTERCONNECTION MAP
         </div>
+        <input
+          type="text"
+          placeholder="Search nodes…"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          style={{
+            width: "100%", padding: "6px 10px", marginBottom: 10,
+            background: "#1a1a2e", border: "1px solid #30363D", borderRadius: 6,
+            color: "#fff", fontSize: 12, fontFamily: "Inter, sans-serif",
+            outline: "none",
+          }}
+          onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+          onBlur={e => (e.target.style.borderColor = "#30363D")}
+        />
+        {searchMatchIds && (
+          <div style={{ color: "#888", fontSize: 11, marginBottom: 8 }}>
+            {searchMatchIds.size} match{searchMatchIds.size !== 1 ? "es" : ""} found
+          </div>
+        )}
         {[
           { color: "#EF4444", shape: "●", label: "Fund Manager" },
           { color: "#3B82F6", shape: "■", label: "13F Holding" },
