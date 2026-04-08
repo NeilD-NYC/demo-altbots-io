@@ -35,6 +35,7 @@ const App = () => (
               <main className="flex-1 overflow-auto scrollbar-thin">
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/performance" element={<Performance />} />
                   <Route path="/managers" element={<ManagerGrid />} />
                   <Route path="/manager/:id" element={<ManagerDetail />} />
                   <Route path="/analyst" element={<AIAnalyst />} />
