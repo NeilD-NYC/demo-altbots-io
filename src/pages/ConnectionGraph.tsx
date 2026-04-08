@@ -175,6 +175,25 @@ export default function ConnectionGraph() {
         <div style={{ color: "#C9A84C", fontWeight: 700, marginBottom: 8 }}>
           INTERCONNECTION MAP
         </div>
+        <input
+          type="text"
+          placeholder="Search nodes…"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          style={{
+            width: "100%", padding: "6px 10px", marginBottom: 10,
+            background: "#1a1a2e", border: "1px solid #30363D", borderRadius: 6,
+            color: "#fff", fontSize: 12, fontFamily: "Inter, sans-serif",
+            outline: "none",
+          }}
+          onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+          onBlur={e => (e.target.style.borderColor = "#30363D")}
+        />
+        {searchMatchIds && (
+          <div style={{ color: "#888", fontSize: 11, marginBottom: 8 }}>
+            {searchMatchIds.size} match{searchMatchIds.size !== 1 ? "es" : ""} found
+          </div>
+        )}
         {[
           { color: "#EF4444", shape: "●", label: "Fund Manager" },
           { color: "#3B82F6", shape: "■", label: "13F Holding" },
