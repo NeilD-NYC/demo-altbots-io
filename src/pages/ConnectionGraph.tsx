@@ -122,14 +122,19 @@ export default function ConnectionGraph() {
   }, []);
 
   const getNodeObject = useCallback((node: any) => {
-    const color = focusedNode
-      ? (highlightNodes.has(node) ? (node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type]) : "#222233")
+    const isSearching = searchMatchIds !== null;
+    const isMatch = isSearching && searchMatchIds.has(node.id);
+    const isFocusDimmed = focusedNode && !highlightNodes.has(node);
+    const isSearchDimmed = isSearching && !isMatch;
+
+    const color = (isFocusDimmed || isSearchDimmed)
+      ? "#222233"
       : (node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type]);
 
     const material = new THREE.MeshLambertMaterial({
       color,
       transparent: true,
-      opacity: focusedNode && !highlightNodes.has(node) ? 0.15 : 0.9,
+      opacity: (isFocusDimmed || isSearchDimmed) ? 0.1 : 0.9,
     });
 
     let geometry;
