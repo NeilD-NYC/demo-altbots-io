@@ -1,8 +1,9 @@
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { graphData } from "@/data/graphData";
+import { Search, X } from "lucide-react";
 
 const TYPE_COLORS: Record<string, string> = {
   fund_manager: "#EF4444",
@@ -23,6 +24,54 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredNodes = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return graphData.nodes.filter(n => n.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [searchQuery]);
+
+  const handleSearchSelect = useCallback((node: any) => {
+    const fg = fgRef.current;
+    if (!fg) return;
+    const runtimeNode = fg.graphData().nodes.find((n: any) => n.id === node.id);
+    if (!runtimeNode) return;
+
+    setSearchQuery(node.name);
+    setShowDropdown(false);
+
+    // Focus camera
+    const distance = 120;
+    const distRatio = 1 + distance / Math.hypot(runtimeNode.x || 1, runtimeNode.y || 1, runtimeNode.z || 1);
+    fg.cameraPosition(
+      { x: runtimeNode.x * distRatio, y: runtimeNode.y * distRatio, z: runtimeNode.z * distRatio },
+      runtimeNode,
+      1500
+    );
+
+    // Highlight node and connections
+    const newNodes = new Set<any>();
+    const newLinks = new Set<any>();
+    newNodes.add(runtimeNode);
+    const currentLinks = fg.graphData().links;
+    currentLinks.forEach((link: any) => {
+      const s = typeof link.source === "object" ? link.source.id : link.source;
+      const t = typeof link.target === "object" ? link.target.id : link.target;
+      if (s === runtimeNode.id || t === runtimeNode.id) {
+        newLinks.add(link);
+        fg.graphData().nodes.forEach((n: any) => {
+          if (n.id === s || n.id === t) newNodes.add(n);
+        });
+      }
+    });
+
+    setHighlightNodes(newNodes);
+    setHighlightLinks(newLinks);
+    setFocusedNode(runtimeNode);
+  }, []);
 
   const neighborMap = useRef<Record<string, Set<string>>>({});
   const linkSet = useRef(new Set<any>());
@@ -156,9 +205,60 @@ export default function ConnectionGraph() {
         <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, color: "#888" }}>
           Click any node to focus
         </div>
+        {/* Search bar */}
+        <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#0D1117", border: "1px solid #30363D", borderRadius: 6, padding: "4px 8px" }}>
+            <Search size={14} color="#888" />
+            <input
+              type="text"
+              placeholder="Search nodes..."
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowDropdown(true); }}
+              onFocus={() => setShowDropdown(true)}
+              style={{
+                background: "transparent", border: "none", outline: "none",
+                color: "#fff", fontSize: 12, width: "100%", fontFamily: "Inter, sans-serif"
+              }}
+            />
+            {searchQuery && (
+              <X size={14} color="#888" style={{ cursor: "pointer" }} onClick={() => {
+                setSearchQuery("");
+                setShowDropdown(false);
+                setFocusedNode(null);
+                setHighlightNodes(new Set());
+                setHighlightLinks(new Set());
+              }} />
+            )}
+          </div>
+          {showDropdown && filteredNodes.length > 0 && (
+            <div style={{
+              position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4,
+              background: "rgba(10,10,30,0.95)", border: "1px solid #30363D",
+              borderRadius: 6, overflow: "hidden", zIndex: 20
+            }}>
+              {filteredNodes.map((node) => (
+                <div
+                  key={node.id}
+                  onClick={() => handleSearchSelect(node)}
+                  style={{
+                    padding: "6px 10px", cursor: "pointer", fontSize: 12,
+                    color: "#ccc", display: "flex", alignItems: "center", gap: 8,
+                    borderBottom: "1px solid #1a1f2b"
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1a2332")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <span style={{ color: TYPE_COLORS[node.type] || "#C9A84C", fontSize: 14 }}>
+                    {node.type === "fund_manager" ? "●" : node.type === "holding" ? "■" : "◆"}
+                  </span>
+                  {node.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Focus panel */}
       {focusedNode && focusedNode.type === "fund_manager" && (
         <div style={{
           position: "absolute", top: 16, right: 16, zIndex: 10, width: 220,
