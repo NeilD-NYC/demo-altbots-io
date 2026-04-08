@@ -37,33 +37,61 @@ export default function ConnectionGraph() {
   const handleSearchSelect = useCallback((node: any) => {
     const fg = fgRef.current;
     if (!fg) return;
-    const runtimeNode = fg.graphData().nodes.find((n: any) => n.id === node.id);
-    if (!runtimeNode) return;
+
+    // Find runtime node by matching id in the scene
+    let runtimeNode: any = null;
+    fg.scene().traverse((obj: any) => {
+      if (obj.__data && obj.__data.id === node.id) runtimeNode = obj.__data;
+    });
+
+    // Fallback: search graphData nodes that have x/y/z (runtime-enriched)
+    if (!runtimeNode) {
+      const gd = fg.graphData();
+      if (gd && gd.nodes) {
+        runtimeNode = gd.nodes.find((n: any) => n.id === node.id);
+      }
+    }
+
+    // Last fallback: use static data (no position, but at least highlights work)
+    if (!runtimeNode) runtimeNode = node;
 
     setSearchQuery(node.name);
     setShowDropdown(false);
 
-    // Focus camera
-    const distance = 120;
-    const distRatio = 1 + distance / Math.hypot(runtimeNode.x || 1, runtimeNode.y || 1, runtimeNode.z || 1);
-    fg.cameraPosition(
-      { x: runtimeNode.x * distRatio, y: runtimeNode.y * distRatio, z: runtimeNode.z * distRatio },
-      runtimeNode,
-      1500
-    );
+    // Focus camera if node has position
+    if (runtimeNode.x != null) {
+      const distance = 120;
+      const distRatio = 1 + distance / Math.hypot(runtimeNode.x || 1, runtimeNode.y || 1, runtimeNode.z || 1);
+      fg.cameraPosition(
+        { x: runtimeNode.x * distRatio, y: runtimeNode.y * distRatio, z: runtimeNode.z * distRatio },
+        runtimeNode,
+        1500
+      );
+    }
 
     // Highlight node and connections
     const newNodes = new Set<any>();
     const newLinks = new Set<any>();
     newNodes.add(runtimeNode);
-    const currentLinks = fg.graphData().links;
-    currentLinks.forEach((link: any) => {
+
+    graphData.links.forEach((link: any) => {
       const s = typeof link.source === "object" ? link.source.id : link.source;
       const t = typeof link.target === "object" ? link.target.id : link.target;
-      if (s === runtimeNode.id || t === runtimeNode.id) {
+      if (s === node.id || t === node.id) {
         newLinks.add(link);
-        fg.graphData().nodes.forEach((n: any) => {
-          if (n.id === s || n.id === t) newNodes.add(n);
+        graphData.nodes.forEach(n => {
+          if (n.id === s || n.id === t) {
+            // Try to find runtime version
+            let rn: any = n;
+            try {
+              const gd = fg.graphData();
+              if (gd && gd.nodes) {
+                const found = gd.nodes.find((x: any) => x.id === n.id);
+                if (found) rn = found;
+              }
+            } catch {}
+            newNodes.add(rn);
+          }
         });
       }
     });
