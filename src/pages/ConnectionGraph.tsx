@@ -195,10 +195,15 @@ export default function ConnectionGraph() {
         }
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
-        warmupTicks={80}
-        cooldownTicks={150}
-        d3AlphaDecay={0.02}
-        d3VelocityDecay={0.3}
+        warmupTicks={120}
+        cooldownTicks={200}
+        d3AlphaDecay={0.015}
+        d3VelocityDecay={0.25}
+        d3AlphaMin={0.005}
+        dagLevelDistance={80}
+        linkDistance={180}
+        nodeRelSize={6}
+        d3Force="charge"
       />
     </div>
   );
