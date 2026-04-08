@@ -35,7 +35,6 @@ export default function ConnectionGraph() {
   }, [searchQuery]);
 
   const handleSearchSelect = useCallback((node: any) => {
-    // Find the runtime node object from the graph
     const fg = fgRef.current;
     if (!fg) return;
     const runtimeNode = fg.graphData().nodes.find((n: any) => n.id === node.id);
@@ -43,7 +42,35 @@ export default function ConnectionGraph() {
 
     setSearchQuery(node.name);
     setShowDropdown(false);
-    handleNodeClick(runtimeNode);
+
+    // Focus camera
+    const distance = 120;
+    const distRatio = 1 + distance / Math.hypot(runtimeNode.x || 1, runtimeNode.y || 1, runtimeNode.z || 1);
+    fg.cameraPosition(
+      { x: runtimeNode.x * distRatio, y: runtimeNode.y * distRatio, z: runtimeNode.z * distRatio },
+      runtimeNode,
+      1500
+    );
+
+    // Highlight node and connections
+    const newNodes = new Set<any>();
+    const newLinks = new Set<any>();
+    newNodes.add(runtimeNode);
+    const currentLinks = fg.graphData().links;
+    currentLinks.forEach((link: any) => {
+      const s = typeof link.source === "object" ? link.source.id : link.source;
+      const t = typeof link.target === "object" ? link.target.id : link.target;
+      if (s === runtimeNode.id || t === runtimeNode.id) {
+        newLinks.add(link);
+        fg.graphData().nodes.forEach((n: any) => {
+          if (n.id === s || n.id === t) newNodes.add(n);
+        });
+      }
+    });
+
+    setHighlightNodes(newNodes);
+    setHighlightLinks(newLinks);
+    setFocusedNode(runtimeNode);
   }, []);
 
   const neighborMap = useRef<Record<string, Set<string>>>({});
