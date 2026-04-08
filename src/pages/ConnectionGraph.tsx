@@ -1,8 +1,9 @@
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { graphData } from "@/data/graphData";
+import { Search, X } from "lucide-react";
 
 const TYPE_COLORS: Record<string, string> = {
   fund_manager: "#EF4444",
