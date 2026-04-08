@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { managers, signalEvents } from "@/data/managers";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FlagDot from "@/components/FlagDot";
 import RiskScoreBadge from "@/components/RiskScoreBadge";
 import { ArrowLeft, FileText, CheckCircle2, XCircle } from "lucide-react";
@@ -51,21 +51,8 @@ const ManagerDetail = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {/* Gauge */}
-            <div className="relative w-24 h-14">
-              <svg viewBox="0 0 120 70" className="w-full h-full">
-                <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="#30363D" strokeWidth="8" strokeLinecap="round" />
-                <path
-                  d="M 10 65 A 50 50 0 0 1 110 65"
-                  fill="none"
-                  stroke={gaugeColor}
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeDasharray={`${(angle / 180) * 157} 157`}
-                />
-                <text x="60" y="62" textAnchor="middle" fill={gaugeColor} fontSize="20" fontWeight="700">{manager.risk_score}</text>
-              </svg>
-            </div>
+            {/* Animated Gauge */}
+            <AnimatedGauge score={manager.risk_score} managerId={manager.id} />
             <button className="text-xs font-medium text-primary border border-primary/30 rounded px-3 py-2 hover:bg-primary/10 transition-colors flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5" /> Generate PDF Report
             </button>
