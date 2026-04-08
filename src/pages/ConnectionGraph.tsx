@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useEffect, useMemo } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
@@ -23,26 +23,6 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
-  const [showManagers, setShowManagers] = useState(true);
-  const [showHoldings, setShowHoldings] = useState(true);
-  const [showCustodians, setShowCustodians] = useState(true);
-
-  const managerCount = useMemo(() => graphData.nodes.filter(n => n.type === "fund_manager").length, []);
-  const holdingCount = useMemo(() => graphData.nodes.filter(n => n.type === "holding").length, []);
-  const custodianCount = useMemo(() => graphData.nodes.filter(n => n.type === "custodian").length, []);
-
-  const filteredGraphData = useMemo(() => {
-    const visibleTypes = new Set<string>();
-    if (showManagers) visibleTypes.add("fund_manager");
-    if (showHoldings) visibleTypes.add("holding");
-    if (showCustodians) visibleTypes.add("custodian");
-
-    const filteredNodes = graphData.nodes.filter(n => visibleTypes.has(n.type));
-    const visibleIds = new Set(filteredNodes.map(n => n.id));
-    const filteredLinks = graphData.links.filter(l => visibleIds.has(l.source as string) && visibleIds.has(l.target as string));
-
-    return { nodes: filteredNodes, links: filteredLinks };
-  }, [showManagers, showHoldings, showCustodians]);
 
   const neighborMap = useRef<Record<string, Set<string>>>({});
   const linkSet = useRef(new Set<any>());
@@ -176,35 +156,6 @@ export default function ConnectionGraph() {
         <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, color: "#888" }}>
           Click any node to focus
         </div>
-        <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
-          <div style={{ color: "#888", marginBottom: 2, fontSize: 11, textTransform: "uppercase", letterSpacing: 1 }}>Filter Nodes</div>
-          {[
-            { label: "Fund Managers", count: managerCount, color: "#EF4444", active: showManagers, toggle: () => setShowManagers(v => !v) },
-            { label: "13F Holdings", count: holdingCount, color: "#3B82F6", active: showHoldings, toggle: () => setShowHoldings(v => !v) },
-            { label: "Custodians", count: custodianCount, color: "#C9A84C", active: showCustodians, toggle: () => setShowCustodians(v => !v) },
-          ].map(({ label, count, color, active, toggle }) => (
-            <button
-              key={label}
-              onClick={toggle}
-              style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "6px 10px", borderRadius: 20, cursor: "pointer",
-                border: `1px solid ${color}`, transition: "all 0.2s ease",
-                background: active ? color : "#1a1a2e",
-                color: active ? "#0D1117" : color,
-                fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600,
-                width: "100%",
-              }}
-            >
-              <span>{label}</span>
-              <span style={{
-                background: active ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.08)",
-                padding: "1px 7px", borderRadius: 10, fontSize: 10, fontWeight: 700,
-                color: active ? "#0D1117" : color,
-              }}>{count}</span>
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Focus panel */}
@@ -234,7 +185,7 @@ export default function ConnectionGraph() {
       {/* @ts-ignore */}
       <ForceGraph3D
         ref={fgRef}
-        graphData={filteredGraphData}
+        graphData={graphData}
         backgroundColor="#0D1117"
         nodeThreeObject={getNodeObject}
         nodeLabel={getNodeLabel}
