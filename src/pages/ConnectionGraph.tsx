@@ -147,7 +147,7 @@ export default function ConnectionGraph() {
     }
 
     return new THREE.Mesh(geometry, material);
-  }, [focusedNode, highlightNodes]);
+  }, [focusedNode, highlightNodes, searchMatchIds]);
 
   const getNodeLabel = useCallback((node: any) => {
     const color = TYPE_COLORS[node.type];
