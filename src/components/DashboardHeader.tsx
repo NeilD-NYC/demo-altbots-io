@@ -8,7 +8,7 @@ const DashboardHeader = () => {
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="hidden md:inline">Last Sweep: April 8, 2026</span>
         <span className="hidden md:inline">|</span>
-        <span>8 Managers Active</span>
+        <span>50 Managers Active</span>
         <span>|</span>
         <span className="flex items-center gap-1.5">
           <span className="relative flex h-2 w-2">
