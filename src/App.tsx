@@ -12,6 +12,7 @@ import ManagerGrid from "./pages/ManagerGrid";
 import ManagerDetail from "./pages/ManagerDetail";
 import AIAnalyst from "./pages/AIAnalyst";
 import ConnectionGraph from "./pages/ConnectionGraph";
+import Performance from "./pages/Performance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <main className="flex-1 overflow-auto scrollbar-thin">
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/performance" element={<Performance />} />
                   <Route path="/managers" element={<ManagerGrid />} />
                   <Route path="/manager/:id" element={<ManagerDetail />} />
                   <Route path="/analyst" element={<AIAnalyst />} />
