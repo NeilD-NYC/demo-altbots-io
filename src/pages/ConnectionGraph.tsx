@@ -1,6 +1,7 @@
 import { useRef, useCallback, useState, useEffect } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { graphData } from "@/data/graphData";
 
 const TYPE_COLORS: Record<string, string> = {
@@ -35,6 +36,19 @@ export default function ConnectionGraph() {
       neighborMap.current[s].add(t);
       neighborMap.current[t].add(s);
     });
+  }, []);
+
+  // Add UnrealBloomPass for neon glow effect
+  useEffect(() => {
+    const fg = fgRef.current;
+    if (!fg) return;
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.8,  // strength
+      0.6,  // radius
+      0.1   // threshold
+    );
+    fg.postProcessingComposer().addPass(bloomPass);
   }, []);
 
   const handleNodeClick = useCallback((node: any) => {
