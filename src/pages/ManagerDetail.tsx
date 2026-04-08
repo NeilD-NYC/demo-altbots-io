@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { managers, signalEvents } from "@/data/managers";
+import IntelligenceTab from "@/components/IntelligenceTab";
 import { useState, useEffect } from "react";
 import FlagDot from "@/components/FlagDot";
 import RiskScoreBadge from "@/components/RiskScoreBadge";
@@ -458,26 +459,7 @@ const ManagerDetail = () => {
           )}
 
           {activeTab === "Intelligence" && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {[
-                ["Key Person Risk", manager.key_person_risk],
-                ["AUM Trend", manager.aum_trend],
-                ["Strategy Drift", manager.strategy_drift ? "Detected" : "None"],
-                ["Performance YTD", `${manager.performance_ytd}%`],
-                ["Performance 3yr", manager.performance_3yr != null ? `${manager.performance_3yr}%` : "N/A"],
-                ["Prime Broker", manager.prime_broker],
-                ["Auditor", manager.auditor],
-                ["Legal Counsel", manager.legal_counsel],
-              ].map(([label, value]) => (
-                <div key={label as string}>
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{label}</p>
-                  <p className={cn(
-                    "text-sm font-medium mt-0.5",
-                    label === "Strategy Drift" && value === "Detected" ? "text-destructive" : "text-foreground"
-                  )}>{String(value)}</p>
-                </div>
-              ))}
-            </div>
+            <IntelligenceTab managerId={manager.id} />
           )}
 
           {activeTab === "Signals" && (
