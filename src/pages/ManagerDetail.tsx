@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { managers, signalEvents } from "@/data/managers";
+import IntelligenceTab from "@/components/IntelligenceTab";
 import { useState, useEffect } from "react";
 import FlagDot from "@/components/FlagDot";
 import RiskScoreBadge from "@/components/RiskScoreBadge";
