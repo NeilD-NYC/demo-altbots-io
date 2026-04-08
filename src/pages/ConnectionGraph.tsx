@@ -23,6 +23,26 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
+  const [showManagers, setShowManagers] = useState(true);
+  const [showHoldings, setShowHoldings] = useState(true);
+  const [showCustodians, setShowCustodians] = useState(true);
+
+  const managerCount = useMemo(() => graphData.nodes.filter(n => n.type === "fund_manager").length, []);
+  const holdingCount = useMemo(() => graphData.nodes.filter(n => n.type === "holding").length, []);
+  const custodianCount = useMemo(() => graphData.nodes.filter(n => n.type === "custodian").length, []);
+
+  const filteredGraphData = useMemo(() => {
+    const visibleTypes = new Set<string>();
+    if (showManagers) visibleTypes.add("fund_manager");
+    if (showHoldings) visibleTypes.add("holding");
+    if (showCustodians) visibleTypes.add("custodian");
+
+    const filteredNodes = graphData.nodes.filter(n => visibleTypes.has(n.type));
+    const visibleIds = new Set(filteredNodes.map(n => n.id));
+    const filteredLinks = graphData.links.filter(l => visibleIds.has(l.source as string) && visibleIds.has(l.target as string));
+
+    return { nodes: filteredNodes, links: filteredLinks };
+  }, [showManagers, showHoldings, showCustodians]);
 
   const neighborMap = useRef<Record<string, Set<string>>>({});
   const linkSet = useRef(new Set<any>());
