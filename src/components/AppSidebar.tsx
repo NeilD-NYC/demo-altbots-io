@@ -33,6 +33,7 @@ export function AppSidebar() {
             <div>
               <h2 className="text-lg font-bold text-primary gold-glow">AltBots</h2>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Portfolio Monitor</p>
+              <p className="text-[9px] text-muted-foreground/60 italic mt-1">AI Generates. Humans Verify. You Trust.</p>
             </div>
           )}
           {collapsed && <span className="text-primary font-bold text-lg">A</span>}
