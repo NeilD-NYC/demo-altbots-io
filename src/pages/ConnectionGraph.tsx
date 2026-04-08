@@ -1,10 +1,7 @@
 import { useRef, useCallback, useState, useEffect } from "react";
-
 import ForceGraph3D from "react-force-graph-3d";
-
 import * as THREE from "three";
-
-import { graphData } from "../data/graphData";
+import { graphData } from "@/data/graphData";
 
 const TYPE_COLORS: Record<string, string> = {
   fund_manager: "#EF4444",
@@ -26,7 +23,6 @@ export default function ConnectionGraph() {
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
 
-  // Build neighbor lookup once
   const neighborMap = useRef<Record<string, Set<string>>>({});
   const linkSet = useRef(new Set<any>());
 
@@ -42,7 +38,6 @@ export default function ConnectionGraph() {
   }, []);
 
   const handleNodeClick = useCallback((node: any) => {
-    // Camera fly-to
     const distance = 120;
     const distRatio = 1 + distance / Math.hypot(node.x || 1, node.y || 1, node.z || 1);
     fgRef.current?.cameraPosition(
@@ -51,7 +46,6 @@ export default function ConnectionGraph() {
       1500
     );
 
-    // Highlight neighbors
     const newNodes = new Set<any>();
     const newLinks = new Set<any>();
     newNodes.add(node);
@@ -60,7 +54,6 @@ export default function ConnectionGraph() {
       const t = typeof link.target === "object" ? link.target.id : link.target;
       if (s === node.id || t === node.id) {
         newLinks.add(link);
-        // Add connected node objects
         graphData.nodes.forEach(n => {
           if (n.id === s || n.id === t) newNodes.add(n);
         });
