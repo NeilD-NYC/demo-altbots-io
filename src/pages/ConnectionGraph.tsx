@@ -173,6 +173,7 @@ export default function ConnectionGraph() {
         </div>
       )}
 
+      {/* @ts-ignore */}
       <ForceGraph3D
         ref={fgRef}
         graphData={graphData}
