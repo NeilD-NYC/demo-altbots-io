@@ -19,7 +19,7 @@
 
 A full-featured portfolio intelligence dashboard designed for institutional allocators managing multi-manager alternative investment portfolios — hedge funds, private equity, venture capital, and family office mandates.
 
-Built by a former Managing Director with 20+ years of buy-side experience, this dashboard encodes the actual monitoring and oversight framework used at a $24B multi-family office into a real-time, interactive interface.
+Built by a former Managing Director with 15+ years of buy-side experience, this dashboard encodes the actual monitoring and oversight framework used at a $24B multi-family office into a real-time, interactive interface.
 
 ---
 
