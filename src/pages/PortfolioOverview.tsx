@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { managers } from "@/data/managers";
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
 import { AlertTriangle, TrendingUp, Users, Shield, DollarSign } from "lucide-react";
 import FlagDot from "@/components/FlagDot";
 
@@ -84,44 +84,137 @@ const trendData = [
 const totalAUM = managers.reduce((s, m) => s + m.aum_bn, 0);
 const avgRisk = (managers.reduce((s, m) => s + m.risk_score, 0) / managers.length).toFixed(1);
 
-const KPICard = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string | number; accent?: boolean }) => (
-  <div className="bg-card border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary/30 transition-colors">
-    <div className="p-2.5 rounded-lg bg-secondary">
-      <Icon className={`h-5 w-5 ${accent ? "text-destructive" : "text-primary"}`} />
+const KPIShell = ({
+  icon: Icon,
+  label,
+  accent,
+  children,
+}: {
+  icon: any;
+  label: string;
+  accent?: boolean;
+  children: React.ReactNode;
+}) => (
+  <div className="bg-card border border-border rounded-lg p-5 flex flex-col gap-3 min-h-[170px] hover:border-primary/30 transition-colors">
+    <div className="flex items-center gap-2.5">
+      <div className="p-2 rounded-md bg-secondary">
+        <Icon className={`h-4 w-4 ${accent ? "text-destructive" : "text-primary"}`} />
+      </div>
+      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{label}</p>
     </div>
-    <div>
-      <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
-      <p className="text-2xl font-bold text-foreground">
-        {value}
-        {accent && <span className="ml-2 text-xs bg-destructive/20 text-destructive px-2 py-0.5 rounded-full font-medium">Alert</span>}
-      </p>
-    </div>
+    <div className="flex-1 flex flex-col justify-between">{children}</div>
   </div>
 );
+
+// Card 1: AUM sparkline data (7 points, slight upward curve, ending ~26.5)
+const aumSpark = [
+  { x: 1, v: 24.8 },
+  { x: 2, v: 25.0 },
+  { x: 3, v: 25.1 },
+  { x: 4, v: 25.3 },
+  { x: 5, v: 25.7 },
+  { x: 6, v: 26.1 },
+  { x: 7, v: 26.5 },
+];
 
 const PortfolioOverview = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
-      {/* KPI Row + Health Gauge */}
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
-          <KPICard icon={DollarSign} label="Total AUM Under Monitoring" value={`$${totalAUM.toFixed(1)}B`} />
-          <KPICard icon={Users} label="Managers Monitored" value={managers.length} />
-          <KPICard icon={AlertTriangle} label="Active Alerts" value={1} accent />
-          <KPICard icon={Shield} label="Avg Risk Score" value={`${avgRisk} / 100`} />
-        </div>
-        {/* Portfolio Health Score */}
-        <div className="bg-card border border-border rounded-lg p-5 flex flex-col items-center justify-center min-w-[180px]">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">Portfolio Health Score</p>
-          <HealthGauge score={71} />
-          <span className="text-[11px] font-bold tracking-widest text-warning mt-2">MODERATE RISK</span>
-        </div>
+    <div className="p-8 space-y-8 max-w-[1400px] mx-auto">
+      {/* KPI Row — 5 cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Card 1 — Total AUM */}
+        <KPIShell icon={DollarSign} label="Total AUM Under Monitoring">
+          <div>
+            <p className="text-3xl font-bold text-foreground tabular-nums">$26.5B</p>
+            <p className="text-xs text-success mt-1 font-medium">↑ +$1.2B since last sweep</p>
+          </div>
+          <div className="h-10 -mx-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={aumSpark} margin={{ top: 4, bottom: 2, left: 4, right: 4 }}>
+                <Line
+                  type="monotone"
+                  dataKey="v"
+                  stroke="#C9A84C"
+                  strokeWidth={1.75}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </KPIShell>
+
+        {/* Card 2 — Managers Monitored */}
+        <KPIShell icon={Users} label="Managers Monitored">
+          <div>
+            <p className="text-3xl font-bold text-foreground tabular-nums">8</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              <span className="text-foreground/80">3</span> HF
+              <span className="mx-1.5 text-border">|</span>
+              <span className="text-foreground/80">2</span> PE
+              <span className="mx-1.5 text-border">|</span>
+              <span className="text-foreground/80">2</span> Credit
+              <span className="mx-1.5 text-border">|</span>
+              <span className="text-foreground/80">1</span> Real Assets
+            </p>
+          </div>
+        </KPIShell>
+
+        {/* Card 3 — Active Alerts */}
+        <KPIShell icon={AlertTriangle} label="Active Alerts" accent>
+          <div>
+            <p className="text-3xl font-bold text-foreground flex items-center gap-2">
+              1
+              <span className="text-[10px] bg-destructive/20 text-destructive px-2 py-0.5 rounded-full font-semibold tracking-wide">ALERT</span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">0 new since last sweep</p>
+          </div>
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-destructive" /> 1 Critical</span>
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-warning/40" /> 0 Watch</span>
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-success/40" /> 0 Clear</span>
+          </div>
+        </KPIShell>
+
+        {/* Card 4 — Avg Risk Score */}
+        <KPIShell icon={Shield} label="Avg Risk Score">
+          <div>
+            <p className="text-3xl font-bold text-foreground tabular-nums">33.9 <span className="text-base text-muted-foreground font-normal">/ 100</span></p>
+            <p className="text-xs text-warning mt-1 font-medium">↑ +2.1 pts vs prior month</p>
+          </div>
+          <div>
+            <div className="relative h-1.5 rounded-full" style={{ background: "linear-gradient(to right, #22C55E, #F59E0B, #EF4444)" }}>
+              <div
+                className="absolute -top-1 h-3.5 w-0.5 bg-foreground rounded-sm"
+                style={{ left: "33.9%" }}
+              />
+            </div>
+            <div className="flex justify-between text-[9px] text-muted-foreground mt-1 tabular-nums">
+              <span>0</span><span>50</span><span>100</span>
+            </div>
+          </div>
+        </KPIShell>
+
+        {/* Card 5 — Portfolio Health Score */}
+        <KPIShell icon={TrendingUp} label="Portfolio Health Score">
+          <div className="flex flex-col items-center justify-center -mt-1">
+            <HealthGauge score={71} />
+            <span className="text-[10px] font-bold tracking-widest text-warning mt-1">MODERATE RISK</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center tabular-nums">
+            Sharpe <span className="text-foreground/80">1.74</span>
+            <span className="mx-1 text-border">|</span>
+            Sortino <span className="text-foreground/80">2.31</span>
+            <span className="mx-1 text-border">|</span>
+            Max DD <span className="text-destructive">-6.8%</span>
+          </p>
+        </KPIShell>
       </div>
 
       {/* Three Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Strategy Concentration */}
         <div className="bg-card border border-border rounded-lg p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4">Strategy Concentration</h3>
