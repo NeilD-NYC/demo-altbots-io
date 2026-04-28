@@ -1,7 +1,6 @@
 import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { graphData } from "@/data/graphData";
 import { Search, X } from "lucide-react";
 
@@ -126,15 +125,6 @@ export default function ConnectionGraph() {
     fg.d3Force('link')?.distance(120);
     // Add center force to keep graph from drifting
     fg.d3Force('center')?.strength(0.03);
-
-    // Add UnrealBloomPass for neon glow effect
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.8,  // strength
-      0.6,  // radius
-      0.1   // threshold
-    );
-    fg.postProcessingComposer().addPass(bloomPass);
   }, []);
 
   const handleNodeClick = useCallback((node: any) => {
