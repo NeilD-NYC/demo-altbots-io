@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { managers } from "@/data/managers";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
 import { AlertTriangle, TrendingUp, Users, Shield, DollarSign } from "lucide-react";
-import FlagDot from "@/components/FlagDot";
 
 const HealthGauge = ({ score }: { score: number }) => {
   const [animated, setAnimated] = useState(0);
