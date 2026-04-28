@@ -381,17 +381,19 @@ const pacingData = [
 ];
 
 const fundDetail = [
-  { fund: "Arcturus PE Fund III", strat: "Buyout", vintage: 2019, commit: 400, called: 392, uncalled: 8, nav: 631, tvpi: 1.61, dpi: 0.82, status: "Harvesting" },
-  { fund: "Meridian Ventures II", strat: "Venture", vintage: 2020, commit: 250, called: 228, uncalled: 22, nav: 326, tvpi: 1.43, dpi: 0.41, status: "Active" },
-  { fund: "Ironwood Growth IV", strat: "Growth", vintage: 2021, commit: 500, called: 451, uncalled: 49, nav: 577, tvpi: 1.28, dpi: 0.28, status: "Active" },
-  { fund: "Northgate Opps I", strat: "Special Sits", vintage: 2022, commit: 350, called: 298, uncalled: 52, nav: 340, tvpi: 1.14, dpi: 0.09, status: "Investing" },
-  { fund: "Solaris Credit Fund", strat: "Private Credit", vintage: 2022, commit: 200, called: 156, uncalled: 44, nav: 178, tvpi: 1.14, dpi: 0.31, status: "Active" },
-  { fund: "Helix Distressed III", strat: "Distressed", vintage: 2023, commit: 300, called: 198, uncalled: 102, nav: 214, tvpi: 1.08, dpi: 0.00, status: "Investing" },
-  { fund: "Vega Special II", strat: "Special Sits", vintage: 2024, commit: 280, called: 142, uncalled: 138, nav: 145, tvpi: 1.02, dpi: 0.00, status: "Early" },
-  { fund: "Tundra Real Assets", strat: "Real Assets", vintage: 2025, commit: 450, called: 98, uncalled: 352, nav: 100, tvpi: 1.00, dpi: 0.00, status: "Funding" },
+  { fund: "Arcturus PE Fund III", strat: "Buyout", vintage: 2019, commit: 400, called: 392, uncalled: 8, nav: 631, tvpi: 1.61, dpi: 0.82, moic: 1.61, irr: 18.4, status: "Harvesting" },
+  { fund: "Meridian Ventures II", strat: "Venture", vintage: 2020, commit: 250, called: 228, uncalled: 22, nav: 326, tvpi: 1.43, dpi: 0.41, moic: 1.43, irr: 14.2, status: "Active" },
+  { fund: "Ironwood Growth IV", strat: "Growth", vintage: 2021, commit: 500, called: 451, uncalled: 49, nav: 577, tvpi: 1.28, dpi: 0.28, moic: 1.28, irr: 11.7, status: "Active" },
+  { fund: "Northgate Opps I", strat: "Special Sits", vintage: 2022, commit: 350, called: 298, uncalled: 52, nav: 340, tvpi: 1.14, dpi: 0.09, moic: 1.14, irr: 9.3, status: "Investing" },
+  { fund: "Solaris Credit Fund", strat: "Private Credit", vintage: 2022, commit: 200, called: 156, uncalled: 44, nav: 178, tvpi: 1.14, dpi: 0.31, moic: 1.14, irr: 8.8, status: "Active" },
+  { fund: "Helix Distressed III", strat: "Distressed", vintage: 2023, commit: 300, called: 198, uncalled: 102, nav: 214, tvpi: 1.08, dpi: 0.00, moic: 1.08, irr: 6.1, status: "Investing" },
+  { fund: "Vega Special II", strat: "Special Sits", vintage: 2024, commit: 280, called: 142, uncalled: 138, nav: 145, tvpi: 1.02, dpi: 0.00, moic: 1.02, irr: 2.4, status: "Early" },
+  { fund: "Tundra Real Assets", strat: "Real Assets", vintage: 2025, commit: 450, called: 98, uncalled: 352, nav: 100, tvpi: 1.00, dpi: 0.00, moic: 1.00, irr: 0.0, status: "Funding" },
 ];
 
 function tvpiColor(v: number) { return v > 1.2 ? "text-[#22C55E]" : v >= 1.0 ? "text-[#F59E0B]" : "text-[#EF4444]"; }
+function moicColor(v: number) { return v >= 1.5 ? "text-[#22C55E]" : v >= 1.0 ? "text-[#C9A84C]" : "text-[#EF4444]"; }
+function irrColor(v: number) { return v >= 15 ? "text-[#22C55E]" : v >= 8 ? "text-[#C9A84C]" : "text-[#EF4444]"; }
 
 function PEPacingTab() {
   return (
@@ -451,7 +453,7 @@ function PEPacingTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead><tr className="border-b border-[#30363D] text-muted-foreground">
-                {["Fund","Strategy","Vintage","Commitment","Called","Uncalled","NAV","TVPI","DPI","Status"].map(h => <th key={h} className="px-3 py-2 text-left font-medium">{h}</th>)}
+                {["Fund","Strategy","Vintage","Commitment","Called","Uncalled","NAV","TVPI","DPI","MOIC","IRR (Net)","Status"].map(h => <th key={h} className="px-3 py-2 text-left font-medium">{h}</th>)}
               </tr></thead>
               <tbody>
                 {fundDetail.map(r => (
@@ -465,6 +467,8 @@ function PEPacingTab() {
                     <td className="px-3 py-2 text-foreground">${r.nav}M</td>
                     <td className={`px-3 py-2 font-semibold ${tvpiColor(r.tvpi)}`}>{r.tvpi.toFixed(2)}x</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.dpi.toFixed(2)}x</td>
+                    <td className={`px-3 py-2 font-semibold ${moicColor(r.moic)}`}>{r.moic.toFixed(2)}x</td>
+                    <td className={`px-3 py-2 font-semibold ${irrColor(r.irr)}`}>{r.irr.toFixed(1)}%</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.status}</td>
                   </tr>
                 ))}
