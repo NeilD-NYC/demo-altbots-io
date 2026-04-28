@@ -213,6 +213,27 @@ const PortfolioOverview = () => {
         </KPIShell>
       </div>
 
+      {/* Recent Alerts — horizontal strip directly below KPIs */}
+      <div className="space-y-2">
+        <div className="bg-card border border-border border-l-4 border-l-destructive rounded-lg px-5 py-3 flex items-center gap-4">
+          <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-destructive shrink-0">Red Alert</span>
+          <span className="text-xs text-muted-foreground shrink-0 hidden md:inline">Helix Credit Opportunities · Apr 8, 2026</span>
+          <span className="text-xs text-secondary-foreground truncate flex-1">
+            SEC enforcement confirmed. FINRA disclosure on record. Adverse media flagged. Strategy drift detected.
+          </span>
+          <button
+            onClick={() => navigate("/manager/4")}
+            className="text-xs font-medium text-primary hover:text-primary/80 border border-primary/30 rounded px-3 py-1.5 hover:bg-primary/10 transition-colors shrink-0"
+          >
+            View Full Report
+          </button>
+        </div>
+        <p className="text-[11px] text-success/70 pl-2">
+          All other managers clear — no new flags since April 8, 2026
+        </p>
+      </div>
+
       {/* Three Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Strategy Concentration */}
@@ -278,29 +299,67 @@ const PortfolioOverview = () => {
         </div>
       </div>
 
-      {/* Alert Feed */}
-      <div className="bg-card border border-destructive/30 rounded-lg p-5">
-        <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-destructive" />
-          Recent Alerts
-        </h3>
-        <div className="flex items-start gap-3 bg-destructive/5 border border-destructive/20 rounded-lg p-4">
-          <FlagDot flag="red" />
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-semibold text-destructive uppercase">Red Alert</span>
-              <span className="text-xs text-muted-foreground">| Helix Credit Opportunities | April 8, 2026</span>
-            </div>
-            <p className="text-sm text-secondary-foreground leading-relaxed">
-              SEC enforcement history confirmed. FINRA disclosure on record. Adverse media flagged (WSJ 2021). Strategy drift detected. Recommend immediate review.
-            </p>
-            <button
-              onClick={() => navigate("/manager/4")}
-              className="mt-3 text-xs font-medium text-primary hover:text-primary/80 border border-primary/30 rounded px-3 py-1.5 hover:bg-primary/10 transition-colors"
-            >
-              View Full Report
-            </button>
-          </div>
+      {/* Strategy KPI Scorecard */}
+      <div className="bg-card border border-border rounded-lg p-5">
+        <h3 className="text-[11px] font-bold tracking-widest uppercase text-primary mb-4">Strategy KPI Scorecard</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
+                <th className="text-left font-medium py-2 px-3">Strategy</th>
+                <th className="text-right font-medium py-2 px-3">Target Alloc</th>
+                <th className="text-right font-medium py-2 px-3">Actual Alloc</th>
+                <th className="text-right font-medium py-2 px-3">Variance</th>
+                <th className="text-right font-medium py-2 px-3">MTD Return</th>
+                <th className="text-right font-medium py-2 px-3">YTD Return</th>
+                <th className="text-right font-medium py-2 px-3">Avg Risk</th>
+                <th className="text-center font-medium py-2 px-3">Status</th>
+              </tr>
+            </thead>
+            <tbody className="tabular-nums">
+              {[
+                { s: "Global Macro", t: 35, a: 35.2, v: 0.2, m: 2.1, y: 7.8, r: 28, st: "ok" },
+                { s: "Quant Equity", t: 27, a: 26.8, v: -0.2, m: 2.7, y: 11.2, r: 22, st: "ok" },
+                { s: "Growth Equity", t: 20, a: 20.8, v: 0.8, m: 1.8, y: 9.1, r: 31, st: "ok" },
+                { s: "Event Driven", t: 10, a: 13.6, v: 3.6, m: 2.4, y: 8.3, r: 29, st: "over" },
+                { s: "Distressed Credit", t: 8, a: 8.7, v: 0.7, m: -2.0, y: 1.2, r: 67, st: "review" },
+                { s: "Special Sits", t: 5, a: 4.1, v: -0.9, m: 3.5, y: 14.6, r: 38, st: "ok" },
+              ].map((row) => {
+                const varColor =
+                  Math.abs(row.v) > 2 ? "text-destructive" : row.v > 0 ? "text-warning" : "text-muted-foreground";
+                const retColor = (n: number) => (n >= 0 ? "text-success" : "text-destructive");
+                const riskColor = row.r < 30 ? "text-success" : row.r <= 60 ? "text-warning" : "text-destructive";
+                const badge =
+                  row.st === "ok"
+                    ? { cls: "bg-success/15 text-success border-success/30", label: "✅ On Track" }
+                    : row.st === "over"
+                    ? { cls: "bg-warning/15 text-warning border-warning/30", label: "⚠️ Over Weight" }
+                    : { cls: "bg-destructive/15 text-destructive border-destructive/30", label: "🔴 Review" };
+                return (
+                  <tr key={row.s} className="border-b border-border/50 hover:bg-muted/20">
+                    <td className="py-2.5 px-3 text-foreground font-medium">{row.s}</td>
+                    <td className="py-2.5 px-3 text-right text-muted-foreground">{row.t.toFixed(0)}%</td>
+                    <td className="py-2.5 px-3 text-right text-foreground">{row.a.toFixed(1)}%</td>
+                    <td className={`py-2.5 px-3 text-right font-medium ${varColor}`}>
+                      {row.v > 0 ? "+" : ""}{row.v.toFixed(1)}%
+                    </td>
+                    <td className={`py-2.5 px-3 text-right font-medium ${retColor(row.m)}`}>
+                      {row.m > 0 ? "+" : ""}{row.m.toFixed(1)}%
+                    </td>
+                    <td className={`py-2.5 px-3 text-right font-medium ${retColor(row.y)}`}>
+                      {row.y > 0 ? "+" : ""}{row.y.toFixed(1)}%
+                    </td>
+                    <td className={`py-2.5 px-3 text-right font-semibold ${riskColor}`}>{row.r}</td>
+                    <td className="py-2.5 px-3 text-center">
+                      <span className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badge.cls}`}>
+                        {badge.label}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
