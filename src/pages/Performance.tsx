@@ -452,6 +452,77 @@ function RiskTab() {
 
 /* ───────── MAIN PAGE ───────── */
 
+const stressScenarios = [
+  { name: "Rate Shock +200bps", navB: "-$1.2B", navPct: "-4.5%", dd: "-8.2%", sharpe: "-0.31", illiq: "+1.8%", sev: "MODERATE" },
+  { name: "Equity Selloff -20%", navB: "-$2.8B", navPct: "-10.6%", dd: "-13.4%", sharpe: "-0.58", illiq: "+2.4%", sev: "HIGH" },
+  { name: "Credit Spread +300bps", navB: "-$1.9B", navPct: "-7.2%", dd: "-11.1%", sharpe: "-0.44", illiq: "+3.1%", sev: "HIGH" },
+  { name: "Combined Shock", navB: "-$4.1B", navPct: "-15.5%", dd: "-18.7%", sharpe: "-0.89", illiq: "+4.6%", sev: "SEVERE" },
+];
+
+const stressNarratives = [
+  { name: "Rate Shock +200bps", text: "A 200bps rate increase compresses NAV by an estimated $1.2B, primarily impacting private credit and growth equity valuations. Drawdown remains within the -10% policy threshold; no immediate rebalancing required." },
+  { name: "Equity Selloff -20%", text: "A broad equity selloff of 20% pushes estimated drawdown to -13.4%, breaching the -10% policy threshold. Recommend reviewing Ironwood Systematic and Arcturus Capital exposures for near-term risk reduction." },
+  { name: "Credit Spread +300bps", text: "A 300bps credit spread widening would materially impair Helix Distressed III and Solaris Credit Fund valuations, driving illiquid allocation above target. Immediate liquidity review recommended for the distressed sleeve." },
+  { name: "Combined Shock", text: "Under a combined macro shock, portfolio NAV declines by an estimated $4.1B (-15.5%), with drawdown reaching -18.7% — well beyond policy limits. This scenario warrants immediate Portfolio Committee escalation and defensive repositioning across liquid allocations." },
+];
+
+function severityBadge(sev: string) {
+  if (sev === "MODERATE") return "bg-[#C9A84C]/15 text-[#C9A84C] border-[#C9A84C]/40";
+  if (sev === "HIGH") return "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/40";
+  return "bg-[#EF4444]/25 text-[#FF6B6B] border-[#EF4444]/60 font-bold";
+}
+
+function StressScenariosTab() {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-[#161B22] border-[#30363D]">
+        <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Portfolio Stress Test — Macro Scenarios</CardTitle></CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead><tr className="border-b border-[#30363D] text-muted-foreground">
+                {["Scenario","NAV Impact ($B)","NAV Impact (%)","Max Drawdown","Sharpe Impact","Illiquid Alloc Shift","Severity"].map(h => (
+                  <th key={h} className="px-3 py-2 text-left font-medium">{h}</th>
+                ))}
+              </tr></thead>
+              <tbody>
+                {stressScenarios.map(r => (
+                  <tr key={r.name} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
+                    <td className={`px-3 py-2 text-foreground ${r.sev === "SEVERE" ? "font-bold" : "font-medium"}`}>{r.name}</td>
+                    <td className="px-3 py-2 text-[#EF4444] font-semibold">{r.navB}</td>
+                    <td className="px-3 py-2 text-[#EF4444] font-semibold">{r.navPct}</td>
+                    <td className="px-3 py-2 text-[#EF4444] font-semibold">{r.dd}</td>
+                    <td className="px-3 py-2 text-foreground">{r.sharpe}</td>
+                    <td className="px-3 py-2 text-foreground">{r.illiq}</td>
+                    <td className="px-3 py-2">
+                      <span className={`inline-block px-2 py-0.5 rounded border text-[10px] tracking-wide ${severityBadge(r.sev)}`}>{r.sev}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-[#161B22] border-[#30363D]">
+        <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">AI Analyst — Scenario Interpretation</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          {stressNarratives.map(n => (
+            <div
+              key={n.name}
+              className={`bg-[#0D1117] border border-[#30363D] rounded p-3 ${n.name === "Combined Shock" ? "border-l-4 border-l-[#EF4444]" : ""}`}
+            >
+              <div className="text-xs font-semibold text-[#C9A84C] mb-1">{n.name}</div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{n.text}</p>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default function Performance() {
   return (
     <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
@@ -461,11 +532,13 @@ export default function Performance() {
           <TabsTrigger value="exposure" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">EXPOSURE</TabsTrigger>
           <TabsTrigger value="correlation" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">CORRELATION</TabsTrigger>
           <TabsTrigger value="risk" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">RISK METRICS</TabsTrigger>
+          <TabsTrigger value="stress" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">STRESS SCENARIOS</TabsTrigger>
         </TabsList>
         <TabsContent value="positions"><PositionsTab /></TabsContent>
         <TabsContent value="exposure"><ExposureTab /></TabsContent>
         <TabsContent value="correlation"><CorrelationTab /></TabsContent>
         <TabsContent value="risk"><RiskTab /></TabsContent>
+        <TabsContent value="stress"><StressScenariosTab /></TabsContent>
       </Tabs>
     </div>
   );
