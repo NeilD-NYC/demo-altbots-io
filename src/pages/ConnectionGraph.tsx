@@ -57,6 +57,8 @@ export default function ConnectionGraph() {
   const runtimeNodesRef = useRef<GraphNode[]>([]);
   const nodeMeshesRef = useRef(new Map<string, THREE.Mesh>());
   const linkLinesRef = useRef<Array<{ key: string; link: GraphLink; line: THREE.Line }>>([]);
+  const linkHalosRef = useRef<Array<{ key: string; halo: THREE.Line }>>([]);
+  const alertMeshesRef = useRef<THREE.Mesh[]>([]);
   const animationFrameRef = useRef<number>();
 
   const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null);
@@ -121,6 +123,14 @@ export default function ConnectionGraph() {
     setHighlightNodeIds(new Set());
     setHighlightLinkKeys(new Set());
   }, []);
+
+  const getEmissiveForNode = (node: GraphNode): { color: string; intensity: number } => {
+    if (node.flag === "red") return { color: "#ff3333", intensity: 0.8 };
+    if (node.type === "fund_manager") return { color: "#00ff88", intensity: 0.5 };
+    if (node.type === "holding") return { color: "#4488ff", intensity: 0.4 };
+    if (node.type === "custodian") return { color: "#C5A55A", intensity: 0.6 };
+    return { color: "#C5A55A", intensity: 0.4 };
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -195,40 +205,62 @@ export default function ConnectionGraph() {
     linkLinesRef.current = graphData.links.map((link: GraphLink, index: number) => {
       const source = positionById.get(getEndpointId(link.source));
       const target = positionById.get(getEndpointId(link.target));
-      const geometry = new THREE.BufferGeometry().setFromPoints([
+      const points = [
         new THREE.Vector3(source?.x || 0, source?.y || 0, source?.z || 0),
         new THREE.Vector3(target?.x || 0, target?.y || 0, target?.z || 0),
-      ]);
+      ];
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
       const material = new THREE.LineBasicMaterial({
         color: getLinkColor(link),
         transparent: true,
-        opacity: link.type === "custodied_by" ? 0.36 : 0.28,
+        opacity: link.type === "custodied_by" ? 0.5 : 0.42,
       });
       const line = new THREE.Line(geometry, material);
       scene.add(line);
+
+      // Halo line behind for soft glow
+      const haloGeometry = new THREE.BufferGeometry().setFromPoints(points);
+      const haloMaterial = new THREE.LineBasicMaterial({
+        color: getLinkColor(link),
+        transparent: true,
+        opacity: 0.15,
+        linewidth: 2,
+      });
+      const halo = new THREE.Line(haloGeometry, haloMaterial);
+      scene.add(halo);
+      linkHalosRef.current.push({ key: getLinkKey(link, index), halo });
+
       return { key: getLinkKey(link, index), link, line };
     });
 
     const nodeMeshMap = nodeMeshesRef.current;
     nodeMeshMap.clear();
     const nodeMeshes: THREE.Mesh[] = [];
+    alertMeshesRef.current = [];
     positionedNodes.forEach((node: GraphNode) => {
       const geometry = node.type === "fund_manager"
         ? new THREE.SphereGeometry(node.aum ? Math.max(4, node.aum * 0.8) : 6, 18, 18)
         : node.type === "holding"
           ? new THREE.BoxGeometry(5, 5, 5)
           : new THREE.OctahedronGeometry(7);
-      const material = new THREE.MeshLambertMaterial({
+      const emissive = getEmissiveForNode(node);
+      const material = new THREE.MeshStandardMaterial({
         color: getNodeColor(node),
+        emissive: new THREE.Color(emissive.color),
+        emissiveIntensity: emissive.intensity,
         transparent: true,
         opacity: 0.92,
+        roughness: 0.55,
+        metalness: 0.15,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(node.x, node.y, node.z);
       mesh.userData.node = node;
+      mesh.userData.baseEmissiveIntensity = emissive.intensity;
       scene.add(mesh);
       nodeMeshes.push(mesh);
       nodeMeshMap.set(node.id, mesh);
+      if (node.flag === "red") alertMeshesRef.current.push(mesh);
     });
 
     const raycaster = new THREE.Raycaster();
@@ -279,6 +311,13 @@ export default function ConnectionGraph() {
 
     const animate = () => {
       controls.update();
+      // Pulse alert (red) nodes between 0.4 and 1.0 on a 2s sine loop
+      const t = performance.now() / 1000;
+      const pulse = 0.7 + 0.3 * Math.sin((t * Math.PI * 2) / 2); // 0.4 .. 1.0
+      alertMeshesRef.current.forEach((mesh) => {
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        mat.emissiveIntensity = pulse;
+      });
       renderer.render(scene, camera);
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -306,6 +345,8 @@ export default function ConnectionGraph() {
       runtimeNodesRef.current = [];
       nodeMeshMap.clear();
       linkLinesRef.current = [];
+      linkHalosRef.current = [];
+      alertMeshesRef.current = [];
     };
   }, [handleBackgroundClick, selectNode]);
 
@@ -313,17 +354,27 @@ export default function ConnectionGraph() {
     nodeMeshesRef.current.forEach((mesh, nodeId) => {
       const node = runtimeNodesRef.current.find((item) => item.id === nodeId) || nodeById.get(nodeId);
       if (!node) return;
-      const material = mesh.material as THREE.MeshLambertMaterial;
+      const material = mesh.material as THREE.MeshStandardMaterial;
       const isActive = !focusedNode || highlightNodeIds.has(nodeId);
       material.color.set(isActive ? getNodeColor(node) : "#222233");
       material.opacity = isActive ? 0.92 : 0.15;
+      const emissive = getEmissiveForNode(node);
+      material.emissive.set(isActive ? emissive.color : "#000000");
+      mesh.userData.baseEmissiveIntensity = isActive ? emissive.intensity : 0;
+      if (node.flag !== "red") material.emissiveIntensity = isActive ? emissive.intensity : 0;
     });
 
     linkLinesRef.current.forEach(({ key, link, line }) => {
       const material = line.material as THREE.LineBasicMaterial;
       const isActive = !focusedNode || highlightLinkKeys.has(key);
       material.color.set(isActive ? getLinkColor(link) : "#111122");
-      material.opacity = isActive ? (link.type === "custodied_by" ? 0.42 : 0.34) : 0.12;
+      material.opacity = isActive ? (link.type === "custodied_by" ? 0.55 : 0.45) : 0.12;
+    });
+
+    linkHalosRef.current.forEach(({ key, halo }) => {
+      const material = halo.material as THREE.LineBasicMaterial;
+      const isActive = !focusedNode || highlightLinkKeys.has(key);
+      material.opacity = isActive ? 0.15 : 0.04;
     });
   }, [focusedNode, highlightLinkKeys, highlightNodeIds, nodeById]);
 
@@ -341,6 +392,14 @@ export default function ConnectionGraph() {
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", background: "#0D1117" }}>
       <div ref={containerRef} style={{ position: "absolute", inset: 0 }} />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          background: "radial-gradient(ellipse at center, rgba(197, 165, 90, 0.03) 0%, transparent 70%)",
+        }}
+      />
 
       {tooltipHtml && (
         <div style={{
