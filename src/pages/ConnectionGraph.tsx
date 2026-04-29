@@ -217,6 +217,116 @@ export default function ConnectionGraph() {
         background: "#0D1117",
       }}
     >
+      {/* Search */}
+      <div
+        style={{
+          position: "absolute",
+          top: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 11,
+          width: 320,
+          fontFamily: "Inter, sans-serif",
+        }}
+      >
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setSearchOpen(true);
+          }}
+          onFocus={() => setSearchOpen(true)}
+          onBlur={() => setTimeout(() => setSearchOpen(false), 150)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const q = search.trim().toLowerCase();
+              const match = graphData.nodes.find((n) =>
+                n.name.toLowerCase().includes(q)
+              );
+              if (match) selectNodeById(match.id);
+            } else if (e.key === "Escape") {
+              setSearch("");
+              setSearchOpen(false);
+              handleBackgroundClick();
+            }
+          }}
+          placeholder="Search managers, holdings, custodians…"
+          style={{
+            width: "100%",
+            background: "rgba(10,10,30,0.95)",
+            border: "1px solid #30363D",
+            borderRadius: 8,
+            padding: "10px 14px",
+            color: "#fff",
+            fontSize: 13,
+            outline: "none",
+          }}
+        />
+        {searchOpen && search.trim() && (
+          <div
+            style={{
+              marginTop: 4,
+              background: "rgba(10,10,30,0.98)",
+              border: "1px solid #30363D",
+              borderRadius: 8,
+              maxHeight: 280,
+              overflowY: "auto",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+            }}
+          >
+            {graphData.nodes
+              .filter((n) =>
+                n.name.toLowerCase().includes(search.trim().toLowerCase())
+              )
+              .slice(0, 10)
+              .map((n) => {
+                const c = (n as any).flag
+                  ? FLAG_COLORS[(n as any).flag]
+                  : TYPE_COLORS[n.type];
+                return (
+                  <div
+                    key={n.id}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      selectNodeById(n.id);
+                    }}
+                    style={{
+                      padding: "8px 12px",
+                      color: "#fff",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      borderBottom: "1px solid #1a1a2a",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = "rgba(201,168,76,0.1)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    <span style={{ color: c, fontSize: 14 }}>●</span>
+                    <span>{n.name}</span>
+                    <span style={{ color: "#666", marginLeft: "auto", fontSize: 10 }}>
+                      {n.type.replace("_", " ")}
+                    </span>
+                  </div>
+                );
+              })}
+            {graphData.nodes.filter((n) =>
+              n.name.toLowerCase().includes(search.trim().toLowerCase())
+            ).length === 0 && (
+              <div style={{ padding: "10px 12px", color: "#888", fontSize: 12 }}>
+                No matches
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Legend */}
       <div
         style={{
