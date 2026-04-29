@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 const DataSourcesStrip = () => {
   const [open, setOpen] = useState(false);
+  const [live, setLive] = useState(true);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,13 +49,25 @@ const DataSourcesStrip = () => {
           <span className="text-muted-foreground">0 failed</span>
         </span>
       </div>
-      <div className="flex items-center gap-1.5 pl-3">
+      <button
+        onClick={() => setLive((v) => !v)}
+        title={live ? "Click to pause real-time updates" : "Click to resume real-time updates"}
+        className="flex items-center gap-1.5 pl-3 focus:outline-none hover:opacity-80"
+      >
         <span className="relative flex h-2 w-2">
-          <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22C55E]" />
+          {live && (
+            <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75" />
+          )}
+          <span
+            className={`relative inline-flex rounded-full h-2 w-2 ${live ? "bg-[#22C55E]" : "bg-muted-foreground"}`}
+          />
         </span>
-        <span className="text-[#22C55E] font-semibold tracking-wider text-[10px]">LIVE</span>
-      </div>
+        <span
+          className={`font-semibold tracking-wider text-[10px] ${live ? "text-[#22C55E]" : "text-muted-foreground"}`}
+        >
+          {live ? "LIVE" : "PAUSED"}
+        </span>
+      </button>
     </div>
   );
 };
