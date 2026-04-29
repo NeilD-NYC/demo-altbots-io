@@ -98,6 +98,8 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState<Set<any>>(new Set());
   const [highlightLinks, setHighlightLinks] = useState<Set<any>>(new Set());
+  const [search, setSearch] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const handleNodeClick = useCallback((node: any) => {
     const distance = 120;
@@ -124,6 +126,16 @@ export default function ConnectionGraph() {
     setHighlightLinks(newLinks);
     setFocusedNode(node);
   }, []);
+
+  const selectNodeById = useCallback((id: string) => {
+    const liveNode = (fgRef.current?.graphData?.().nodes || graphData.nodes).find(
+      (n: any) => n.id === id
+    );
+    if (!liveNode) return;
+    handleNodeClick(liveNode);
+    setSearch(liveNode.name);
+    setSearchOpen(false);
+  }, [handleNodeClick]);
 
   const handleBackgroundClick = useCallback(() => {
     setFocusedNode(null);
