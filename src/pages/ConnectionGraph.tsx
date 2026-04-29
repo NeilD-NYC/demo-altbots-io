@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 
@@ -121,11 +121,11 @@ const graphData = {
 };
 
 const FLAG_COLORS: Record<string, string> = {
-  green: "#22C55E", yellow: "#F59E0B", red: "#EF4444"
+  green: "#00ff88", yellow: "#ffaa00", red: "#ff2244"
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  fund_manager: "#22C55E", holding: "#3B82F6", custodian: "#C9A84C"
+  fund_manager: "#00ff88", holding: "#00aaff", custodian: "#ffd700"
 };
 
 export default function ConnectionGraph() {
@@ -133,6 +133,18 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      fgRef.current?.cameraPosition({ x: 0, y: 0, z: 500 });
+      const scene = fgRef.current?.scene?.();
+      if (scene) {
+        const ambientLight = new THREE.AmbientLight(0x111133, 0.4);
+        scene.add(ambientLight);
+      }
+    }, 100);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleNodeClick = useCallback((node: any) => {
     const distance = 120;
@@ -176,11 +188,11 @@ export default function ConnectionGraph() {
     let geometry: THREE.BufferGeometry;
 
     if (node.type === "fund_manager") {
-      geometry = new THREE.SphereGeometry(Math.max(4, (node.aum || 1) * 0.8), 32, 32);
+      geometry = new THREE.SphereGeometry(Math.max(6, (node.aum || 1) * 1.2), 64, 64);
     } else if (node.type === "holding") {
-      geometry = new THREE.BoxGeometry(5, 5, 5);
+      geometry = new THREE.SphereGeometry(3.5, 16, 16);
     } else {
-      geometry = new THREE.OctahedronGeometry(6);
+      geometry = new THREE.OctahedronGeometry(8);
     }
 
     const mat = new THREE.MeshLambertMaterial({
@@ -188,13 +200,13 @@ export default function ConnectionGraph() {
       transparent: true,
       opacity: isLit ? 0.9 : 0.1,
       emissive: new THREE.Color(activeColor),
-      emissiveIntensity: isLit ? 0.9 : 0,
+      emissiveIntensity: isLit ? 1.2 : 0,
     });
 
     group.add(new THREE.Mesh(geometry, mat));
 
     if (isLit) {
-      const light = new THREE.PointLight(color, 2.0, 80);
+      const light = new THREE.PointLight(color, 3.5, 120);
       group.add(light);
     }
 
@@ -202,7 +214,7 @@ export default function ConnectionGraph() {
       let frame = 0;
       const pulse = () => {
         frame++;
-        mat.emissiveIntensity = 0.5 + Math.sin(frame / 15) * 0.5;
+        mat.emissiveIntensity = 0.7 + Math.sin(frame / 12) * 0.8;
         requestAnimationFrame(pulse);
       };
       pulse();
@@ -226,7 +238,16 @@ export default function ConnectionGraph() {
   }, []);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#0D1117" }}>
+    <div style={{
+      position: "relative", width: "100%", height: "100%",
+      background: "radial-gradient(ellipse at 40% 50%, #0a0e1a 0%, #060810 60%, #000000 100%)"
+    }}>
+      <style>{`
+        @keyframes focusPulse {
+          0%, 100% { border-color: var(--pulse-color); box-shadow: 0 0 16px var(--pulse-color); }
+          50% { border-color: transparent; box-shadow: 0 0 4px transparent; }
+        }
+      `}</style>
       <div style={{
         position: "absolute", top: 16, left: 16, zIndex: 10,
         background: "rgba(8,8,20,0.92)", border: "1px solid #2a2a3a",
@@ -257,7 +278,9 @@ export default function ConnectionGraph() {
           background: "rgba(8,8,20,0.96)",
           border: `1px solid ${FLAG_COLORS[focusedNode.flag] || "#C9A84C"}`,
           borderRadius: 8, padding: "12px 16px", color: "#fff",
-          fontFamily: "Inter,sans-serif", fontSize: 12
+          fontFamily: "Inter,sans-serif", fontSize: 12,
+          animation: "focusPulse 2s ease-in-out infinite",
+          ["--pulse-color" as any]: FLAG_COLORS[focusedNode.flag] || "#ffd700",
         }}>
           <div style={{ color: FLAG_COLORS[focusedNode.flag], fontWeight: 700, fontSize: 14, marginBottom: 8 }}>
             {focusedNode.name}
@@ -280,21 +303,21 @@ export default function ConnectionGraph() {
       <ForceGraph3D
         ref={fgRef as any}
         graphData={graphData}
-        backgroundColor="#0D1117"
+        backgroundColor="rgba(0,0,0,0)"
         nodeThreeObject={getNodeObject as any}
         nodeLabel={getNodeLabel}
         nodeThreeObjectExtend={false}
         linkColor={(link: any) => {
-          if (!focusedNode) return link.type === "custodied_by" ? "#C9A84C" : "#3B82F6";
-          return highlightLinks.has(link) ? (link.type === "custodied_by" ? "#C9A84C" : "#3B82F6") : "#0a0a14";
+          if (!focusedNode) return link.type === "custodied_by" ? "#ffd700" : "#00aaff";
+          return highlightLinks.has(link) ? (link.type === "custodied_by" ? "#ffd700" : "#00aaff") : "#0a0a14";
         }}
-        linkWidth={(link: any) => highlightLinks.has(link) ? 2 : 0.4}
-        linkOpacity={0.5}
-        linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 5 : 1}
-        linkDirectionalParticleSpeed={0.004}
-        linkDirectionalParticleWidth={(link: any) => highlightLinks.has(link) ? 3 : 1}
+        linkWidth={(link: any) => highlightLinks.has(link) ? 3 : 0.4}
+        linkOpacity={0.35}
+        linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 8 : 1}
+        linkDirectionalParticleSpeed={0.006}
+        linkDirectionalParticleWidth={(link: any) => highlightLinks.has(link) ? 4 : 1}
         linkDirectionalParticleColor={(link: any) =>
-          link.type === "custodied_by" ? "#C9A84C" : "#3B82F6"
+          link.type === "custodied_by" ? "#ffd700" : "#00aaff"
         }
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
