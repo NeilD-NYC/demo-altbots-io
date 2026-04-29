@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import DashboardHeader from "@/components/DashboardHeader";
+import DataSourcesStrip from "@/components/DataSourcesStrip";
 import AlertBanner from "@/components/AlertBanner";
 import Index from "./pages/Index";
 import ManagerGrid from "./pages/ManagerGrid";
@@ -30,6 +31,7 @@ const App = () => (
             <div className="flex-1 flex flex-col min-w-0">
               <AlertBanner />
               <DashboardHeader />
+              <DataSourcesStrip />
               <div className="flex items-center h-10 px-4 border-b border-border bg-card/50">
                 <SidebarTrigger />
               </div>
