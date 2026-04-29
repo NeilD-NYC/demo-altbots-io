@@ -209,7 +209,8 @@ export default function ConnectionGraph() {
       return { key: getLinkKey(link, index), link, line };
     });
 
-    nodeMeshesRef.current.clear();
+    const nodeMeshMap = nodeMeshesRef.current;
+    nodeMeshMap.clear();
     const nodeMeshes: THREE.Mesh[] = [];
     positionedNodes.forEach((node: GraphNode) => {
       const geometry = node.type === "fund_manager"
@@ -227,7 +228,7 @@ export default function ConnectionGraph() {
       mesh.userData.node = node;
       scene.add(mesh);
       nodeMeshes.push(mesh);
-      nodeMeshesRef.current.set(node.id, mesh);
+      nodeMeshMap.set(node.id, mesh);
     });
 
     const raycaster = new THREE.Raycaster();
@@ -303,7 +304,7 @@ export default function ConnectionGraph() {
       cameraRef.current = null;
       controlsRef.current = null;
       runtimeNodesRef.current = [];
-      nodeMeshesRef.current.clear();
+      nodeMeshMap.clear();
       linkLinesRef.current = [];
     };
   }, [handleBackgroundClick, selectNode]);
