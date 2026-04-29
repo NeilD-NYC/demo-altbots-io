@@ -352,8 +352,38 @@ const sortinoData = [
 ];
 
 function RiskTab() {
+  const [varMethod, setVarMethod] = useState<"Parametric" | "Historical Simulation" | "Monte Carlo">("Parametric");
+  const varValues: Record<typeof varMethod, string> = {
+    "Parametric": "-0.82%",
+    "Historical Simulation": "-1.14%",
+    "Monte Carlo": "-0.97%",
+  };
+  const methods: Array<typeof varMethod> = ["Parametric", "Historical Simulation", "Monte Carlo"];
   return (
     <div className="space-y-4">
+      {/* VaR methodology selector */}
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-muted-foreground">VaR Methodology:</span>
+        <div className="flex items-center gap-2">
+          {methods.map((m) => {
+            const active = varMethod === m;
+            return (
+              <button
+                key={m}
+                onClick={() => setVarMethod(m)}
+                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  active
+                    ? "bg-[#C9A84C] text-[#0D1117] border-[#C9A84C]"
+                    : "bg-[#161B22] text-[#8b949e] border-[#30363D] hover:text-[#C9A84C] hover:border-[#C9A84C]/50"
+                }`}
+              >
+                {m}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         {/* Drawdown */}
         <Card className="bg-[#161B22] border-[#30363D]">
@@ -442,7 +472,7 @@ function RiskTab() {
       <Card className="bg-[#0D1117] border-[#C9A84C]/30">
         <CardContent className="py-3 px-6">
           <p className="text-xs text-[#C9A84C] font-medium text-center tracking-wide">
-            Portfolio Risk Summary: Sharpe 1.74 | Sortino 2.31 | Max Drawdown -6.8% | Annualized Vol 5.8% | Beta to S&P 0.41 | VaR 95% (1-day) -0.82%
+            Portfolio Risk Summary: Sharpe 1.74 | Sortino 2.31 | Max Drawdown -6.8% | Annualized Vol 5.8% | Beta to S&P 0.41 | VaR 95% (1-day) {varValues[varMethod]}
           </p>
         </CardContent>
       </Card>
