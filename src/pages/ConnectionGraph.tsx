@@ -16,8 +16,26 @@ const FLAG_COLORS: Record<string, string> = {
   red: "#EF4444",
 };
 
-type GraphNode = any;
-type GraphLink = any;
+type GraphNode = {
+  id: string;
+  name: string;
+  type: string;
+  aum?: number;
+  strategy?: string;
+  riskScore?: number;
+  flag?: keyof typeof FLAG_COLORS;
+  sector?: string;
+  x?: number;
+  y?: number;
+  z?: number;
+};
+
+type GraphLink = {
+  source: string | GraphNode;
+  target: string | GraphNode;
+  type: string;
+  weight?: number;
+};
 
 const getEndpointId = (endpoint: string | { id: string }) =>
   typeof endpoint === "object" ? endpoint.id : endpoint;
@@ -49,12 +67,12 @@ export default function ConnectionGraph() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const nodeById = useMemo(() => new Map(graphData.nodes.map((node: GraphNode) => [node.id, node])), []);
+  const nodeById = useMemo(() => new Map((graphData.nodes as GraphNode[]).map((node) => [node.id, node])), []);
 
   const filteredNodes = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
-    return graphData.nodes.filter((node: GraphNode) => node.name.toLowerCase().includes(q)).slice(0, 8);
+    return (graphData.nodes as GraphNode[]).filter((node) => node.name.toLowerCase().includes(q)).slice(0, 8);
   }, [searchQuery]);
 
   const focusCameraOnNode = useCallback((node: GraphNode) => {
