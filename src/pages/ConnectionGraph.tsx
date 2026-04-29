@@ -51,6 +51,7 @@ const getLinkColor = (link: GraphLink) =>
 
 export default function ConnectionGraph() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const glowCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
@@ -150,6 +151,17 @@ export default function ConnectionGraph() {
     renderer.setSize(width, height);
     rendererRef.current = renderer;
     container.appendChild(renderer.domElement);
+
+    const glowCanvas = glowCanvasRef.current;
+    const glowCtx = glowCanvas ? glowCanvas.getContext("2d") : null;
+    const dpr = Math.min(window.devicePixelRatio, 2);
+    if (glowCanvas) {
+      glowCanvas.width = width * dpr;
+      glowCanvas.height = height * dpr;
+      glowCanvas.style.width = `${width}px`;
+      glowCanvas.style.height = `${height}px`;
+      glowCtx?.scale(dpr, dpr);
+    }
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -302,12 +314,34 @@ export default function ConnectionGraph() {
       camera.aspect = nextWidth / nextHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(nextWidth, nextHeight);
+      if (glowCanvas && glowCtx) {
+        glowCanvas.width = nextWidth * dpr;
+        glowCanvas.height = nextHeight * dpr;
+        glowCanvas.style.width = `${nextWidth}px`;
+        glowCanvas.style.height = `${nextHeight}px`;
+        glowCtx.setTransform(1, 0, 0, 1, 0, 0);
+        glowCtx.scale(dpr, dpr);
+      }
     };
 
     renderer.domElement.addEventListener("pointermove", handlePointerMove);
     renderer.domElement.addEventListener("pointerleave", handlePointerLeave);
     renderer.domElement.addEventListener("click", handlePointerClick);
     window.addEventListener("resize", handleResize);
+
+    const projectVec = new THREE.Vector3();
+    const getGlowColors = (node: GraphNode): { rgb: string; innerAlpha: number } => {
+      if (node.flag === "red") return { rgb: "255, 51, 51", innerAlpha: 0.9 };
+      if (node.type === "fund_manager") return { rgb: "0, 255, 136", innerAlpha: 0.6 };
+      if (node.type === "holding") return { rgb: "68, 136, 255", innerAlpha: 0.5 };
+      if (node.type === "custodian") return { rgb: "197, 165, 90", innerAlpha: 0.7 };
+      return { rgb: "197, 165, 90", innerAlpha: 0.5 };
+    };
+    const getNodeBaseSize = (node: GraphNode): number => {
+      if (node.type === "fund_manager") return node.aum ? Math.max(4, node.aum * 0.8) : 6;
+      if (node.type === "holding") return 4;
+      return 7;
+    };
 
     const animate = () => {
       controls.update();
@@ -319,6 +353,40 @@ export default function ConnectionGraph() {
         mat.emissiveIntensity = pulse;
       });
       renderer.render(scene, camera);
+
+      // 2D glow overlay
+      if (glowCanvas && glowCtx) {
+        const w = glowCanvas.width / dpr;
+        const h = glowCanvas.height / dpr;
+        glowCtx.clearRect(0, 0, w, h);
+        glowCtx.globalCompositeOperation = "screen";
+        const redPulse = 3.5 + 1.5 * Math.sin(Date.now() / 500); // 2..5
+        runtimeNodesRef.current.forEach((node) => {
+          if (node.x == null || node.y == null || node.z == null) return;
+          projectVec.set(node.x, node.y, node.z).project(camera);
+          if (projectVec.z > 1 || projectVec.z < -1) return;
+          const sx = (projectVec.x * 0.5 + 0.5) * w;
+          const sy = (-projectVec.y * 0.5 + 0.5) * h;
+          // approximate screen size from world size and distance
+          const worldSize = getNodeBaseSize(node);
+          const distance = camera.position.distanceTo(new THREE.Vector3(node.x, node.y, node.z));
+          const fovRad = (camera.fov * Math.PI) / 180;
+          const screenSize = Math.max(3, (worldSize / (2 * Math.tan(fovRad / 2) * distance)) * h);
+          const { rgb, innerAlpha } = getGlowColors(node);
+          const outerMult = node.flag === "red" ? redPulse : 3;
+          const inner = screenSize;
+          const outer = screenSize * outerMult;
+          const grad = glowCtx.createRadialGradient(sx, sy, inner, sx, sy, outer);
+          grad.addColorStop(0, `rgba(${rgb}, ${innerAlpha})`);
+          grad.addColorStop(1, `rgba(${rgb}, 0)`);
+          glowCtx.fillStyle = grad;
+          glowCtx.beginPath();
+          glowCtx.arc(sx, sy, outer, 0, Math.PI * 2);
+          glowCtx.fill();
+        });
+        glowCtx.globalCompositeOperation = "source-over";
+      }
+
       animationFrameRef.current = requestAnimationFrame(animate);
     };
     animate();
@@ -392,6 +460,10 @@ export default function ConnectionGraph() {
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", background: "#0D1117" }}>
       <div ref={containerRef} style={{ position: "absolute", inset: 0 }} />
+      <canvas
+        ref={glowCanvasRef}
+        style={{ position: "absolute", inset: 0, pointerEvents: "none", width: "100%", height: "100%" }}
+      />
       <div
         style={{
           position: "absolute",
