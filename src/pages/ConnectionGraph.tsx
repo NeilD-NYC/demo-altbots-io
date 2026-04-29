@@ -1,13 +1,85 @@
-import { useRef, useCallback, useState, useEffect, useMemo } from "react";
+import { useRef, useCallback, useState } from "react";
+import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { graphData } from "@/data/graphData";
-import { Search, X } from "lucide-react";
 
-const TYPE_COLORS: Record<string, string> = {
-  fund_manager: "#EF4444",
-  holding: "#3B82F6",
-  custodian: "#C9A84C",
+const graphData = {
+  nodes: [
+    { id: "fm_arcturus", name: "Arcturus Capital", type: "fund_manager", aum: 4.2, strategy: "Global Macro", riskScore: 18, flag: "green" },
+    { id: "fm_meridian", name: "Meridian Capital", type: "fund_manager", aum: 1.8, strategy: "Long/Short Equity", riskScore: 34, flag: "yellow" },
+    { id: "fm_ironwood", name: "Ironwood Systematic", type: "fund_manager", aum: 7.1, strategy: "Quant Equity", riskScore: 12, flag: "green" },
+    { id: "fm_helix", name: "Helix Credit", type: "fund_manager", aum: 2.3, strategy: "Distressed Credit", riskScore: 78, flag: "red" },
+    { id: "fm_northgate", name: "Northgate Event Driven", type: "fund_manager", aum: 3.6, strategy: "Event Driven", riskScore: 22, flag: "green" },
+    { id: "fm_solaris", name: "Solaris Private Credit", type: "fund_manager", aum: 0.9, strategy: "Private Credit", riskScore: 41, flag: "yellow" },
+    { id: "fm_tundra", name: "Tundra Macro", type: "fund_manager", aum: 5.5, strategy: "Global Macro", riskScore: 29, flag: "green" },
+    { id: "fm_vega", name: "Vega Special Situations", type: "fund_manager", aum: 1.1, strategy: "Special Situations", riskScore: 37, flag: "yellow" },
+    { id: "h_aapl", name: "Apple (AAPL)", type: "holding", sector: "Technology" },
+    { id: "h_msft", name: "Microsoft (MSFT)", type: "holding", sector: "Technology" },
+    { id: "h_nvda", name: "NVIDIA (NVDA)", type: "holding", sector: "Technology" },
+    { id: "h_googl", name: "Alphabet (GOOGL)", type: "holding", sector: "Technology" },
+    { id: "h_amzn", name: "Amazon (AMZN)", type: "holding", sector: "Consumer" },
+    { id: "h_meta", name: "Meta (META)", type: "holding", sector: "Technology" },
+    { id: "h_brk", name: "Berkshire (BRK.B)", type: "holding", sector: "Financials" },
+    { id: "h_jpm", name: "JPMorgan (JPM)", type: "holding", sector: "Financials" },
+    { id: "h_unh", name: "UnitedHealth (UNH)", type: "holding", sector: "Healthcare" },
+    { id: "h_gs", name: "Goldman Sachs (GS)", type: "holding", sector: "Financials" },
+    { id: "h_spy", name: "SPDR S&P 500 (SPY)", type: "holding", sector: "ETF" },
+    { id: "h_tlt", name: "iShares 20yr Treasury (TLT)", type: "holding", sector: "Fixed Income" },
+    { id: "c_gs", name: "Goldman Sachs PB", type: "custodian" },
+    { id: "c_ms", name: "Morgan Stanley PB", type: "custodian" },
+    { id: "c_jpm", name: "JPMorgan PB", type: "custodian" },
+    { id: "c_barc", name: "Barclays PB", type: "custodian" },
+    { id: "c_db", name: "Deutsche Bank PB", type: "custodian" },
+  ],
+  links: [
+    { source: "fm_arcturus", target: "h_aapl", type: "holds" },
+    { source: "fm_arcturus", target: "h_msft", type: "holds" },
+    { source: "fm_arcturus", target: "h_gs", type: "holds" },
+    { source: "fm_arcturus", target: "h_spy", type: "holds" },
+    { source: "fm_arcturus", target: "h_tlt", type: "holds" },
+    { source: "fm_arcturus", target: "c_gs", type: "custodied_by" },
+    { source: "fm_meridian", target: "h_aapl", type: "holds" },
+    { source: "fm_meridian", target: "h_nvda", type: "holds" },
+    { source: "fm_meridian", target: "h_meta", type: "holds" },
+    { source: "fm_meridian", target: "h_amzn", type: "holds" },
+    { source: "fm_meridian", target: "h_msft", type: "holds" },
+    { source: "fm_meridian", target: "c_ms", type: "custodied_by" },
+    { source: "fm_ironwood", target: "h_spy", type: "holds" },
+    { source: "fm_ironwood", target: "h_msft", type: "holds" },
+    { source: "fm_ironwood", target: "h_nvda", type: "holds" },
+    { source: "fm_ironwood", target: "h_aapl", type: "holds" },
+    { source: "fm_ironwood", target: "h_googl", type: "holds" },
+    { source: "fm_ironwood", target: "c_gs", type: "custodied_by" },
+    { source: "fm_helix", target: "h_jpm", type: "holds" },
+    { source: "fm_helix", target: "h_brk", type: "holds" },
+    { source: "fm_helix", target: "h_gs", type: "holds" },
+    { source: "fm_helix", target: "h_tlt", type: "holds" },
+    { source: "fm_helix", target: "h_unh", type: "holds" },
+    { source: "fm_helix", target: "c_db", type: "custodied_by" },
+    { source: "fm_northgate", target: "h_amzn", type: "holds" },
+    { source: "fm_northgate", target: "h_googl", type: "holds" },
+    { source: "fm_northgate", target: "h_meta", type: "holds" },
+    { source: "fm_northgate", target: "h_msft", type: "holds" },
+    { source: "fm_northgate", target: "h_brk", type: "holds" },
+    { source: "fm_northgate", target: "c_jpm", type: "custodied_by" },
+    { source: "fm_solaris", target: "h_jpm", type: "holds" },
+    { source: "fm_solaris", target: "h_brk", type: "holds" },
+    { source: "fm_solaris", target: "h_unh", type: "holds" },
+    { source: "fm_solaris", target: "h_gs", type: "holds" },
+    { source: "fm_solaris", target: "h_tlt", type: "holds" },
+    { source: "fm_solaris", target: "c_ms", type: "custodied_by" },
+    { source: "fm_tundra", target: "h_tlt", type: "holds" },
+    { source: "fm_tundra", target: "h_spy", type: "holds" },
+    { source: "fm_tundra", target: "h_googl", type: "holds" },
+    { source: "fm_tundra", target: "h_aapl", type: "holds" },
+    { source: "fm_tundra", target: "h_msft", type: "holds" },
+    { source: "fm_tundra", target: "c_barc", type: "custodied_by" },
+    { source: "fm_vega", target: "h_nvda", type: "holds" },
+    { source: "fm_vega", target: "h_meta", type: "holds" },
+    { source: "fm_vega", target: "h_amzn", type: "holds" },
+    { source: "fm_vega", target: "h_unh", type: "holds" },
+    { source: "fm_vega", target: "h_jpm", type: "holds" },
+    { source: "fm_vega", target: "c_gs", type: "custodied_by" },
+  ],
 };
 
 const FLAG_COLORS: Record<string, string> = {
@@ -15,577 +87,265 @@ const FLAG_COLORS: Record<string, string> = {
   yellow: "#F59E0B",
   red: "#EF4444",
 };
-
-type GraphNode = {
-  id: string;
-  name: string;
-  type: string;
-  aum?: number;
-  strategy?: string;
-  riskScore?: number;
-  flag?: keyof typeof FLAG_COLORS;
-  sector?: string;
-  x?: number;
-  y?: number;
-  z?: number;
+const TYPE_COLORS: Record<string, string> = {
+  fund_manager: "#22C55E",
+  holding: "#3B82F6",
+  custodian: "#C9A84C",
 };
-
-type GraphLink = {
-  source: string | GraphNode;
-  target: string | GraphNode;
-  type: string;
-  weight?: number;
-};
-
-const getEndpointId = (endpoint: string | { id: string }) =>
-  typeof endpoint === "object" ? endpoint.id : endpoint;
-
-const getLinkKey = (link: GraphLink, index: number) =>
-  `${getEndpointId(link.source)}-${getEndpointId(link.target)}-${link.type}-${index}`;
-
-const getNodeColor = (node: GraphNode) =>
-  node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type] || "#C9A84C";
-
-const getLinkColor = (link: GraphLink) =>
-  link.type === "custodied_by" ? "#C9A84C" : "#3B82F6";
 
 export default function ConnectionGraph() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const glowCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const controlsRef = useRef<OrbitControls | null>(null);
-  const runtimeNodesRef = useRef<GraphNode[]>([]);
-  const nodeMeshesRef = useRef(new Map<string, THREE.Mesh>());
-  const linkLinesRef = useRef<Array<{ key: string; link: GraphLink; line: THREE.Line }>>([]);
-  const linkHalosRef = useRef<Array<{ key: string; halo: THREE.Line }>>([]);
-  const alertMeshesRef = useRef<THREE.Mesh[]>([]);
-  const animationFrameRef = useRef<number>();
+  const fgRef = useRef<any>();
+  const [focusedNode, setFocusedNode] = useState<any>(null);
+  const [highlightNodes, setHighlightNodes] = useState<Set<any>>(new Set());
+  const [highlightLinks, setHighlightLinks] = useState<Set<any>>(new Set());
 
-  const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [focusedNode, setFocusedNode] = useState<GraphNode | null>(null);
-  const [highlightNodeIds, setHighlightNodeIds] = useState(new Set<string>());
-  const [highlightLinkKeys, setHighlightLinkKeys] = useState(new Set<string>());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const nodeById = useMemo(() => new Map((graphData.nodes as GraphNode[]).map((node) => [node.id, node])), []);
-
-  const filteredNodes = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase();
-    return (graphData.nodes as GraphNode[]).filter((node) => node.name.toLowerCase().includes(q)).slice(0, 8);
-  }, [searchQuery]);
-
-  const focusCameraOnNode = useCallback((node: GraphNode) => {
-    const camera = cameraRef.current;
-    const controls = controlsRef.current;
-    if (!camera || !controls || node.x == null) return;
-
-    const target = new THREE.Vector3(node.x, node.y, node.z);
-    const direction = target.clone().normalize();
-    if (direction.lengthSq() === 0) direction.set(0, 0, 1);
-
-    camera.position.copy(target.clone().add(direction.multiplyScalar(135)));
-    controls.target.copy(target);
-    controls.update();
-  }, []);
-
-  const selectNode = useCallback((node: GraphNode) => {
-    const newNodeIds = new Set<string>([node.id]);
-    const newLinkKeys = new Set<string>();
-
-    graphData.links.forEach((link: GraphLink, index: number) => {
-      const sourceId = getEndpointId(link.source);
-      const targetId = getEndpointId(link.target);
-      if (sourceId === node.id || targetId === node.id) {
-        newLinkKeys.add(getLinkKey(link, index));
-        newNodeIds.add(sourceId);
-        newNodeIds.add(targetId);
+  const handleNodeClick = useCallback((node: any) => {
+    const distance = 120;
+    const distRatio =
+      1 + distance / Math.hypot(node.x || 1, node.y || 1, node.z || 1);
+    fgRef.current?.cameraPosition(
+      { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+      node,
+      1500
+    );
+    const newNodes = new Set<any>([node]);
+    const newLinks = new Set<any>();
+    graphData.links.forEach((link: any) => {
+      const s = typeof link.source === "object" ? link.source.id : link.source;
+      const t = typeof link.target === "object" ? link.target.id : link.target;
+      if (s === node.id || t === node.id) {
+        newLinks.add(link);
+        graphData.nodes.forEach((n) => {
+          if (n.id === s || n.id === t) newNodes.add(n);
+        });
       }
     });
-
-    setHighlightNodeIds(newNodeIds);
-    setHighlightLinkKeys(newLinkKeys);
+    setHighlightNodes(newNodes);
+    setHighlightLinks(newLinks);
     setFocusedNode(node);
-    focusCameraOnNode(node);
-  }, [focusCameraOnNode]);
-
-  const handleSearchSelect = useCallback((node: GraphNode) => {
-    const runtimeNode = runtimeNodesRef.current.find((runtime) => runtime.id === node.id) || node;
-    setSearchQuery(node.name);
-    setShowDropdown(false);
-    selectNode(runtimeNode);
-  }, [selectNode]);
+  }, []);
 
   const handleBackgroundClick = useCallback(() => {
     setFocusedNode(null);
-    setHighlightNodeIds(new Set());
-    setHighlightLinkKeys(new Set());
+    setHighlightNodes(new Set());
+    setHighlightLinks(new Set());
   }, []);
 
-  const getEmissiveForNode = (node: GraphNode): { color: string; intensity: number } => {
-    if (node.flag === "red") return { color: "#ff3333", intensity: 0.8 };
-    if (node.type === "fund_manager") return { color: "#00ff88", intensity: 0.5 };
-    if (node.type === "holding") return { color: "#4488ff", intensity: 0.4 };
-    if (node.type === "custodian") return { color: "#C5A55A", intensity: 0.6 };
-    return { color: "#C5A55A", intensity: 0.4 };
-  };
+  const getNodeObject = useCallback(
+    (node: any) => {
+      const isLit = !focusedNode || highlightNodes.has(node);
+      const color = node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type];
+      const activeColor = isLit ? color : "#111122";
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+      const group = new THREE.Group();
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#0D1117");
-
-    const width = container.clientWidth || 800;
-    const height = container.clientHeight || 600;
-    const camera = new THREE.PerspectiveCamera(58, width / height, 1, 2000);
-    camera.position.set(0, 40, 285);
-    cameraRef.current = camera;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(width, height);
-    rendererRef.current = renderer;
-    container.appendChild(renderer.domElement);
-
-    const glowCanvas = glowCanvasRef.current;
-    const glowCtx = glowCanvas ? glowCanvas.getContext("2d") : null;
-    const dpr = Math.min(window.devicePixelRatio, 2);
-    if (glowCanvas) {
-      glowCanvas.width = width * dpr;
-      glowCanvas.height = height * dpr;
-      glowCanvas.style.width = `${width}px`;
-      glowCanvas.style.height = `${height}px`;
-      glowCtx?.scale(dpr, dpr);
-    }
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.rotateSpeed = 0.55;
-    controls.zoomSpeed = 0.8;
-    controls.minDistance = 80;
-    controls.maxDistance = 620;
-    controlsRef.current = controls;
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.58));
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    keyLight.position.set(80, 120, 160);
-    scene.add(keyLight);
-    const rimLight = new THREE.DirectionalLight(0x3b82f6, 0.45);
-    rimLight.position.set(-120, -40, -100);
-    scene.add(rimLight);
-
-    const fundManagers = graphData.nodes.filter((node: GraphNode) => node.type === "fund_manager");
-    const holdings = graphData.nodes.filter((node: GraphNode) => node.type === "holding");
-    const custodians = graphData.nodes.filter((node: GraphNode) => node.type === "custodian");
-
-    const positionedNodes = graphData.nodes.map((node: GraphNode) => ({ ...node }));
-    const positionById = new Map<string, GraphNode>();
-
-    positionedNodes.forEach((node: GraphNode) => {
+      let geometry: THREE.BufferGeometry;
       if (node.type === "fund_manager") {
-        const index = fundManagers.findIndex((item: GraphNode) => item.id === node.id);
-        const y = -82 + (164 * index) / Math.max(fundManagers.length - 1, 1);
-        const radiusAtY = Math.sqrt(Math.max(0.15, 1 - Math.pow(y / 100, 2))) * 126;
-        const angle = index * 2.399963229728653;
-        node.x = Math.cos(angle) * radiusAtY;
-        node.y = y;
-        node.z = Math.sin(angle) * radiusAtY;
+        geometry = new THREE.SphereGeometry(
+          Math.max(4, (node.aum || 1) * 0.8),
+          32,
+          32
+        );
       } else if (node.type === "holding") {
-        const index = holdings.findIndex((item: GraphNode) => item.id === node.id);
-        const angle = (index / holdings.length) * Math.PI * 2;
-        node.x = Math.cos(angle) * 56;
-        node.y = 22 + Math.sin(index * 1.7) * 18;
-        node.z = Math.sin(angle) * 56;
+        geometry = new THREE.BoxGeometry(5, 5, 5);
       } else {
-        const index = custodians.findIndex((item: GraphNode) => item.id === node.id);
-        const angle = (index / custodians.length) * Math.PI * 2 + Math.PI / 5;
-        node.x = Math.cos(angle) * 72;
-        node.y = -112;
-        node.z = Math.sin(angle) * 72;
+        geometry = new THREE.OctahedronGeometry(7);
       }
-      positionById.set(node.id, node);
-    });
 
-    runtimeNodesRef.current = positionedNodes;
-
-    linkLinesRef.current = graphData.links.map((link: GraphLink, index: number) => {
-      const source = positionById.get(getEndpointId(link.source));
-      const target = positionById.get(getEndpointId(link.target));
-      const points = [
-        new THREE.Vector3(source?.x || 0, source?.y || 0, source?.z || 0),
-        new THREE.Vector3(target?.x || 0, target?.y || 0, target?.z || 0),
-      ];
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      const material = new THREE.LineBasicMaterial({
-        color: getLinkColor(link),
+      const mat = new THREE.MeshLambertMaterial({
+        color: activeColor,
         transparent: true,
-        opacity: link.type === "custodied_by" ? 0.5 : 0.42,
+        opacity: isLit ? 0.9 : 0.1,
+        emissive: new THREE.Color(activeColor),
+        emissiveIntensity: isLit ? 0.9 : 0,
       });
-      const line = new THREE.Line(geometry, material);
-      scene.add(line);
 
-      // Halo line behind for soft glow
-      const haloGeometry = new THREE.BufferGeometry().setFromPoints(points);
-      const haloMaterial = new THREE.LineBasicMaterial({
-        color: getLinkColor(link),
-        transparent: true,
-        opacity: 0.15,
-        linewidth: 2,
-      });
-      const halo = new THREE.Line(haloGeometry, haloMaterial);
-      scene.add(halo);
-      linkHalosRef.current.push({ key: getLinkKey(link, index), halo });
+      group.add(new THREE.Mesh(geometry, mat));
 
-      return { key: getLinkKey(link, index), link, line };
-    });
+      if (isLit) {
+        const light = new THREE.PointLight(color, 2.0, 80);
+        group.add(light);
+      }
 
-    const nodeMeshMap = nodeMeshesRef.current;
-    nodeMeshMap.clear();
-    const nodeMeshes: THREE.Mesh[] = [];
-    alertMeshesRef.current = [];
-    positionedNodes.forEach((node: GraphNode) => {
-      const geometry = node.type === "fund_manager"
-        ? new THREE.SphereGeometry(node.aum ? Math.max(4, node.aum * 0.8) : 6, 18, 18)
+      if (node.flag === "red" && isLit) {
+        let frame = 0;
+        const pulse = () => {
+          frame++;
+          mat.emissiveIntensity = 0.5 + Math.sin(frame / 15) * 0.5;
+          requestAnimationFrame(pulse);
+        };
+        pulse();
+      }
+
+      return group;
+    },
+    [focusedNode, highlightNodes]
+  );
+
+  const getNodeLabel = useCallback((node: any) => {
+    const color = node.flag ? FLAG_COLORS[node.flag] : TYPE_COLORS[node.type];
+    const detail =
+      node.type === "fund_manager"
+        ? `AUM: $${node.aum}B  |  Risk: ${node.riskScore}/100`
         : node.type === "holding"
-          ? new THREE.BoxGeometry(5, 5, 5)
-          : new THREE.OctahedronGeometry(7);
-      const emissive = getEmissiveForNode(node);
-      const material = new THREE.MeshStandardMaterial({
-        color: getNodeColor(node),
-        emissive: new THREE.Color(emissive.color),
-        emissiveIntensity: emissive.intensity,
-        transparent: true,
-        opacity: 0.92,
-        roughness: 0.55,
-        metalness: 0.15,
-      });
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(node.x, node.y, node.z);
-      mesh.userData.node = node;
-      mesh.userData.baseEmissiveIntensity = emissive.intensity;
-      scene.add(mesh);
-      nodeMeshes.push(mesh);
-      nodeMeshMap.set(node.id, mesh);
-      if (node.flag === "red") alertMeshesRef.current.push(mesh);
-    });
-
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
-
-    const updatePointer = (event: PointerEvent) => {
-      const rect = renderer.domElement.getBoundingClientRect();
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    };
-
-    const getIntersectedNode = (event: PointerEvent) => {
-      updatePointer(event);
-      raycaster.setFromCamera(pointer, camera);
-      return raycaster.intersectObjects(nodeMeshes, false)[0]?.object.userData.node || null;
-    };
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const node = getIntersectedNode(event);
-      setHoveredNode(node);
-      setMousePos({ x: event.clientX, y: event.clientY });
-      renderer.domElement.style.cursor = node ? "pointer" : "grab";
-    };
-
-    const handlePointerLeave = () => {
-      setHoveredNode(null);
-      renderer.domElement.style.cursor = "grab";
-    };
-
-    const handlePointerClick = (event: PointerEvent) => {
-      const node = getIntersectedNode(event);
-      if (node) selectNode(node);
-      else handleBackgroundClick();
-    };
-
-    const handleResize = () => {
-      const nextWidth = container.clientWidth || width;
-      const nextHeight = container.clientHeight || height;
-      camera.aspect = nextWidth / nextHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(nextWidth, nextHeight);
-      if (glowCanvas && glowCtx) {
-        glowCanvas.width = nextWidth * dpr;
-        glowCanvas.height = nextHeight * dpr;
-        glowCanvas.style.width = `${nextWidth}px`;
-        glowCanvas.style.height = `${nextHeight}px`;
-        glowCtx.setTransform(1, 0, 0, 1, 0, 0);
-        glowCtx.scale(dpr, dpr);
-      }
-    };
-
-    renderer.domElement.addEventListener("pointermove", handlePointerMove);
-    renderer.domElement.addEventListener("pointerleave", handlePointerLeave);
-    renderer.domElement.addEventListener("click", handlePointerClick);
-    window.addEventListener("resize", handleResize);
-
-    const projectVec = new THREE.Vector3();
-    const getGlowColors = (node: GraphNode): { rgb: string; innerAlpha: number } => {
-      if (node.flag === "red") return { rgb: "255, 51, 51", innerAlpha: 0.9 };
-      if (node.type === "fund_manager") return { rgb: "0, 255, 136", innerAlpha: 0.6 };
-      if (node.type === "holding") return { rgb: "68, 136, 255", innerAlpha: 0.5 };
-      if (node.type === "custodian") return { rgb: "197, 165, 90", innerAlpha: 0.7 };
-      return { rgb: "197, 165, 90", innerAlpha: 0.5 };
-    };
-    const getNodeBaseSize = (node: GraphNode): number => {
-      if (node.type === "fund_manager") return node.aum ? Math.max(4, node.aum * 0.8) : 6;
-      if (node.type === "holding") return 4;
-      return 7;
-    };
-
-    const animate = () => {
-      controls.update();
-      // Pulse alert (red) nodes between 0.4 and 1.0 on a 2s sine loop
-      const t = performance.now() / 1000;
-      const pulse = 0.7 + 0.3 * Math.sin((t * Math.PI * 2) / 2); // 0.4 .. 1.0
-      alertMeshesRef.current.forEach((mesh) => {
-        const mat = mesh.material as THREE.MeshStandardMaterial;
-        mat.emissiveIntensity = pulse;
-      });
-      renderer.render(scene, camera);
-
-      // 2D glow overlay
-      if (glowCanvas && glowCtx) {
-        const w = glowCanvas.width / dpr;
-        const h = glowCanvas.height / dpr;
-        glowCtx.clearRect(0, 0, w, h);
-        glowCtx.globalCompositeOperation = "screen";
-        const redPulse = 3.5 + 1.5 * Math.sin(Date.now() / 500); // 2..5
-        runtimeNodesRef.current.forEach((node) => {
-          if (node.x == null || node.y == null || node.z == null) return;
-          projectVec.set(node.x, node.y, node.z).project(camera);
-          if (projectVec.z > 1 || projectVec.z < -1) return;
-          const sx = (projectVec.x * 0.5 + 0.5) * w;
-          const sy = (-projectVec.y * 0.5 + 0.5) * h;
-          // approximate screen size from world size and distance
-          const worldSize = getNodeBaseSize(node);
-          const distance = camera.position.distanceTo(new THREE.Vector3(node.x, node.y, node.z));
-          const fovRad = (camera.fov * Math.PI) / 180;
-          const screenSize = Math.max(3, (worldSize / (2 * Math.tan(fovRad / 2) * distance)) * h);
-          const { rgb, innerAlpha } = getGlowColors(node);
-          const outerMult = node.flag === "red" ? redPulse : 3;
-          const inner = screenSize;
-          const outer = screenSize * outerMult;
-          const grad = glowCtx.createRadialGradient(sx, sy, inner, sx, sy, outer);
-          grad.addColorStop(0, `rgba(${rgb}, ${innerAlpha})`);
-          grad.addColorStop(1, `rgba(${rgb}, 0)`);
-          glowCtx.fillStyle = grad;
-          glowCtx.beginPath();
-          glowCtx.arc(sx, sy, outer, 0, Math.PI * 2);
-          glowCtx.fill();
-        });
-        glowCtx.globalCompositeOperation = "source-over";
-      }
-
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-    animate();
-
-    return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-      renderer.domElement.removeEventListener("pointermove", handlePointerMove);
-      renderer.domElement.removeEventListener("pointerleave", handlePointerLeave);
-      renderer.domElement.removeEventListener("click", handlePointerClick);
-      window.removeEventListener("resize", handleResize);
-      controls.dispose();
-      scene.traverse((object) => {
-        const mesh = object as THREE.Mesh;
-        mesh.geometry?.dispose?.();
-        const material = mesh.material as THREE.Material | THREE.Material[] | undefined;
-        if (Array.isArray(material)) material.forEach((item) => item.dispose());
-        else material?.dispose?.();
-      });
-      renderer.dispose();
-      renderer.domElement.remove();
-      rendererRef.current = null;
-      cameraRef.current = null;
-      controlsRef.current = null;
-      runtimeNodesRef.current = [];
-      nodeMeshMap.clear();
-      linkLinesRef.current = [];
-      linkHalosRef.current = [];
-      alertMeshesRef.current = [];
-    };
-  }, [handleBackgroundClick, selectNode]);
-
-  useEffect(() => {
-    nodeMeshesRef.current.forEach((mesh, nodeId) => {
-      const node = runtimeNodesRef.current.find((item) => item.id === nodeId) || nodeById.get(nodeId);
-      if (!node) return;
-      const material = mesh.material as THREE.MeshStandardMaterial;
-      const isActive = !focusedNode || highlightNodeIds.has(nodeId);
-      material.color.set(isActive ? getNodeColor(node) : "#222233");
-      material.opacity = isActive ? 0.92 : 0.15;
-      const emissive = getEmissiveForNode(node);
-      material.emissive.set(isActive ? emissive.color : "#000000");
-      mesh.userData.baseEmissiveIntensity = isActive ? emissive.intensity : 0;
-      if (node.flag !== "red") material.emissiveIntensity = isActive ? emissive.intensity : 0;
-    });
-
-    linkLinesRef.current.forEach(({ key, link, line }) => {
-      const material = line.material as THREE.LineBasicMaterial;
-      const isActive = !focusedNode || highlightLinkKeys.has(key);
-      material.color.set(isActive ? getLinkColor(link) : "#111122");
-      material.opacity = isActive ? (link.type === "custodied_by" ? 0.55 : 0.45) : 0.12;
-    });
-
-    linkHalosRef.current.forEach(({ key, halo }) => {
-      const material = halo.material as THREE.LineBasicMaterial;
-      const isActive = !focusedNode || highlightLinkKeys.has(key);
-      material.opacity = isActive ? 0.15 : 0.04;
-    });
-  }, [focusedNode, highlightLinkKeys, highlightNodeIds, nodeById]);
-
-  const tooltipHtml = useMemo(() => {
-    if (!hoveredNode) return null;
-    const color = TYPE_COLORS[hoveredNode.type] || "#C9A84C";
-    return [
-      <b key="name" style={{ color, fontSize: 13 }}>{hoveredNode.name}</b>,
-      hoveredNode.type === "fund_manager" ? <span key="aum"><br />AUM: ${hoveredNode.aum}B | Risk: {hoveredNode.riskScore}/100</span> : null,
-      hoveredNode.type === "holding" ? <span key="sector"><br />Sector: {hoveredNode.sector}</span> : null,
-      hoveredNode.type === "custodian" ? <span key="custodian"><br />Prime Broker / Custodian</span> : null,
-    ];
-  }, [hoveredNode]);
+        ? `Sector: ${node.sector}`
+        : "Prime Broker / Custodian";
+    return `<div style="background:rgba(10,10,30,0.95);padding:10px 14px;border-radius:6px;border:1px solid ${color};color:#fff;font-family:Inter,sans-serif;pointer-events:none">
+      <b style="color:${color};font-size:13px">${node.name}</b><br/>
+      <span style="color:#ccc;font-size:11px">${detail}</span>
+    </div>`;
+  }, []);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#0D1117" }}>
-      <div ref={containerRef} style={{ position: "absolute", inset: 0 }} />
-      <canvas
-        ref={glowCanvasRef}
-        style={{ position: "absolute", inset: 0, pointerEvents: "none", width: "100%", height: "100%" }}
-      />
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "calc(100vh - 180px)",
+        background: "#0D1117",
+      }}
+    >
+      {/* Legend */}
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          background: "radial-gradient(ellipse at center, rgba(197, 165, 90, 0.03) 0%, transparent 70%)",
-        }}
-      />
-
-      {tooltipHtml && (
-        <div style={{
-          position: "fixed",
-          left: mousePos.x + 14,
-          top: mousePos.y + 14,
-          zIndex: 30,
-          background: "rgba(10,10,30,0.95)",
-          padding: "10px 14px",
-          borderRadius: 6,
-          border: `1px solid ${TYPE_COLORS[hoveredNode?.type] || "#C9A84C"}`,
+          top: 16,
+          left: 16,
+          zIndex: 10,
+          background: "rgba(10,10,30,0.9)",
+          border: "1px solid #30363D",
+          borderRadius: 8,
+          padding: "12px 16px",
           color: "#fff",
           fontFamily: "Inter, sans-serif",
-          pointerEvents: "none",
-        }}>
-          {tooltipHtml}
-        </div>
-      )}
-
-      <div style={{
-        position: "absolute", top: 16, left: 16, zIndex: 10,
-        background: "rgba(10,10,30,0.9)", border: "1px solid #30363D",
-        borderRadius: 8, padding: "12px 16px", color: "#fff",
-        fontFamily: "Inter, sans-serif", fontSize: 12
-      }}>
+          fontSize: 12,
+        }}
+      >
         <div style={{ color: "#C9A84C", fontWeight: 700, marginBottom: 8 }}>
           INTERCONNECTION MAP
         </div>
         {[
-          { color: "#EF4444", shape: "●", label: "Fund Manager" },
+          { color: "#22C55E", shape: "●", label: "Fund Manager" },
           { color: "#3B82F6", shape: "■", label: "Top Positions" },
           { color: "#C9A84C", shape: "◆", label: "Custodian / Prime Broker" },
         ].map(({ color, shape, label }) => (
-          <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+          <div
+            key={label}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              marginBottom: 4,
+            }}
+          >
             <span style={{ color, fontSize: 16 }}>{shape}</span>
             <span style={{ color: "#ccc" }}>{label}</span>
           </div>
         ))}
-        <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, color: "#888" }}>
+        <div
+          style={{
+            borderTop: "1px solid #30363D",
+            marginTop: 8,
+            paddingTop: 8,
+            color: "#888",
+          }}
+        >
           Click any node to focus
-        </div>
-        <div style={{ borderTop: "1px solid #30363D", marginTop: 8, paddingTop: 8, position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#0D1117", border: "1px solid #30363D", borderRadius: 6, padding: "4px 8px" }}>
-            <Search size={14} color="#888" />
-            <input
-              type="text"
-              placeholder="Search nodes..."
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setShowDropdown(true); }}
-              onFocus={() => setShowDropdown(true)}
-              style={{
-                background: "transparent", border: "none", outline: "none",
-                color: "#fff", fontSize: 12, width: "100%", fontFamily: "Inter, sans-serif"
-              }}
-            />
-            {searchQuery && (
-              <X size={14} color="#888" style={{ cursor: "pointer" }} onClick={() => {
-                setSearchQuery("");
-                setShowDropdown(false);
-                handleBackgroundClick();
-              }} />
-            )}
-          </div>
-          {showDropdown && filteredNodes.length > 0 && (
-            <div style={{
-              position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4,
-              background: "rgba(10,10,30,0.95)", border: "1px solid #30363D",
-              borderRadius: 6, overflow: "hidden", zIndex: 20
-            }}>
-              {filteredNodes.map((node: GraphNode) => (
-                <div
-                  key={node.id}
-                  onClick={() => handleSearchSelect(node)}
-                  style={{
-                    padding: "6px 10px", cursor: "pointer", fontSize: 12,
-                    color: "#ccc", display: "flex", alignItems: "center", gap: 8,
-                    borderBottom: "1px solid #1a1f2b"
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1a2332")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  <span style={{ color: TYPE_COLORS[node.type] || "#C9A84C", fontSize: 14 }}>
-                    {node.type === "fund_manager" ? "●" : node.type === "holding" ? "■" : "◆"}
-                  </span>
-                  {node.name}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {focusedNode && focusedNode.type === "fund_manager" && (
-        <div style={{
-          position: "absolute", top: 16, right: 16, zIndex: 10, width: 220,
-          background: "rgba(10,10,30,0.95)", border: `1px solid ${FLAG_COLORS[focusedNode.flag] || "#C9A84C"}`,
-          borderRadius: 8, padding: "12px 16px", color: "#fff",
-          fontFamily: "Inter, sans-serif", fontSize: 12
-        }}>
-          <div style={{ color: FLAG_COLORS[focusedNode.flag], fontWeight: 700, fontSize: 14, marginBottom: 8 }}>
+      {/* Focus panel */}
+      {focusedNode?.type === "fund_manager" && (
+        <div
+          style={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            zIndex: 10,
+            width: 240,
+            background: "rgba(10,10,30,0.95)",
+            border: `1px solid ${FLAG_COLORS[focusedNode.flag] || "#C9A84C"}`,
+            borderRadius: 8,
+            padding: "12px 16px",
+            color: "#fff",
+            fontFamily: "Inter, sans-serif",
+            fontSize: 12,
+          }}
+        >
+          <div
+            style={{
+              color: FLAG_COLORS[focusedNode.flag],
+              fontWeight: 700,
+              fontSize: 14,
+              marginBottom: 8,
+            }}
+          >
             {focusedNode.name}
           </div>
           <div style={{ color: "#ccc", lineHeight: 1.8 }}>
             Strategy: {focusedNode.strategy}<br />
             AUM: ${focusedNode.aum}B<br />
-            Risk Score: <span style={{
-              color: focusedNode.riskScore > 50 ? "#EF4444" : focusedNode.riskScore > 30 ? "#F59E0B" : "#22C55E"
-            }}>{focusedNode.riskScore}/100</span><br />
-            Status: <span style={{ color: FLAG_COLORS[focusedNode.flag] }}>
-              {focusedNode.flag === "red" ? "⚠ ELEVATED RISK" : focusedNode.flag === "yellow" ? "MONITOR" : "CLEAR"}
+            Risk Score:{" "}
+            <span
+              style={{
+                color:
+                  focusedNode.riskScore > 50
+                    ? "#EF4444"
+                    : focusedNode.riskScore > 30
+                    ? "#F59E0B"
+                    : "#22C55E",
+              }}
+            >
+              {focusedNode.riskScore}/100
+            </span>
+            <br />
+            Status:{" "}
+            <span style={{ color: FLAG_COLORS[focusedNode.flag] }}>
+              {focusedNode.flag === "red"
+                ? "⚠ ELEVATED RISK"
+                : focusedNode.flag === "yellow"
+                ? "MONITOR"
+                : "CLEAR"}
             </span>
           </div>
         </div>
       )}
+
+      <ForceGraph3D
+        ref={fgRef}
+        graphData={graphData as any}
+        backgroundColor="#0D1117"
+        nodeThreeObject={getNodeObject as any}
+        nodeLabel={getNodeLabel as any}
+        nodeThreeObjectExtend={false}
+        linkColor={(link: any) => {
+          if (!focusedNode)
+            return link.type === "custodied_by" ? "#C9A84C" : "#3B82F6";
+          return highlightLinks.has(link)
+            ? link.type === "custodied_by"
+              ? "#C9A84C"
+              : "#3B82F6"
+            : "#0a0a14";
+        }}
+        linkWidth={(link: any) => (highlightLinks.has(link) ? 2 : 0.4)}
+        linkOpacity={0.5}
+        linkDirectionalParticles={(link: any) =>
+          highlightLinks.has(link) ? 5 : 1
+        }
+        linkDirectionalParticleSpeed={0.004}
+        linkDirectionalParticleWidth={(link: any) =>
+          highlightLinks.has(link) ? 3 : 1
+        }
+        linkDirectionalParticleColor={(link: any) =>
+          link.type === "custodied_by" ? "#C9A84C" : "#3B82F6"
+        }
+        onNodeClick={handleNodeClick}
+        onBackgroundClick={handleBackgroundClick}
+        warmupTicks={80}
+        cooldownTicks={150}
+        d3AlphaDecay={0.02}
+        d3VelocityDecay={0.3}
+      />
     </div>
   );
 }
