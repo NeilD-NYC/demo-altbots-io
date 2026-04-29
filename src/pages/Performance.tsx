@@ -145,8 +145,18 @@ const factorData = [
 ];
 
 function ExposureTab() {
+  const factorDecomp = [
+    { factor: "Momentum", beta: 0.68, contrib: 2.8, pct: 31.2, dir: "Long" },
+    { factor: "Quality",  beta: 0.54, contrib: 1.9, pct: 21.1, dir: "Long" },
+    { factor: "Growth",   beta: 0.61, contrib: 1.7, pct: 18.9, dir: "Long" },
+    { factor: "Low Vol",  beta: 0.28, contrib: 0.9, pct: 10.0, dir: "Long" },
+    { factor: "Value",    beta: -0.18, contrib: 0.6, pct: 6.7, dir: "Short" },
+    { factor: "Size",     beta: -0.12, contrib: 0.4, pct: 4.4, dir: "Short" },
+    { factor: "Residual", beta: null,  contrib: 0.7, pct: 7.8, dir: "--" },
+  ] as const;
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
       {/* Sector donut */}
       <Card className="bg-[#161B22] border-[#30363D]">
         <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Sector Breakdown</CardTitle></CardHeader>
@@ -207,6 +217,64 @@ function ExposureTab() {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+        </CardContent>
+      </Card>
+      </div>
+
+      {/* Factor Risk Decomposition */}
+      <Card className="bg-[#161B22] border-[#30363D]">
+        <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Factor Risk Decomposition</CardTitle></CardHeader>
+        <CardContent>
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-widest text-muted-foreground border-b border-[#30363D]">
+                <th className="text-left py-2 font-medium">Factor</th>
+                <th className="text-right py-2 font-medium">Beta</th>
+                <th className="text-right py-2 font-medium">Risk Contribution</th>
+                <th className="text-left py-2 font-medium pl-6">% of Total Risk</th>
+                <th className="text-right py-2 font-medium">Direction</th>
+              </tr>
+            </thead>
+            <tbody>
+              {factorDecomp.map((r) => (
+                <tr key={r.factor} className="border-b border-[#30363D]/50">
+                  <td className="py-2 text-foreground">{r.factor}</td>
+                  <td className={`py-2 text-right font-mono ${r.beta === null ? "text-muted-foreground" : r.beta >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                    {r.beta === null ? "--" : `${r.beta >= 0 ? "+" : ""}${r.beta.toFixed(2)}`}
+                  </td>
+                  <td className="py-2 text-right font-mono text-foreground">{r.contrib.toFixed(1)}%</td>
+                  <td className="py-2 pl-6">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1.5 bg-[#0D1117] rounded-full overflow-hidden max-w-[200px]">
+                        <div className="h-full bg-[#C9A84C] rounded-full" style={{ width: `${r.pct}%` }} />
+                      </div>
+                      <span className="font-mono text-foreground w-12 text-right">{r.pct.toFixed(1)}%</span>
+                    </div>
+                  </td>
+                  <td className={`py-2 text-right font-medium ${r.dir === "Long" ? "text-[#22C55E]" : r.dir === "Short" ? "text-[#EF4444]" : "text-muted-foreground"}`}>
+                    {r.dir}
+                  </td>
+                </tr>
+              ))}
+              <tr className="border-t-2 border-[#30363D] font-bold">
+                <td className="py-2 text-foreground">TOTAL</td>
+                <td className="py-2 text-right text-muted-foreground">--</td>
+                <td className="py-2 text-right font-mono text-foreground">9.0%</td>
+                <td className="py-2 pl-6">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-1.5 bg-[#0D1117] rounded-full overflow-hidden max-w-[200px]">
+                      <div className="h-full bg-[#C9A84C] rounded-full" style={{ width: `100%` }} />
+                    </div>
+                    <span className="font-mono text-foreground w-12 text-right">100%</span>
+                  </div>
+                </td>
+                <td className="py-2 text-right text-muted-foreground">--</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="mt-3 text-[10px] text-muted-foreground italic">
+            Risk contribution calculated using Barra-style factor decomposition. Residual = idiosyncratic risk not explained by listed factors.
+          </p>
         </CardContent>
       </Card>
     </div>
