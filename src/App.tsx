@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import DashboardHeader from "@/components/DashboardHeader";
+import DataSourcesStrip from "@/components/DataSourcesStrip";
 import AlertBanner from "@/components/AlertBanner";
 import Index from "./pages/Index";
 import ManagerGrid from "./pages/ManagerGrid";
