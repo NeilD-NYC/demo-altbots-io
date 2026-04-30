@@ -313,18 +313,18 @@ export default function ConnectionGraph() {
         }}
         linkWidth={(link: any) => highlightLinks.has(link) ? 3 : 0.4}
         linkOpacity={0.35}
-        linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 8 : 1}
-        linkDirectionalParticleSpeed={0.006}
+        linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 4 : 0}
+        linkDirectionalParticleSpeed={0.003}
         linkDirectionalParticleWidth={(link: any) => highlightLinks.has(link) ? 4 : 1}
         linkDirectionalParticleColor={(link: any) =>
           link.type === "custodied_by" ? "#ffd700" : "#00aaff"
         }
         onNodeClick={handleNodeClick}
         onBackgroundClick={handleBackgroundClick}
-        warmupTicks={80}
-        cooldownTicks={150}
-        d3AlphaDecay={0.02}
-        d3VelocityDecay={0.3}
+        warmupTicks={40}
+        cooldownTicks={75}
+        d3AlphaDecay={0.04}
+        d3VelocityDecay={0.6}
       />
     </div>
   );
