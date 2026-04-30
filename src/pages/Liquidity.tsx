@@ -251,7 +251,7 @@ function BuyingPowerTab({ liveValues }: { liveValues: Record<string, number> }) 
             <CardContent className="p-4 space-y-1">
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{k.label}</p>
               {i === 0 ? (
-                <FlashCell value={k.lv} tag="p" className="text-xl font-bold" style={{ color: k.color }}>{k.value}</FlashCell>
+                <FlashCell value={k.lv} tag="p" className={`text-xl font-bold`}><span style={{ color: k.color }}>{k.value}</span></FlashCell>
               ) : (
                 <p className="text-xl font-bold" style={{ color: k.color }}>{k.value}</p>
               )}
