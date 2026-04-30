@@ -15,7 +15,7 @@ import {
 
 const navItems = [
   { title: "Portfolio Overview", url: "/", icon: LayoutDashboard },
-  { title: "Performance", url: "/performance", icon: TrendingUp },
+  { title: "Holdings & Performance", url: "/performance", icon: TrendingUp },
   { title: "Liquidity", url: "/liquidity", icon: Droplets },
   { title: "Manager Grid", url: "/managers", icon: Table2 },
   { title: "Manager Detail", url: "/manager/4", icon: FileText },
