@@ -233,7 +233,16 @@ function createStarfield(scene: THREE.Scene) {
     depthWrite: false,
   });
   
-  scene.add(new THREE.Points(starGeom, starMat));
+  const stars = new THREE.Points(starGeom, starMat);
+  scene.add(stars);
+  
+  // Slow galaxy rotation for the starfield
+  const rotateStars = () => {
+    stars.rotation.y += 0.00008;
+    stars.rotation.x += 0.00003;
+    requestAnimationFrame(rotateStars);
+  };
+  rotateStars();
   
   // Nebula clouds - large soft sprites
   const nebulaColors = ["#2a1050", "#0d2a5a", "#1a0a3a", "#0a1a3a"];
