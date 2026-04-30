@@ -335,13 +335,13 @@ const ManagerDetail = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mt-6 border-b border-border">
+        <div className="flex flex-wrap gap-1 mt-6 border-b border-border">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "px-4 py-2.5 text-sm font-medium transition-all duration-200 relative cursor-pointer",
+                "px-2.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium transition-all duration-200 relative cursor-pointer",
                 activeTab === tab
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground hover:scale-105 tab-heartbeat-inactive"
