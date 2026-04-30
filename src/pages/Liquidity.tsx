@@ -193,7 +193,7 @@ function BuyingPowerTab() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={waterfallBars} margin={{ bottom: 30 }}>
                 <XAxis dataKey="name" tick={{ fill: "#8b949e", fontSize: 8 }} angle={-20} textAnchor="end" />
-                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
                 <Bar dataKey="base" stackId="a" fill="transparent" />
                 <Bar dataKey="bar" stackId="a" radius={[4, 4, 0, 0]}>
@@ -228,7 +228,7 @@ function BuyingPowerTab() {
             <AreaChart data={bpTimeline}>
               <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
               <XAxis dataKey="day" tick={{ fill: "#8b949e", fontSize: 9 }} interval={14} />
-              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
               <Area type="monotone" dataKey="bp" name="Available Buying Power" stroke="#C9A84C" fill="rgba(201,168,76,0.15)" strokeWidth={2} />
               <Area type="monotone" dataKey="deployed" name="Capital Deployed" stroke="#3B82F6" fill="rgba(59,130,246,0.1)" strokeWidth={2} />
@@ -329,7 +329,7 @@ function CapitalCallsTab() {
             <ComposedChart data={ccHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
               <XAxis dataKey="month" tick={{ fill: "#8b949e", fontSize: 10 }} />
-              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
               <Bar dataKey="calls" name="Calls" fill="#EF4444" radius={[2, 2, 0, 0]} />
               <Bar dataKey="distributions" name="Distributions" fill="#22C55E" radius={[2, 2, 0, 0]} />
@@ -434,7 +434,7 @@ function PEPacingTab() {
               <AreaChart data={pacingData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
                 <XAxis dataKey="q" tick={{ fill: "#8b949e", fontSize: 9 }} />
-                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
                 <Area type="monotone" dataKey="bear" name="Bear Case" stroke="#EF4444" fill="rgba(239,68,68,0.05)" strokeDasharray="5 3" strokeWidth={1.5} />
                 <Area type="monotone" dataKey="base" name="Base Case" stroke="#C9A84C" fill="rgba(201,168,76,0.15)" strokeWidth={2} />
@@ -442,7 +442,7 @@ function PEPacingTab() {
                 <Legend wrapperStyle={{ fontSize: 10 }} />
               </AreaChart>
             </ResponsiveContainer>
-            <p className="text-[10px] text-muted-foreground italic mt-1">Peak call period Q3 2026 - Q2 2027</p>
+            <p className="text-[10px] text-muted-foreground italic mt-1">Peak Q2 2027 — Q3 2027</p>
           </CardContent>
         </Card>
       </div>
