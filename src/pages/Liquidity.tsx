@@ -46,7 +46,7 @@ function barColor(s: string) { return s === "red" ? "#EF4444" : s === "amber" ? 
 function CashTab() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {cashKpis.map(k => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
@@ -57,7 +57,7 @@ function CashTab() {
           </Card>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Cash Balance by Manager</CardTitle></CardHeader>
           <CardContent>
@@ -176,7 +176,7 @@ const bpTimeline = genBPTimeline();
 function BuyingPowerTab() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {bpKpis.map(k => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
@@ -186,7 +186,7 @@ function BuyingPowerTab() {
           </Card>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Available Capital Decomposition</CardTitle></CardHeader>
           <CardContent>
@@ -280,7 +280,7 @@ function statusBadge(s: string) {
 function CapitalCallsTab() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {ccKpis.map(k => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
@@ -397,7 +397,7 @@ function irrColor(v: number) { return v >= 15 ? "text-[#22C55E]" : v >= 8 ? "tex
 function PEPacingTab() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {peKpis.map(k => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
@@ -408,7 +408,7 @@ function PEPacingTab() {
           </Card>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Called vs Uncalled by Vintage Year</CardTitle></CardHeader>
           <CardContent>
@@ -517,7 +517,7 @@ const gateRows = [
 function LiquidityStressTab() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {stressKpis.map(k => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
@@ -528,7 +528,7 @@ function LiquidityStressTab() {
           </Card>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Liquidity Profile by Redemption Window</CardTitle></CardHeader>
           <CardContent>
@@ -605,7 +605,7 @@ function LiquidityStressTab() {
 
 export default function Liquidity() {
   return (
-    <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
+    <div className="p-3 sm:p-6 space-y-4 bg-[#0D1117] min-h-full">
       <Tabs defaultValue="cash" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D]">
           <TabsTrigger value="cash" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">CASH & BALANCES</TabsTrigger>
