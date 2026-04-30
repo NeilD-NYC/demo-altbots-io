@@ -199,10 +199,10 @@ const AIAnalyst = () => {
           <button
             onClick={() => setMode("standard")}
             className={cn(
-              "px-4 py-1.5 text-xs font-medium rounded-full transition-colors",
+              "px-4 py-1.5 text-xs font-medium rounded-full transition-all duration-200 cursor-pointer",
               mode === "standard"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
+                : "text-muted-foreground hover:text-foreground hover:scale-105 tab-heartbeat-inactive"
             )}
           >
             Standard Analyst
@@ -210,10 +210,10 @@ const AIAnalyst = () => {
           <button
             onClick={() => setMode("persona")}
             className={cn(
-              "px-4 py-1.5 text-xs font-medium rounded-full transition-colors",
+              "px-4 py-1.5 text-xs font-medium rounded-full transition-all duration-200 cursor-pointer",
               mode === "persona"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
+                : "text-muted-foreground hover:text-foreground hover:scale-105 tab-heartbeat-inactive"
             )}
           >
             Persona Mode
