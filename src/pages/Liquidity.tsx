@@ -244,32 +244,32 @@ function BuyingPowerTab() {
 /* ═══════════ TAB 3: CAPITAL CALLS ═══════════ */
 
 const ccKpis = [
-  { label: "Pending Capital Calls", value: "$380M", badge: "4 Active", badgeColor: "#EF4444" },
-  { label: "Due Within 30 Days", value: "$215M", color: "#EF4444" },
-  { label: "Due 31-90 Days", value: "$165M", color: "#F59E0B" },
-  { label: "YTD Capital Called", value: "$1.24B", color: "#6B7280" },
+  { label: "Pending Capital Calls", value: "$3.8M", badge: "4 Active", badgeColor: "#EF4444" },
+  { label: "Due Within 30 Days", value: "$2.2M", color: "#EF4444" },
+  { label: "Due 31-90 Days", value: "$1.6M", color: "#F59E0B" },
+  { label: "YTD Capital Called", value: "$12.4M", color: "#6B7280" },
 ];
 
 const ccRows = [
-  { fund: "Helix Credit Opportunities", strat: "Distressed", amount: "$85M", due: "Apr 15 2026", status: "URGENT", days: 7, cash: "$28M", action: "SHORTFALL", urgent: true },
-  { fund: "Granite Point Capital", strat: "Distressed", amount: "$60M", due: "Apr 22 2026", status: "PENDING", days: 14, cash: "$142M", action: "FUNDED", urgent: false },
-  { fund: "Solaris Private Credit", strat: "Private Credit", amount: "$45M", due: "May 1 2026", status: "PENDING", days: 23, cash: "$162M", action: "FUNDED", urgent: false },
-  { fund: "Dune Credit Strategies", strat: "Distressed", amount: "$190M", due: "May 28 2026", status: "SCHEDULED", days: 50, cash: "$396M", action: "FUNDED", urgent: false },
+  { fund: "Helix Credit Opportunities", strat: "Distressed", amount: "$0.9M", due: "Apr 15 2026", status: "URGENT", days: 7, cash: "$0.4M", action: "SHORTFALL", urgent: true },
+  { fund: "Granite Point Capital", strat: "Distressed", amount: "$0.6M", due: "Apr 22 2026", status: "PENDING", days: 14, cash: "$2.1M", action: "FUNDED", urgent: false },
+  { fund: "Solaris Private Credit", strat: "Private Credit", amount: "$0.5M", due: "May 1 2026", status: "PENDING", days: 23, cash: "$2.4M", action: "FUNDED", urgent: false },
+  { fund: "Dune Credit Strategies", strat: "Distressed", amount: "$1.8M", due: "May 28 2026", status: "SCHEDULED", days: 50, cash: "$5.8M", action: "FUNDED", urgent: false },
 ];
 
 const ccHistory = [
-  { month: "May 25", calls: 180, distributions: 0 },
-  { month: "Jun 25", calls: 95, distributions: 120 },
-  { month: "Jul 25", calls: 220, distributions: 45 },
-  { month: "Aug 25", calls: 145, distributions: 0 },
-  { month: "Sep 25", calls: 310, distributions: 85 },
-  { month: "Oct 25", calls: 85, distributions: 200 },
-  { month: "Nov 25", calls: 195, distributions: 0 },
-  { month: "Dec 25", calls: 260, distributions: 140 },
-  { month: "Jan 26", calls: 110, distributions: 310 },
-  { month: "Feb 26", calls: 175, distributions: 65 },
-  { month: "Mar 26", calls: 340, distributions: 0 },
-  { month: "Apr 26", calls: 85, distributions: 180 },
+  { month: "May 25", calls: 1.8, distributions: 0 },
+  { month: "Jun 25", calls: 1.0, distributions: 1.2 },
+  { month: "Jul 25", calls: 2.2, distributions: 0.5 },
+  { month: "Aug 25", calls: 1.5, distributions: 0 },
+  { month: "Sep 25", calls: 3.1, distributions: 0.9 },
+  { month: "Oct 25", calls: 0.9, distributions: 2.0 },
+  { month: "Nov 25", calls: 2.0, distributions: 0 },
+  { month: "Dec 25", calls: 2.6, distributions: 1.4 },
+  { month: "Jan 26", calls: 1.1, distributions: 3.1 },
+  { month: "Feb 26", calls: 1.8, distributions: 0.7 },
+  { month: "Mar 26", calls: 3.4, distributions: 0 },
+  { month: "Apr 26", calls: 0.9, distributions: 1.8 },
 ].map(d => ({ ...d, net: d.distributions - d.calls }));
 
 function statusBadge(s: string) {
