@@ -39,7 +39,7 @@ function tickValue(v: SimValue, maxDriftPct: number): SimValue {
   };
 }
 
-export function useMarketSimulation(initialValues: Record<string, number>, maxDriftPct = 0.08) {
+export function useMarketSimulation(initialValues: Record<string, number>, maxDriftPct = 0.08, driftOverrides?: Record<string, number>) {
   const [liveValues, setLiveValues] = useState<Record<string, number>>(() => {
     const out: Record<string, number> = {};
     for (const k in initialValues) out[k] = initialValues[k];
@@ -84,7 +84,8 @@ export function useMarketSimulation(initialValues: Record<string, number>, maxDr
       if (shuffled.length > 0) {
         const updates: Record<string, number> = {};
         for (const k of shuffled) {
-          state[k] = tickValue(state[k], maxDriftPct);
+          const drift = driftOverrides?.[k] ?? maxDriftPct;
+          state[k] = tickValue(state[k], drift);
           updates[k] = state[k].current;
         }
         setLiveValues(prev => ({ ...prev, ...updates }));
