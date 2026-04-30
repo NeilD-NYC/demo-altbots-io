@@ -105,15 +105,15 @@ const KPIShell = ({
   </div>
 );
 
-// Card 1: AUM sparkline data (7 points, slight upward curve, ending ~26.5)
+ // Card 1: AUM sparkline data (7 points, slight upward curve, ending ~718)
 const aumSpark = [
-  { x: 1, v: 24.8 },
-  { x: 2, v: 25.0 },
-  { x: 3, v: 25.1 },
-  { x: 4, v: 25.3 },
-  { x: 5, v: 25.7 },
-  { x: 6, v: 26.1 },
-  { x: 7, v: 26.5 },
+  { x: 1, v: 680 },
+  { x: 2, v: 690 },
+  { x: 3, v: 695 },
+  { x: 4, v: 700 },
+  { x: 5, v: 708 },
+  { x: 6, v: 714 },
+  { x: 7, v: 718 },
 ];
 
 const PortfolioOverview = () => {
@@ -126,8 +126,8 @@ const PortfolioOverview = () => {
         {/* Card 1 — Total AUM */}
         <KPIShell icon={DollarSign} label="Total AUM Under Monitoring">
           <div>
-            <p className="text-3xl font-bold text-foreground tabular-nums">$26.5B</p>
-            <p className="text-xs text-success mt-1 font-medium">↑ +$1.2B since last sweep</p>
+            <p className="text-3xl font-bold text-foreground tabular-nums">$718M</p>
+            <p className="text-xs text-success mt-1 font-medium">↑ +$1.2M since last sweep</p>
           </div>
           <div className="h-10 -mx-1">
             <ResponsiveContainer width="100%" height="100%">
