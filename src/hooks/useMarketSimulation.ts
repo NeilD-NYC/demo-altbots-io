@@ -1,5 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
+export type SimKeyConfig = {
+  drift?: number;           // max drift as fraction (default 0.08)
+  tickMin?: number;         // min tick interval ms (default 4000)
+  tickMax?: number;         // max tick interval ms (default 12000)
+  absolute?: boolean;       // if true, drift is absolute not percentage
+  floor?: number;           // min clamp
+  ceiling?: number;         // max clamp
+};
+
 type SimValue = {
   current: number;
   base: number;
@@ -20,26 +29,45 @@ function getMoveMagnitude(): number {
   return randomBetween(0.01, 0.02);                      // large
 }
 
-function tickValue(v: SimValue, maxDriftPct: number): SimValue {
-  const mag = getMoveMagnitude();
+function tickValue(v: SimValue, cfg: SimKeyConfig): SimValue {
+  const maxDrift = cfg.drift ?? 0.08;
+  const tickMin = cfg.tickMin ?? 4000;
+  const tickMax = cfg.tickMax ?? 12000;
+
   // momentum: 55% chance of same direction
   let dir: 1 | -1 = Math.random() < 0.55 ? v.lastDir : (v.lastDir === 1 ? -1 : 1);
 
-  // mean-revert at boundary
-  const drift = (v.current - v.base) / v.base;
-  if (drift >= maxDriftPct) dir = -1;
-  else if (drift <= -maxDriftPct) dir = 1;
+  if (cfg.absolute) {
+    // absolute mode: drift is the max absolute distance from base
+    const dist = v.current - v.base;
+    if (dist >= maxDrift) dir = -1;
+    else if (dist <= -maxDrift) dir = 1;
 
-  const newVal = v.current * (1 + dir * mag);
-  return {
-    ...v,
-    current: newVal,
-    lastDir: dir,
-    nextTick: Date.now() + randomBetween(4000, 12000),
-  };
+    // small absolute move
+    const absMag = maxDrift * randomBetween(0.02, 0.25);
+    let newVal = v.current + dir * absMag;
+    if (cfg.floor != null) newVal = Math.max(cfg.floor, newVal);
+    if (cfg.ceiling != null) newVal = Math.min(cfg.ceiling, newVal);
+    return { ...v, current: newVal, lastDir: dir, nextTick: Date.now() + randomBetween(tickMin, tickMax) };
+  } else {
+    // percentage mode
+    const drift = (v.current - v.base) / v.base;
+    if (drift >= maxDrift) dir = -1;
+    else if (drift <= -maxDrift) dir = 1;
+
+    const mag = getMoveMagnitude();
+    let newVal = v.current * (1 + dir * mag);
+    if (cfg.floor != null) newVal = Math.max(cfg.floor, newVal);
+    if (cfg.ceiling != null) newVal = Math.min(cfg.ceiling, newVal);
+    return { ...v, current: newVal, lastDir: dir, nextTick: Date.now() + randomBetween(tickMin, tickMax) };
+  }
 }
 
-export function useMarketSimulation(initialValues: Record<string, number>, maxDriftPct = 0.08, driftOverrides?: Record<string, number>) {
+export function useMarketSimulation(
+  initialValues: Record<string, number>,
+  maxDriftPct = 0.08,
+  keyConfigs?: Record<string, SimKeyConfig>,
+) {
   const [liveValues, setLiveValues] = useState<Record<string, number>>(() => {
     const out: Record<string, number> = {};
     for (const k in initialValues) out[k] = initialValues[k];
@@ -54,11 +82,14 @@ export function useMarketSimulation(initialValues: Record<string, number>, maxDr
     const s: SimState = {};
     const now = Date.now();
     for (const k in initialValues) {
+      const cfg = keyConfigs?.[k];
+      const tickMin = cfg?.tickMin ?? 4000;
+      const tickMax = cfg?.tickMax ?? 12000;
       s[k] = {
         current: initialValues[k],
         base: initialValues[k],
         lastDir: Math.random() < 0.5 ? 1 : -1,
-        nextTick: now + randomBetween(1000, 6000),
+        nextTick: now + randomBetween(tickMin * 0.3, tickMax * 0.5),
       };
     }
     stateRef.current = s;
@@ -84,8 +115,9 @@ export function useMarketSimulation(initialValues: Record<string, number>, maxDr
       if (shuffled.length > 0) {
         const updates: Record<string, number> = {};
         for (const k of shuffled) {
-          const drift = driftOverrides?.[k] ?? maxDriftPct;
-          state[k] = tickValue(state[k], drift);
+          const cfg: SimKeyConfig = keyConfigs?.[k] ?? { drift: maxDriftPct };
+          if (cfg.drift == null) cfg.drift = maxDriftPct;
+          state[k] = tickValue(state[k], cfg);
           updates[k] = state[k].current;
         }
         setLiveValues(prev => ({ ...prev, ...updates }));
