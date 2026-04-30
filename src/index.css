@@ -79,6 +79,21 @@
     animation: pulse-dot 1s step-end infinite;
   }
 
+  @keyframes flash-green {
+    0% { background-color: rgba(0, 255, 136, 0.13); }
+    100% { background-color: transparent; }
+  }
+  @keyframes flash-red {
+    0% { background-color: rgba(255, 36, 68, 0.13); }
+    100% { background-color: transparent; }
+  }
+  .flash-up {
+    animation: flash-green 600ms ease-out forwards;
+  }
+  .flash-down {
+    animation: flash-red 600ms ease-out forwards;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: hsl(215 15% 22%) transparent;
