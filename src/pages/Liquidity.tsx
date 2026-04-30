@@ -554,7 +554,7 @@ function LiquidityStressTab() {
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={stressWaterfall} margin={{ bottom: 30 }}>
                 <XAxis dataKey="name" tick={{ fill: "#8b949e", fontSize: 8 }} angle={-15} textAnchor="end" />
-                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} />
+                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
                 <Bar dataKey="base" stackId="a" fill="transparent" />
                 <Bar dataKey="bar" stackId="a" radius={[4, 4, 0, 0]}>
