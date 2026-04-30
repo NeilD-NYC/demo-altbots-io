@@ -228,8 +228,8 @@ function BuyingPowerTab() {
             <AreaChart data={bpTimeline}>
               <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
               <XAxis dataKey="day" tick={{ fill: "#8b949e", fontSize: 9 }} interval={14} />
-              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} />
-              <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${(v / 1000).toFixed(2)}B`} />
+              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+              <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
               <Area type="monotone" dataKey="bp" name="Available Buying Power" stroke="#C9A84C" fill="rgba(201,168,76,0.15)" strokeWidth={2} />
               <Area type="monotone" dataKey="deployed" name="Capital Deployed" stroke="#3B82F6" fill="rgba(59,130,246,0.1)" strokeWidth={2} />
               <Legend wrapperStyle={{ fontSize: 10 }} />
