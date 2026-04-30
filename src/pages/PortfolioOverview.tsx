@@ -98,7 +98,7 @@ const PerformanceCard = () => {
   ];
 
   return (
-    <div className="bg-card border border-border rounded-lg p-5 flex flex-col hover:border-primary/30 transition-colors col-span-1 sm:col-span-2">
+    <div className="bg-card border border-border rounded-lg p-5 flex flex-col hover:border-primary/30 transition-colors">
       <div className="flex items-center gap-2.5 mb-1">
         <div className="p-2 rounded-md bg-secondary">
           <TrendingUp className="h-4 w-4 text-primary" />
