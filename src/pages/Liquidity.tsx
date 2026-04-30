@@ -35,10 +35,10 @@ const cashComposition = [
 ];
 
 const mmfTable = [
-  { fund: "Fidelity Government MMF", provider: "Fidelity", balance: 412, yield7d: "5.18%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "Vanguard Federal MMF", provider: "Vanguard", balance: 338, yield7d: "5.09%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "BlackRock Liquid Envir", provider: "BlackRock", balance: 289, yield7d: "5.21%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "JPM Prime MMF", provider: "JPMorgan", balance: 271, yield7d: "5.31%", maturity: "7-day", rating: "AA+", liq: "Weekly" },
+  { fund: "Fidelity Government MMF", provider: "Fidelity", balance: 6.0, yield7d: "5.18%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "Vanguard Federal MMF", provider: "Vanguard", balance: 4.9, yield7d: "5.09%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "BlackRock Liquid Envir", provider: "BlackRock", balance: 4.2, yield7d: "5.21%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "JPM Prime MMF", provider: "JPMorgan", balance: 3.9, yield7d: "5.31%", maturity: "7-day", rating: "AA+", liq: "Weekly" },
 ];
 
 function barColor(s: string) { return s === "red" ? "#EF4444" : s === "amber" ? "#F59E0B" : "#22C55E"; }
