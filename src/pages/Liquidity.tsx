@@ -1,30 +1,49 @@
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, Check } from "lucide-react";
+import { useMarketSimulation, SimKeyConfig } from "@/hooks/useMarketSimulation";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
   AreaChart, Area, CartesianGrid, Legend, ReferenceLine, Line, ComposedChart,
 } from "recharts";
 
+/* ═══════════ FLASH CELL (local) ═══════════ */
+
+function FlashCell({ value, children, className = "", tag = "td" }: { value: number; children: React.ReactNode; className?: string; tag?: "td" | "span" | "p" }) {
+  const prevRef = useRef(value);
+  const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  const keyRef = useRef(0);
+
+  useEffect(() => {
+    if (value !== prevRef.current) {
+      setFlash(value > prevRef.current ? "up" : "down");
+      keyRef.current++;
+      prevRef.current = value;
+      const t = setTimeout(() => setFlash(null), 650);
+      return () => clearTimeout(t);
+    }
+  }, [value]);
+
+  const Tag = tag;
+  return (
+    <Tag key={keyRef.current} className={`${className} ${flash === "up" ? "flash-up" : flash === "down" ? "flash-down" : ""}`}>
+      {children}
+    </Tag>
+  );
+}
+
 /* ═══════════ TAB 1: CASH & BALANCES ═══════════ */
 
-const cashKpis = [
-  { label: "Total Cash & Equivalents", value: "$31.2M", color: "#C9A84C" },
-  { label: "Money Market Holdings", value: "$19.0M", sub: "61% of cash", color: "#3B82F6" },
-  { label: "Uninvested Cash", value: "$12.2M", color: "#F59E0B" },
-  { label: "Weighted Cash Yield", value: "5.12%", sub: "annualized", color: "#22C55E" },
-  { label: "Cash as % of Total NAV", value: "4.3%", color: "#F59E0B" },
-];
-
-const cashByManager = [
-  { name: "Tundra Macro", value: 11.2, status: "green" },
-  { name: "Arcturus Capital", value: 7.3, status: "green" },
-  { name: "Northgate Event", value: 5.8, status: "green" },
-  { name: "Solaris Private Credit", value: 2.4, status: "green" },
-  { name: "Ironwood Systematic", value: 2.1, status: "amber" },
-  { name: "Vega Special Sits", value: 1.1, status: "red" },
-  { name: "Meridian Capital", value: 0.9, status: "amber" },
-  { name: "Helix Credit", value: 0.4, status: "red" },
+const cashByManagerBase = [
+  { name: "Tundra Macro", value: 11.8, status: "green", key: "cash_tundra" },
+  { name: "Arcturus Capital", value: 8.2, status: "green", key: "cash_arcturus" },
+  { name: "Northgate Event", value: 5.8, status: "green", key: "cash_northgate" },
+  { name: "Solaris Private Credit", value: 3.2, status: "green", key: "cash_solaris" },
+  { name: "Ironwood Systematic", value: 3.6, status: "amber", key: "cash_ironwood" },
+  { name: "Vega Special Sits", value: 1.4, status: "red", key: "cash_vega" },
+  { name: "Meridian Capital", value: 1.1, status: "amber", key: "cash_meridian" },
+  { name: "Helix Credit", value: 0.8, status: "red", key: "cash_helix" },
 ];
 
 const cashComposition = [
@@ -34,28 +53,68 @@ const cashComposition = [
   { name: "Uninvested Cash", value: 8, color: "#F59E0B" },
 ];
 
-const mmfTable = [
-  { fund: "Fidelity Government MMF", provider: "Fidelity", balance: 6.0, yield7d: "5.18%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "Vanguard Federal MMF", provider: "Vanguard", balance: 4.9, yield7d: "5.09%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "BlackRock Liquid Envir", provider: "BlackRock", balance: 4.2, yield7d: "5.21%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "JPM Prime MMF", provider: "JPMorgan", balance: 3.9, yield7d: "5.31%", maturity: "7-day", rating: "AA+", liq: "Weekly" },
+const mmfTableBase = [
+  { fund: "Fidelity Government MMF", provider: "Fidelity", balance: 6.0, yieldBase: 5.18, key: "mmf_fidelity", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "Vanguard Federal MMF", provider: "Vanguard", balance: 4.9, yieldBase: 5.09, key: "mmf_vanguard", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "BlackRock Liquid Envir", provider: "BlackRock", balance: 4.2, yieldBase: 5.21, key: "mmf_blackrock", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "JPM Prime MMF", provider: "JPMorgan", balance: 3.9, yieldBase: 5.31, key: "mmf_jpm", maturity: "7-day", rating: "AA+", liq: "Weekly" },
 ];
 
 function barColor(s: string) { return s === "red" ? "#EF4444" : s === "amber" ? "#F59E0B" : "#22C55E"; }
 
-function CashTab() {
+function CashTab({ liveValues }: { liveValues: Record<string, number> }) {
+  const totalCash = liveValues["cash_total"] ?? 31.2;
+  const mmHoldings = liveValues["cash_mm"] ?? 19.0;
+  const uninvested = totalCash - mmHoldings;
+  const cashYield = liveValues["cash_yield"] ?? 5.12;
+  const cashPctNav = totalCash / 718 * 100;
+
+  const cashByManager = cashByManagerBase.map(m => ({
+    ...m,
+    value: liveValues[m.key] ?? m.value,
+  }));
+
+  const mmfTable = mmfTableBase.map(m => ({
+    ...m,
+    yield7d: liveValues[m.key] ?? m.yieldBase,
+  }));
+  const avgYield = mmfTable.reduce((s, r) => s + r.yield7d, 0) / mmfTable.length;
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        {cashKpis.map(k => (
-          <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
-            <CardContent className="p-4 space-y-1">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{k.label}</p>
-              <p className="text-xl font-bold" style={{ color: k.color }}>{k.value}</p>
-              {k.sub && <p className="text-[10px] text-muted-foreground">{k.sub}</p>}
-            </CardContent>
-          </Card>
-        ))}
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Cash & Equivalents</p>
+            <FlashCell value={totalCash} tag="p" className="text-xl font-bold text-[#C9A84C]">${totalCash.toFixed(1)}M</FlashCell>
+          </CardContent>
+        </Card>
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Money Market Holdings</p>
+            <FlashCell value={mmHoldings} tag="p" className="text-xl font-bold text-[#3B82F6]">${mmHoldings.toFixed(1)}M</FlashCell>
+            <p className="text-[10px] text-muted-foreground">{(mmHoldings / totalCash * 100).toFixed(0)}% of cash</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Uninvested Cash</p>
+            <FlashCell value={uninvested} tag="p" className="text-xl font-bold text-[#F59E0B]">${uninvested.toFixed(1)}M</FlashCell>
+          </CardContent>
+        </Card>
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Weighted Cash Yield</p>
+            <FlashCell value={cashYield} tag="p" className="text-xl font-bold text-[#22C55E]">{cashYield.toFixed(2)}%</FlashCell>
+            <p className="text-[10px] text-muted-foreground">annualized</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Cash as % of Total NAV</p>
+            <FlashCell value={cashPctNav} tag="p" className="text-xl font-bold text-[#F59E0B]">{cashPctNav.toFixed(1)}%</FlashCell>
+          </CardContent>
+        </Card>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-[#161B22] border-[#30363D]">
@@ -67,7 +126,7 @@ function CashTab() {
                 <YAxis type="category" dataKey="name" tick={{ fill: "#8b949e", fontSize: 10 }} width={110} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
                 <ReferenceLine x={1.5} stroke="#EF4444" strokeDasharray="4 4" label={{ value: "Min Cash Target $1.5M", fill: "#EF4444", fontSize: 9, position: "insideTopRight" }} />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                <Bar dataKey="value" radius={[0, 4, 4, 0]} animationDuration={400}>
                   {cashByManager.map(d => <Cell key={d.name} fill={barColor(d.status)} />)}
                 </Bar>
               </BarChart>
@@ -101,14 +160,14 @@ function CashTab() {
                   <td className="px-4 py-2 text-foreground font-medium">{r.fund}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.provider}</td>
                   <td className="px-4 py-2 text-foreground">${r.balance.toFixed(1)}M</td>
-                  <td className="px-4 py-2 text-[#22C55E]">{r.yield7d}</td>
+                  <FlashCell value={r.yield7d} className="px-4 py-2 text-[#22C55E]">{r.yield7d.toFixed(2)}%</FlashCell>
                   <td className="px-4 py-2 text-muted-foreground">{r.maturity}</td>
                   <td className="px-4 py-2 text-foreground">{r.rating}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.liq}</td>
                 </tr>
               ))}
               <tr className="border-t border-[#C9A84C]/30 font-semibold text-[#C9A84C]">
-                <td className="px-4 py-2">Total</td><td /><td className="px-4 py-2">$19.0M</td><td className="px-4 py-2">Avg 5.20%</td><td /><td /><td />
+                <td className="px-4 py-2">Total</td><td /><td className="px-4 py-2">${mmHoldings.toFixed(1)}M</td><td className="px-4 py-2">Avg {avgYield.toFixed(2)}%</td><td /><td /><td />
               </tr>
             </tbody>
           </table>
@@ -173,15 +232,29 @@ function genBPTimeline() {
 }
 const bpTimeline = genBPTimeline();
 
-function BuyingPowerTab() {
+function BuyingPowerTab({ liveValues }: { liveValues: Record<string, number> }) {
+  const bp = liveValues["bp_total"] ?? 48.4;
+  const marginUtil = liveValues["bp_margin"] ?? 34.2;
+
+  const bpKpisLive = [
+    { label: "Total Available Buying Power", value: `$${bp.toFixed(1)}M`, color: "#C9A84C", lv: bp },
+    { label: "Margin Capacity Remaining", value: "$27.1M", color: "#C9A84C", lv: 27.1 },
+    { label: "Credit Facility Undrawn", value: "$15.0M", color: "#3B82F6", lv: 15 },
+    { label: "Leverage Ratio (Portfolio)", value: "1.34x", color: "#F59E0B", lv: 1.34 },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        {bpKpis.map(k => (
+        {bpKpisLive.map((k, i) => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{k.label}</p>
-              <p className="text-xl font-bold" style={{ color: k.color }}>{k.value}</p>
+              {i === 0 ? (
+                <FlashCell value={k.lv} tag="p" className={`text-xl font-bold`}><span style={{ color: k.color }}>{k.value}</span></FlashCell>
+              ) : (
+                <p className="text-xl font-bold" style={{ color: k.color }}>{k.value}</p>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -394,11 +467,30 @@ function tvpiColor(v: number) { return v > 1.2 ? "text-[#22C55E]" : v >= 1.0 ? "
 function moicColor(v: number) { return v >= 1.5 ? "text-[#22C55E]" : v >= 1.0 ? "text-[#C9A84C]" : "text-[#EF4444]"; }
 function irrColor(v: number) { return v >= 15 ? "text-[#22C55E]" : v >= 8 ? "text-[#C9A84C]" : "text-[#EF4444]"; }
 
-function PEPacingTab() {
+function PEPacingTab({ liveValues }: { liveValues: Record<string, number> }) {
+  const calledToDate = liveValues["pe_called"] ?? 42.1;
+  const illiquidNav = liveValues["pe_nav_illiq"] ?? 51.2;
+  const tvpiTotal = illiquidNav / calledToDate;
+  const illiqPct = illiquidNav / 718 * 100;
+
+  const peKpisLive = [
+    { label: "Total Illiquid Commitments", value: "$68.5M", color: "#C9A84C" },
+    { label: "Capital Called to Date", value: `$${calledToDate.toFixed(1)}M`, sub: `${(calledToDate / 68.5 * 100).toFixed(0)}%`, color: "#C9A84C" },
+    { label: "Remaining Unfunded", value: `$${(68.5 - calledToDate).toFixed(1)}M`, color: "#F59E0B" },
+    { label: "Estimated NAV (Illiquid)", value: `$${illiquidNav.toFixed(1)}M`, sub: `TVPI ${tvpiTotal.toFixed(2)}x`, color: "#22C55E" },
+    { label: "Target Illiquid Alloc", value: `10% | Actual ${illiqPct.toFixed(1)}%`, color: "#22C55E" },
+  ];
+
+  const fundDetailLive = fundDetail.map(r => {
+    const nav = liveValues[`pe_nav_${r.fund}`] ?? r.nav;
+    const tvpi = nav / r.called;
+    return { ...r, nav, tvpi };
+  });
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        {peKpis.map(k => (
+        {peKpisLive.map(k => (
           <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
             <CardContent className="p-4 space-y-1">
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{k.label}</p>
@@ -455,7 +547,7 @@ function PEPacingTab() {
                 {["Fund","Strategy","Vintage","Commitment","Called","Uncalled","NAV","TVPI","DPI","MOIC","IRR (Net)","Status"].map(h => <th key={h} className="px-3 py-2 text-left font-medium">{h}</th>)}
               </tr></thead>
               <tbody>
-                {fundDetail.map(r => (
+                {fundDetailLive.map(r => (
                   <tr key={r.fund} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
                     <td className="px-3 py-2 text-foreground font-medium">{r.fund}</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.strat}</td>
@@ -463,7 +555,7 @@ function PEPacingTab() {
                     <td className="px-3 py-2 text-foreground">${r.commit}M</td>
                     <td className="px-3 py-2 text-foreground">${r.called.toFixed(1)}M</td>
                     <td className="px-3 py-2 text-foreground">${r.uncalled.toFixed(1)}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.nav.toFixed(1)}M</td>
+                    <FlashCell value={r.nav} className="px-3 py-2 text-foreground">${r.nav.toFixed(1)}M</FlashCell>
                     <td className={`px-3 py-2 font-semibold ${tvpiColor(r.tvpi)}`}>{r.tvpi.toFixed(2)}x</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.dpi.toFixed(2)}x</td>
                     <td className={`px-3 py-2 font-semibold ${moicColor(r.moic)}`}>{r.moic.toFixed(2)}x</td>
@@ -606,6 +698,79 @@ function LiquidityStressTab() {
 export default function Liquidity() {
   return (
     <div className="p-3 sm:p-6 space-y-4 bg-[#0D1117] min-h-full">
+      <LiquidityInner />
+    </div>
+  );
+}
+
+/* ═══════════ SIMULATION WIRING ═══════════ */
+
+const LIQ_INITIAL: Record<string, number> = {
+  cash_total: 31.2,
+  cash_mm: 19.0,
+  cash_yield: 5.12,
+  // cash by manager
+  cash_tundra: 11.8, cash_arcturus: 8.2, cash_northgate: 5.8,
+  cash_solaris: 3.2, cash_ironwood: 3.6, cash_vega: 1.4,
+  cash_meridian: 1.1, cash_helix: 0.8,
+  // mmf yields
+  mmf_fidelity: 5.18, mmf_vanguard: 5.09, mmf_blackrock: 5.21, mmf_jpm: 5.31,
+  // buying power
+  bp_total: 48.4, bp_margin: 34.2,
+  // PE/VC
+  pe_called: 42.1, pe_nav_illiq: 51.2,
+  ...Object.fromEntries(fundDetail.map(r => [`pe_nav_${r.fund}`, r.nav])),
+};
+
+const LIQ_CONFIGS: Record<string, SimKeyConfig> = {
+  cash_total: { drift: 0.015, tickMin: 8000, tickMax: 20000 },
+  cash_mm: { drift: 0.008, tickMin: 10000, tickMax: 25000 },
+  cash_yield: { drift: 0.05, absolute: true, tickMin: 30000, tickMax: 90000, floor: 4.50, ceiling: 5.80 },
+  // cash by manager
+  cash_tundra: { drift: 0.02, tickMin: 6000, tickMax: 15000 },
+  cash_arcturus: { drift: 0.02, tickMin: 6000, tickMax: 15000 },
+  cash_northgate: { drift: 0.02, tickMin: 6000, tickMax: 15000 },
+  cash_solaris: { drift: 0.015, tickMin: 6000, tickMax: 15000 },
+  cash_ironwood: { drift: 0.015, tickMin: 6000, tickMax: 15000 },
+  cash_vega: { drift: 0.02, tickMin: 6000, tickMax: 15000 },
+  cash_meridian: { drift: 0.02, tickMin: 6000, tickMax: 15000 },
+  cash_helix: { drift: 0.01, tickMin: 6000, tickMax: 15000 },
+  // mmf yields
+  mmf_fidelity: { drift: 0.04, absolute: true, tickMin: 20000, tickMax: 60000, floor: 4.50, ceiling: 5.80 },
+  mmf_vanguard: { drift: 0.04, absolute: true, tickMin: 20000, tickMax: 60000, floor: 4.50, ceiling: 5.80 },
+  mmf_blackrock: { drift: 0.04, absolute: true, tickMin: 20000, tickMax: 60000, floor: 4.50, ceiling: 5.80 },
+  mmf_jpm: { drift: 0.04, absolute: true, tickMin: 20000, tickMax: 60000, floor: 4.50, ceiling: 5.80 },
+  // buying power
+  bp_total: { drift: 0.015, tickMin: 8000, tickMax: 18000 },
+  bp_margin: { drift: 0.3, absolute: true, tickMin: 10000, tickMax: 20000, floor: 28, ceiling: 45 },
+  // PE/VC
+  pe_called: { drift: 0.002, tickMin: 60000, tickMax: 120000 },
+  pe_nav_illiq: { drift: 0.005, tickMin: 45000, tickMax: 90000 },
+  ...Object.fromEntries(fundDetail.map(r => {
+    const drift = ["Solaris Credit Fund","Helix Distressed III"].includes(r.fund) ? 0.002
+      : r.fund === "Tundra Real Assets" ? 0.001
+      : ["Meridian Ventures II"].includes(r.fund) ? 0.004
+      : 0.003;
+    return [`pe_nav_${r.fund}`, { drift, tickMin: 45000, tickMax: 120000 } as SimKeyConfig];
+  })),
+};
+
+function LiquidityInner() {
+  const { liveValues, isLive, toggleLive } = useMarketSimulation(LIQ_INITIAL, 0.08, LIQ_CONFIGS);
+
+  return (
+    <>
+      <div className="flex justify-end">
+        <button onClick={toggleLive} className="flex items-center gap-1.5 focus:outline-none hover:opacity-80">
+          <span className="relative flex h-2 w-2">
+            {isLive && <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75" />}
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${isLive ? "bg-[#22C55E]" : "bg-muted-foreground"}`} />
+          </span>
+          <span className={`font-semibold tracking-wider text-[10px] ${isLive ? "text-[#22C55E]" : "text-muted-foreground"}`}>
+            {isLive ? "LIVE" : "PAUSED"}
+          </span>
+        </button>
+      </div>
       <Tabs defaultValue="cash" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D] flex flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="cash" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">CASH</TabsTrigger>
@@ -614,12 +779,12 @@ export default function Liquidity() {
           <TabsTrigger value="pacing" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">PE/VC</TabsTrigger>
           <TabsTrigger value="stress" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">STRESS</TabsTrigger>
         </TabsList>
-        <TabsContent value="cash"><CashTab /></TabsContent>
-        <TabsContent value="buying"><BuyingPowerTab /></TabsContent>
+        <TabsContent value="cash"><CashTab liveValues={liveValues} /></TabsContent>
+        <TabsContent value="buying"><BuyingPowerTab liveValues={liveValues} /></TabsContent>
         <TabsContent value="calls"><CapitalCallsTab /></TabsContent>
-        <TabsContent value="pacing"><PEPacingTab /></TabsContent>
+        <TabsContent value="pacing"><PEPacingTab liveValues={liveValues} /></TabsContent>
         <TabsContent value="stress"><LiquidityStressTab /></TabsContent>
       </Tabs>
-    </div>
+    </>
   );
 }
