@@ -19,7 +19,7 @@ const navItems = [
   { title: "Liquidity", url: "/liquidity", icon: Droplets },
   { title: "Manager Grid", url: "/managers", icon: Table2 },
   { title: "Manager Detail", url: "/manager/4", icon: FileText },
-  { title: "AI Analyst", url: "/analyst", icon: Bot },
+  { title: "Analyst & Personas", url: "/analyst", icon: Bot },
   { title: "Interconnection Map", url: "/connections", icon: Network },
 ];
 
