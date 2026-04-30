@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, CartesianGrid, Legend, ReferenceLine, ReferenceArea,
@@ -10,23 +10,15 @@ import {
 
 /* ───────── TAB 1: POSITIONS & NAV ───────── */
 
-const kpis = [
-  { label: "Total Portfolio NAV", value: "$26.5B", change: "+2.3% MTD", up: true },
-  { label: "Aggregate P&L MTD", value: "+$612M", change: null, up: true },
-  { label: "Total Cash & Equivalents", value: "$2.1B", change: "8.1% of NAV", up: null },
-  { label: "Blended Buying Power", value: "$4.8B", change: null, up: null },
-  { label: "Avg Margin Utilization", value: "34.2%", change: null, up: null, marginBar: 34.2 },
-];
-
 const managerRows = [
-  { mgr: "Arcturus Capital", strat: "Global Macro", nav: 4200, pnl: 88.2, pnlPct: 2.1, cash: 12, margin: 18, status: "green" },
-  { mgr: "Meridian Capital", strat: "L/S Equity", nav: 1800, pnl: 27.0, pnlPct: 1.5, cash: 9, margin: 41, status: "yellow" },
-  { mgr: "Ironwood Systematic", strat: "Quant Equity", nav: 7100, pnl: 191.7, pnlPct: 2.7, cash: 6, margin: 22, status: "green" },
-  { mgr: "Helix Credit", strat: "Distressed", nav: 2300, pnl: -46.0, pnlPct: -2.0, cash: 4, margin: 67, status: "red" },
-  { mgr: "Northgate Event", strat: "Event Driven", nav: 3600, pnl: 86.4, pnlPct: 2.4, cash: 11, margin: 29, status: "green" },
-  { mgr: "Solaris Private Credit", strat: "Private Credit", nav: 900, pnl: 9.0, pnlPct: 1.0, cash: 18, margin: 12, status: "yellow" },
-  { mgr: "Tundra Macro", strat: "Global Macro", nav: 5500, pnl: 115.5, pnlPct: 2.1, cash: 14, margin: 25, status: "green" },
-  { mgr: "Vega Special Sits", strat: "Special Sits", nav: 1100, pnl: 38.5, pnlPct: 3.5, cash: 7, margin: 38, status: "yellow" },
+  { mgr: "Arcturus Capital", strat: "Global Macro", nav: 98, pnl: 2.1, pnlPct: 2.1, cash: 12, margin: 18, status: "green" },
+  { mgr: "Meridian Capital", strat: "L/S Equity", nav: 42, pnl: 0.6, pnlPct: 1.5, cash: 9, margin: 41, status: "yellow" },
+  { mgr: "Ironwood Systematic", strat: "Quant Equity", nav: 165, pnl: 4.5, pnlPct: 2.7, cash: 6, margin: 22, status: "green" },
+  { mgr: "Helix Credit", strat: "Distressed Credit", nav: 54, pnl: -1.1, pnlPct: -2.0, cash: 4, margin: 67, status: "red" },
+  { mgr: "Northgate Event", strat: "Event Driven", nav: 84, pnl: 2.0, pnlPct: 2.4, cash: 11, margin: 29, status: "green" },
+  { mgr: "Solaris Private Credit", strat: "Private Credit", nav: 21, pnl: 0.2, pnlPct: 1.0, cash: 18, margin: 12, status: "yellow" },
+  { mgr: "Tundra Macro", strat: "Global Macro", nav: 128, pnl: 2.7, pnlPct: 2.1, cash: 14, margin: 25, status: "green" },
+  { mgr: "Vega Special Sits", strat: "Special Situations", nav: 26, pnl: 0.9, pnlPct: 3.5, cash: 7, margin: 38, status: "yellow" },
 ];
 
 function marginColor(v: number) {
@@ -40,25 +32,61 @@ function PositionsTab() {
     <div className="space-y-6">
       {/* KPI cards */}
       <div className="grid grid-cols-5 gap-4">
-        {kpis.map((k) => (
-          <Card key={k.label} className="bg-[#161B22] border-[#30363D]">
-            <CardContent className="p-4 space-y-1">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{k.label}</p>
-              <p className="text-xl font-bold text-foreground">{k.value}</p>
-              {k.change && (
-                <span className={`text-xs flex items-center gap-1 ${k.up ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
-                  {k.up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-                  {k.change}
-                </span>
-              )}
-              {k.marginBar != null && (
-                <div className="pt-1">
-                  <Progress value={k.marginBar} className="h-2 bg-[#30363D] [&>div]:bg-[#F59E0B]" />
+        {/* Card 1 */}
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Family Office AUM</p>
+            <p className="text-xl font-bold text-foreground">$718M</p>
+            <span className="text-xs flex items-center gap-1 text-[#22C55E]">
+              <ArrowUp className="h-3 w-3" />+$8.4M MTD (+1.2%)
+            </span>
+          </CardContent>
+        </Card>
+        {/* Card 2 */}
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Hedge Fund Sleeve</p>
+            <p className="text-xl font-bold text-foreground">$618M</p>
+            <span className="text-xs flex items-center gap-1 text-[#22C55E]">
+              <ArrowUp className="h-3 w-3" />86.1% of portfolio | +$11.9M MTD
+            </span>
+          </CardContent>
+        </Card>
+        {/* Card 3 */}
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Liquid Assets (Cash & Equivalents)</p>
+            <p className="text-xl font-bold text-foreground">$31M</p>
+            <span className="text-xs flex items-center gap-1 text-[#EF4444]">
+              4.3% of NAV — below 5% threshold
+            </span>
+          </CardContent>
+        </Card>
+        {/* Card 4 */}
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Illiquid & Alternatives</p>
+            <p className="text-xl font-bold text-foreground">$100M</p>
+            <span className="text-xs text-muted-foreground">13.9% of portfolio</span>
+          </CardContent>
+        </Card>
+        {/* Card 5 */}
+        <Card className="bg-[#161B22] border-[#30363D]">
+          <CardContent className="p-4 space-y-1">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Avg Manager Risk Score</p>
+            <p className="text-xl font-bold text-foreground">38.1 / 100</p>
+            <span className="text-xs flex items-center gap-1 text-[#F59E0B]">
+              <ArrowUp className="h-3 w-3" />+2.1 pts vs prior month
+            </span>
+            <div className="pt-1">
+              <div className="h-2 rounded-full overflow-hidden" style={{ background: "linear-gradient(to right, #22C55E, #F59E0B, #EF4444)" }}>
+                <div className="relative h-full">
+                  <div className="absolute h-full w-0.5 bg-white" style={{ left: "38.1%" }} />
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Manager table */}
@@ -81,9 +109,9 @@ function PositionsTab() {
                   <tr key={r.mgr} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
                     <td className="px-4 py-2 font-medium text-foreground">{r.mgr}</td>
                     <td className="px-4 py-2 text-muted-foreground">{r.strat}</td>
-                    <td className="px-4 py-2 text-foreground">{r.nav.toLocaleString()}</td>
+                    <td className="px-4 py-2 text-foreground">${r.nav}M</td>
                     <td className={`px-4 py-2 ${r.pnl >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
-                      {r.pnl >= 0 ? "+" : ""}{r.pnl.toFixed(1)}
+                      {r.pnl >= 0 ? "+" : ""}${Math.abs(r.pnl).toFixed(1)}M
                     </td>
                     <td className={`px-4 py-2 ${r.pnlPct >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
                       {r.pnlPct >= 0 ? "+" : ""}{r.pnlPct.toFixed(1)}%
@@ -97,12 +125,358 @@ function PositionsTab() {
                     </td>
                   </tr>
                 ))}
+                <tr className="border-t-2 border-[#30363D] font-bold">
+                  <td className="px-4 py-2 text-foreground">Subtotal</td>
+                  <td className="px-4 py-2 text-muted-foreground">—</td>
+                  <td className="px-4 py-2 text-foreground">$618M</td>
+                  <td className="px-4 py-2 text-[#22C55E]">+$11.9M</td>
+                  <td className="px-4 py-2 text-[#22C55E]">—</td>
+                  <td className="px-4 py-2 text-foreground">—</td>
+                  <td className="px-4 py-2 text-foreground">—</td>
+                  <td className="px-4 py-2">—</td>
+                </tr>
               </tbody>
             </table>
           </div>
         </CardContent>
       </Card>
+
+      {/* Collapsible sections */}
+      <DirectEquitySection />
+      <CommercialRealEstateSection />
+      <PrivateAlternativeSection />
+
+      {/* Portfolio Allocation Summary */}
+      <PortfolioAllocationSummary />
     </div>
+  );
+}
+
+/* ───────── COLLAPSIBLE SECTION WRAPPER ───────── */
+
+function CollapsibleSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | "auto">("auto");
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(open ? contentRef.current.scrollHeight : 0);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (open && contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    }
+  }, []);
+
+  return (
+    <Card className="bg-[#161B22] border-[#30363D]">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left"
+      >
+        <span className="text-sm font-semibold text-[#C9A84C]">{title}</span>
+        {open ? <ChevronUp className="h-4 w-4 text-[#C9A84C]" /> : <ChevronDown className="h-4 w-4 text-[#C9A84C]" />}
+      </button>
+      <div
+        style={{ height: typeof height === "number" ? height : "auto", overflow: "hidden", transition: "height 0.3s ease" }}
+      >
+        <div ref={contentRef}>
+          {children}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+/* ───────── SUBSECTION A: DIRECT EQUITY ───────── */
+
+const equityRows = [
+  { name: "NVIDIA", ticker: "NVDA", shares: 1200, price: 892.40, value: 1070880, mtd: 6.2, ytd: 42.1, weight: 4.2 },
+  { name: "Apple", ticker: "AAPL", shares: 8500, price: 189.30, value: 1609050, mtd: 2.1, ytd: 18.4, weight: 6.3 },
+  { name: "Caterpillar", ticker: "CAT", shares: 3200, price: 342.80, value: 1096960, mtd: 1.8, ytd: 12.7, weight: 4.3 },
+  { name: "SPDR S&P 500", ticker: "SPY", shares: 5500, price: 521.40, value: 2867700, mtd: 1.1, ytd: 9.2, weight: 11.3 },
+  { name: "Alphabet", ticker: "GOOGL", shares: 4800, price: 171.20, value: 821760, mtd: 3.4, ytd: 22.8, weight: 3.2 },
+  { name: "Walmart", ticker: "WMT", shares: 12000, price: 68.40, value: 820800, mtd: 0.9, ytd: 8.1, weight: 3.2 },
+  { name: "Amazon", ticker: "AMZN", shares: 6200, price: 182.50, value: 1131500, mtd: 2.8, ytd: 24.3, weight: 4.5 },
+  { name: "UnitedHealth", ticker: "UNH", shares: 2100, price: 512.80, value: 1076880, mtd: -1.2, ytd: 6.4, weight: 4.2 },
+  { name: "Pfizer", ticker: "PFE", shares: 28000, price: 27.80, value: 778400, mtd: -0.8, ytd: -14.2, weight: 3.1 },
+];
+
+function DirectEquitySection() {
+  return (
+    <CollapsibleSection title="Direct Equity Holdings  |  $25.4M  |  Est. MTD: +$0.8M">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-[#30363D] text-muted-foreground">
+                {["Holding","Ticker","Shares","Price","Market Value","MTD Return","YTD Return","Weight %"].map(h => (
+                  <th key={h} className="px-4 py-2 text-left font-medium">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {equityRows.map(r => (
+                <tr key={r.ticker} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
+                  <td className="px-4 py-2 font-medium text-foreground">{r.name}</td>
+                  <td className="px-4 py-2 text-muted-foreground">{r.ticker}</td>
+                  <td className="px-4 py-2 text-foreground">{r.shares.toLocaleString()}</td>
+                  <td className="px-4 py-2 text-foreground">${r.price.toFixed(2)}</td>
+                  <td className="px-4 py-2 text-foreground">${r.value.toLocaleString()}</td>
+                  <td className={`px-4 py-2 ${r.mtd >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>{r.mtd >= 0 ? "+" : ""}{r.mtd}%</td>
+                  <td className={`px-4 py-2 ${r.ytd >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>{r.ytd >= 0 ? "+" : ""}{r.ytd}%</td>
+                  <td className="px-4 py-2 text-foreground">{r.weight}%</td>
+                </tr>
+              ))}
+              <tr className="border-t-2 border-[#30363D] font-bold">
+                <td className="px-4 py-2 text-foreground">Direct Equity Total</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-foreground">$11,273,930</td>
+                <td className="px-4 py-2 text-[#22C55E]">+1.8%</td>
+                <td className="px-4 py-2 text-[#22C55E]">+14.2%</td>
+                <td className="px-4 py-2 text-foreground">44.3%</td>
+              </tr>
+              <tr className="border-b border-[#30363D]/50">
+                <td className="px-4 py-2 text-muted-foreground italic">Cash / Money Market</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-foreground">$14,126,070</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-foreground">55.7%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </CollapsibleSection>
+  );
+}
+
+/* ───────── SUBSECTION B: COMMERCIAL REAL ESTATE ───────── */
+
+const creRows = [
+  { property: "Brickell Office Tower", location: "Miami, FL", type: "Class A Office", purchase: 6.2, current: 7.8, gain: 1.6, income: "468K", status: "Active" },
+  { property: "Austin Mixed-Use", location: "Austin, TX", type: "Mixed-Use Retail", purchase: 4.8, current: 5.4, gain: 0.6, income: "324K", status: "Active" },
+  { property: "Brooklyn Industrial Park", location: "Brooklyn, NY", type: "Industrial", purchase: 5.5, current: 6.1, gain: 0.6, income: "366K", status: "Active" },
+  { property: "Beverly Hills Retail", location: "Los Angeles, CA", type: "Retail Strip", purchase: 4.1, current: 4.2, gain: 0.1, income: "252K", status: "Watch" },
+  { property: "Dallas Medical Office", location: "Dallas, TX", type: "Medical Office", purchase: 2.8, current: 3.1, gain: 0.3, income: "192K", status: "Active" },
+];
+
+function CommercialRealEstateSection() {
+  return (
+    <CollapsibleSection title="Commercial Real Estate  |  $25.0M  |  Est. Annual Yield: 6.2%">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-[#30363D] text-muted-foreground">
+                {["Property","Location","Type","Purchase Price","Current Value","Unrealized Gain","Annual Income","Status"].map(h => (
+                  <th key={h} className="px-4 py-2 text-left font-medium">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {creRows.map(r => (
+                <tr key={r.property} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
+                  <td className="px-4 py-2 font-medium text-foreground">{r.property}</td>
+                  <td className="px-4 py-2 text-muted-foreground">{r.location}</td>
+                  <td className="px-4 py-2 text-muted-foreground">{r.type}</td>
+                  <td className="px-4 py-2 text-foreground">${r.purchase}M</td>
+                  <td className="px-4 py-2 text-foreground">${r.current}M</td>
+                  <td className="px-4 py-2 text-[#22C55E]">+${r.gain}M</td>
+                  <td className="px-4 py-2 text-foreground">${r.income}</td>
+                  <td className="px-4 py-2">
+                    <span className="flex items-center gap-1.5">
+                      <span className={`inline-block h-2.5 w-2.5 rounded-full ${r.status === "Active" ? "bg-[#22C55E]" : "bg-[#F59E0B]"}`} />
+                      <span className="text-muted-foreground">{r.status}</span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              <tr className="border-t-2 border-[#30363D] font-bold">
+                <td className="px-4 py-2 text-foreground">CRE Total</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-muted-foreground">—</td>
+                <td className="px-4 py-2 text-foreground">$23.4M</td>
+                <td className="px-4 py-2 text-foreground">$26.6M</td>
+                <td className="px-4 py-2 text-[#22C55E]">+$3.2M</td>
+                <td className="px-4 py-2 text-foreground">$1,602K</td>
+                <td className="px-4 py-2">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="px-4 py-3 text-[10px] text-muted-foreground italic">
+          Valuations based on most recent appraisal. Beverly Hills Retail flagged for lease renewal review Q3 2026.
+        </p>
+      </CardContent>
+    </CollapsibleSection>
+  );
+}
+
+/* ───────── SUBSECTION C: PRIVATE & ALTERNATIVE ASSETS ───────── */
+
+const vcRows = [
+  { company: "Stealth AI Co.", stage: "Series B", sector: "Artificial Intelligence", invested: 4.0, value: 9.2, moic: 2.3, status: "Active" },
+  { company: "FinTech Platform X", stage: "Series C", sector: "Financial Technology", invested: 5.0, value: 7.5, moic: 1.5, status: "Active" },
+  { company: "CleanEnergy Startup", stage: "Series A", sector: "Clean Energy", invested: 3.0, value: 3.8, moic: 1.3, status: "Active" },
+  { company: "BioTech Venture", stage: "Series B", sector: "Healthcare", invested: 6.0, value: 5.4, moic: 0.9, status: "Watch" },
+  { company: "PropTech Co.", stage: "Series A", sector: "Real Estate Tech", invested: 4.0, value: 4.8, moic: 1.2, status: "Active" },
+  { company: "Consumer Brand", stage: "Seed", sector: "Consumer", invested: 3.0, value: 2.1, moic: 0.7, status: "Watch" },
+];
+
+const hardAssetRows = [
+  { asset: "Basquiat (1982)", category: "Fine Art", cost: 4.2, value: 7.1, appraised: "Jan 2026", liquidity: "Low" },
+  { asset: "Picasso Lithograph Set", category: "Fine Art", cost: 1.8, value: 2.4, appraised: "Mar 2026", liquidity: "Low" },
+  { asset: "3.8ct Pink Diamond Ring", category: "Jewelry", cost: 0.9, value: 1.4, appraised: "Feb 2026", liquidity: "Low" },
+  { asset: "Patek Philippe Watch Coll", category: "Jewelry / Watches", cost: 0.6, value: 1.1, appraised: "Jan 2026", liquidity: "Low" },
+  { asset: "1962 Ferrari 250 GTE", category: "Collectible Auto", cost: 1.4, value: 2.8, appraised: "Dec 2025", liquidity: "Low" },
+  { asset: "1967 Ford GT40 Replica", category: "Collectible Auto", cost: 0.4, value: 0.7, appraised: "Dec 2025", liquidity: "Low" },
+  { asset: "Aspen Ski Chalet", category: "Vacation Property", cost: 8.5, value: 11.2, appraised: "Oct 2025", liquidity: "Low" },
+  { asset: "Palm Beach Residence", category: "Vacation Property", cost: 14.0, value: 18.4, appraised: "Nov 2025", liquidity: "Low" },
+  { asset: "St. Barths Villa", category: "Vacation Property", cost: 6.8, value: 9.4, appraised: "Sep 2025", liquidity: "Low" },
+  { asset: "Misc. Collectibles", category: "Collectibles", cost: 1.4, value: 1.8, appraised: "Dec 2025", liquidity: "Low" },
+];
+
+function moicColor(m: number) {
+  if (m >= 1.5) return "text-[#22C55E]";
+  if (m >= 1.0) return "text-[#F59E0B]";
+  return "text-[#EF4444]";
+}
+
+function PrivateAlternativeSection() {
+  return (
+    <CollapsibleSection title="Private & Alternative Assets  |  $75.0M  |  Illiquid">
+      <CardContent className="space-y-6">
+        {/* VC */}
+        <div>
+          <p className="text-xs font-semibold text-[#C9A84C] mb-2">Venture & Private Equity</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-[#30363D] text-muted-foreground">
+                  {["Company","Stage","Sector","Invested","Est. Value","MOIC","Status"].map(h => (
+                    <th key={h} className="px-4 py-2 text-left font-medium">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {vcRows.map(r => (
+                  <tr key={r.company} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
+                    <td className="px-4 py-2 font-medium text-foreground">{r.company}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{r.stage}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{r.sector}</td>
+                    <td className="px-4 py-2 text-foreground">${r.invested}M</td>
+                    <td className="px-4 py-2 text-foreground">${r.value}M</td>
+                    <td className={`px-4 py-2 font-semibold ${moicColor(r.moic)}`}>{r.moic.toFixed(1)}x</td>
+                    <td className="px-4 py-2">
+                      <span className="flex items-center gap-1.5">
+                        <span className={`inline-block h-2.5 w-2.5 rounded-full ${r.status === "Active" ? "bg-[#22C55E]" : "bg-[#F59E0B]"}`} />
+                        <span className="text-muted-foreground">{r.status}</span>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="px-4 py-2 text-xs text-muted-foreground font-medium">
+            Subtotal: Invested $25.0M | Est. Value $32.8M | Blended MOIC 1.31x
+          </p>
+        </div>
+
+        {/* Hard Assets */}
+        <div>
+          <p className="text-xs font-semibold text-[#C9A84C] mb-2">Art, Jewelry, Collectibles & Real Property</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-[#30363D] text-muted-foreground">
+                  {["Asset","Category","Acquisition Cost","Est. Value","Last Appraised","Liquidity"].map(h => (
+                    <th key={h} className="px-4 py-2 text-left font-medium">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {hardAssetRows.map(r => (
+                  <tr key={r.asset} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
+                    <td className="px-4 py-2 font-medium text-foreground">{r.asset}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{r.category}</td>
+                    <td className="px-4 py-2 text-foreground">${r.cost}M</td>
+                    <td className="px-4 py-2 text-foreground">${r.value}M</td>
+                    <td className="px-4 py-2 text-muted-foreground">{r.appraised}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{r.liquidity}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="px-4 py-2 text-xs text-muted-foreground font-medium">
+            Subtotal: Cost $40.0M | Est. Value $56.3M | Unrealized Gain +$16.3M
+          </p>
+          <p className="px-4 pb-3 text-[10px] text-muted-foreground italic">
+            Hard asset valuations are estimates based on most recent independent appraisal. Not marked to market daily.
+          </p>
+        </div>
+      </CardContent>
+    </CollapsibleSection>
+  );
+}
+
+/* ───────── PORTFOLIO ALLOCATION SUMMARY ───────── */
+
+const allocSegments = [
+  { label: "Hedge Funds (Liquid Alt)", value: 618, pct: 86.1, color: "#C9A84C" },
+  { label: "Direct Equity", value: 25, pct: 3.5, color: "#3B82F6" },
+  { label: "Commercial Real Estate", value: 25, pct: 3.5, color: "#22C55E" },
+  { label: "Private / VC", value: 25, pct: 3.5, color: "#8B5CF6" },
+  { label: "Hard Assets", value: 50, pct: 7.0, color: "#9CA3AF" },
+];
+
+function PortfolioAllocationSummary() {
+  return (
+    <Card className="bg-[#161B22] border-[#30363D]">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm text-[#C9A84C]">Total Portfolio Allocation Summary</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Stacked bar */}
+        <div className="flex h-8 rounded overflow-hidden">
+          {allocSegments.map(s => (
+            <div
+              key={s.label}
+              style={{ width: `${s.pct}%`, backgroundColor: s.color }}
+              className="flex items-center justify-center text-[9px] font-semibold text-white overflow-hidden whitespace-nowrap"
+              title={`${s.label}: $${s.value}M (${s.pct}%)`}
+            >
+              {s.pct > 5 ? `${s.pct}%` : ""}
+            </div>
+          ))}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap gap-4">
+          {allocSegments.map(s => (
+            <div key={s.label} className="flex items-center gap-2 text-xs">
+              <span className="inline-block h-3 w-3 rounded" style={{ backgroundColor: s.color }} />
+              <span className="text-foreground">{s.label}</span>
+              <span className="text-muted-foreground">${s.value}M ({s.pct}%)</span>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-xs text-muted-foreground text-center border-t border-[#30363D] pt-3">
+          Total: $718M  |  Liquid: $649M (90.4%)  |  Illiquid: $75M (10.4%)  |  Semi-liquid: $25M (3.5%)
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -626,7 +1000,7 @@ export default function Performance() {
     <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
       <Tabs defaultValue="positions" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D]">
-          <TabsTrigger value="positions" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">POSITIONS & NAV</TabsTrigger>
+          <TabsTrigger value="positions" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">HOLDINGS OVERVIEW</TabsTrigger>
           <TabsTrigger value="exposure" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">EXPOSURE</TabsTrigger>
           <TabsTrigger value="correlation" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">CORRELATION</TabsTrigger>
           <TabsTrigger value="risk" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">RISK METRICS</TabsTrigger>
