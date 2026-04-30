@@ -1,16 +1,72 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowUp, ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
+import { useMarketSimulation } from "@/hooks/useMarketSimulation";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, CartesianGrid, Legend, ReferenceLine, ReferenceArea,
 } from "recharts";
 
+/* ───────── FLASH CELL COMPONENT ───────── */
+
+function FlashCell({ value, children, className = "" }: { value: number; children: React.ReactNode; className?: string }) {
+  const prevRef = useRef(value);
+  const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  const keyRef = useRef(0);
+
+  useEffect(() => {
+    if (value !== prevRef.current) {
+      setFlash(value > prevRef.current ? "up" : "down");
+      keyRef.current++;
+      prevRef.current = value;
+      const t = setTimeout(() => setFlash(null), 650);
+      return () => clearTimeout(t);
+    }
+  }, [value]);
+
+  return (
+    <td key={keyRef.current} className={`${className} ${flash === "up" ? "flash-up" : flash === "down" ? "flash-down" : ""}`}>
+      {children}
+    </td>
+  );
+}
+
+function PriceCell({ value, className = "" }: { value: number; className?: string }) {
+  const prevRef = useRef(value);
+  const [arrow, setArrow] = useState<"up" | "down" | null>(null);
+  const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  const keyRef = useRef(0);
+
+  useEffect(() => {
+    if (value !== prevRef.current) {
+      const dir = value > prevRef.current ? "up" : "down";
+      setArrow(dir);
+      setFlash(dir);
+      keyRef.current++;
+      prevRef.current = value;
+      const t1 = setTimeout(() => setFlash(null), 650);
+      const t2 = setTimeout(() => setArrow(null), 3000);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+  }, [value]);
+
+  return (
+    <td key={keyRef.current} className={`${className} ${flash === "up" ? "flash-up" : flash === "down" ? "flash-down" : ""}`}>
+      ${value.toFixed(2)}
+      {arrow && (
+        <span className={`ml-1 text-[10px] ${arrow === "up" ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+          {arrow === "up" ? "▲" : "▼"}
+        </span>
+      )}
+    </td>
+  );
+}
+
 /* ───────── TAB 1: POSITIONS & NAV ───────── */
 
-const managerRows = [
+const managerRowsBase = [
   { mgr: "Arcturus Capital", strat: "Global Macro", nav: 98, pnl: 2.1, pnlPct: 2.1, cash: 12, margin: 18, status: "green" },
   { mgr: "Meridian Capital", strat: "L/S Equity", nav: 42, pnl: 0.6, pnlPct: 1.5, cash: 9, margin: 41, status: "yellow" },
   { mgr: "Ironwood Systematic", strat: "Quant Equity", nav: 165, pnl: 4.5, pnlPct: 2.7, cash: 6, margin: 22, status: "green" },
@@ -21,24 +77,93 @@ const managerRows = [
   { mgr: "Vega Special Sits", strat: "Special Situations", nav: 26, pnl: 0.9, pnlPct: 3.5, cash: 7, margin: 38, status: "yellow" },
 ];
 
+const equityRowsBase = [
+  { name: "NVIDIA", ticker: "NVDA", shares: 1200, price: 892.40, mtd: 6.2, ytd: 42.1, weight: 4.2 },
+  { name: "Apple", ticker: "AAPL", shares: 8500, price: 189.30, mtd: 2.1, ytd: 18.4, weight: 6.3 },
+  { name: "Caterpillar", ticker: "CAT", shares: 3200, price: 342.80, mtd: 1.8, ytd: 12.7, weight: 4.3 },
+  { name: "SPDR S&P 500", ticker: "SPY", shares: 5500, price: 521.40, mtd: 1.1, ytd: 9.2, weight: 11.3 },
+  { name: "Alphabet", ticker: "GOOGL", shares: 4800, price: 171.20, mtd: 3.4, ytd: 22.8, weight: 3.2 },
+  { name: "Walmart", ticker: "WMT", shares: 12000, price: 68.40, mtd: 0.9, ytd: 8.1, weight: 3.2 },
+  { name: "Amazon", ticker: "AMZN", shares: 6200, price: 182.50, mtd: 2.8, ytd: 24.3, weight: 4.5 },
+  { name: "UnitedHealth", ticker: "UNH", shares: 2100, price: 512.80, mtd: -1.2, ytd: 6.4, weight: 4.2 },
+  { name: "Pfizer", ticker: "PFE", shares: 28000, price: 27.80, mtd: -0.8, ytd: -14.2, weight: 3.1 },
+];
+
+// Build initial simulation values
+function buildInitialValues() {
+  const vals: Record<string, number> = {};
+  equityRowsBase.forEach(r => {
+    vals[`price_${r.ticker}`] = r.price;
+    vals[`mtd_${r.ticker}`] = r.mtd;
+  });
+  managerRowsBase.forEach(r => {
+    vals[`mgr_pnl_${r.mgr}`] = r.pnl;
+    vals[`mgr_pnlPct_${r.mgr}`] = r.pnlPct;
+  });
+  vals["kpi_aum"] = 718;
+  vals["kpi_hf_mtd"] = 11.9;
+  vals["kpi_liquid"] = 31;
+  return vals;
+}
+
+const INITIAL_SIM_VALUES = buildInitialValues();
+
 function marginColor(v: number) {
   if (v > 60) return "text-[#EF4444]";
   if (v >= 35) return "text-[#F59E0B]";
   return "text-[#22C55E]";
 }
 
-function PositionsTab() {
+function PositionsTab({ liveValues, isLive, toggleLive }: { liveValues: Record<string, number>; isLive: boolean; toggleLive: () => void }) {
+  const equityRows = useMemo(() => equityRowsBase.map(r => {
+    const price = liveValues[`price_${r.ticker}`] ?? r.price;
+    const mtd = liveValues[`mtd_${r.ticker}`] ?? r.mtd;
+    const value = Math.round(r.shares * price);
+    return { ...r, price, mtd, value };
+  }), [liveValues]);
+
+  const managerRows = useMemo(() => managerRowsBase.map(r => ({
+    ...r,
+    pnl: liveValues[`mgr_pnl_${r.mgr}`] ?? r.pnl,
+    pnlPct: liveValues[`mgr_pnlPct_${r.mgr}`] ?? r.pnlPct,
+  })), [liveValues]);
+
+  const totalAum = liveValues["kpi_aum"] ?? 718;
+  const hfMtd = liveValues["kpi_hf_mtd"] ?? 11.9;
+  const liquidAssets = liveValues["kpi_liquid"] ?? 31;
+  const managerPnlSum = managerRows.reduce((s, r) => s + r.pnl, 0);
+  const equityTotal = equityRows.reduce((s, r) => s + r.value, 0);
+
   return (
     <div className="space-y-6">
+      {/* Live toggle */}
+      <div className="flex justify-end">
+        <button
+          onClick={toggleLive}
+          className="flex items-center gap-1.5 focus:outline-none hover:opacity-80"
+        >
+          <span className="relative flex h-2 w-2">
+            {isLive && (
+              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75" />
+            )}
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${isLive ? "bg-[#22C55E]" : "bg-muted-foreground"}`} />
+          </span>
+          <span className={`font-semibold tracking-wider text-[10px] ${isLive ? "text-[#22C55E]" : "text-muted-foreground"}`}>
+            {isLive ? "LIVE" : "PAUSED"}
+          </span>
+        </button>
+      </div>
+
       {/* KPI cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Card 1 */}
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Family Office AUM</p>
-            <p className="text-lg sm:text-xl font-bold text-foreground">$718M</p>
-            <span className="text-xs flex items-center gap-1 text-[#22C55E]">
-              <ArrowUp className="h-3 w-3" />+$8.4M MTD (+1.2%)
+            <p className="text-lg sm:text-xl font-bold text-foreground">${totalAum.toFixed(0)}M</p>
+            <span className={`text-xs flex items-center gap-1 ${totalAum >= 718 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+              {totalAum >= 718 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+              {totalAum >= 718 ? "+" : ""}${(totalAum - 718 + 8.4).toFixed(1)}M MTD
             </span>
           </CardContent>
         </Card>
@@ -47,8 +172,9 @@ function PositionsTab() {
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Hedge Fund Sleeve</p>
             <p className="text-lg sm:text-xl font-bold text-foreground">$618M</p>
-            <span className="text-xs flex items-center gap-1 text-[#22C55E]">
-              <ArrowUp className="h-3 w-3" />86.1% of portfolio | +$11.9M MTD
+            <span className={`text-xs flex items-center gap-1 ${hfMtd >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+              {hfMtd >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+              86.1% of portfolio | {hfMtd >= 0 ? "+" : ""}${hfMtd.toFixed(1)}M MTD
             </span>
           </CardContent>
         </Card>
@@ -56,9 +182,9 @@ function PositionsTab() {
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Liquid Assets (Cash & Equivalents)</p>
-            <p className="text-lg sm:text-xl font-bold text-foreground">$31M</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground">${liquidAssets.toFixed(0)}M</p>
             <span className="text-xs flex items-center gap-1 text-[#EF4444]">
-              4.3% of NAV — below 5% threshold
+              {(liquidAssets / totalAum * 100).toFixed(1)}% of NAV — {liquidAssets / totalAum < 0.05 ? "below" : "above"} 5% threshold
             </span>
           </CardContent>
         </Card>
@@ -95,59 +221,69 @@ function PositionsTab() {
           <CardTitle className="text-sm text-[#C9A84C]">Manager-Level Snapshot</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-[#30363D] text-muted-foreground">
-                  {["Manager","Strategy","NAV ($M)","P&L MTD ($M)","P&L MTD %","Cash %","Margin Util %","Status"].map(h => (
-                    <th key={h} className="px-4 py-2 text-left font-medium">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {managerRows.map(r => (
-                  <tr key={r.mgr} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
-                    <td className="px-4 py-2 font-medium text-foreground">{r.mgr}</td>
-                    <td className="px-4 py-2 text-muted-foreground">{r.strat}</td>
-                    <td className="px-4 py-2 text-foreground">${r.nav}M</td>
-                    <td className={`px-4 py-2 ${r.pnl >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
-                      {r.pnl >= 0 ? "+" : ""}${Math.abs(r.pnl).toFixed(1)}M
-                    </td>
-                    <td className={`px-4 py-2 ${r.pnlPct >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
-                      {r.pnlPct >= 0 ? "+" : ""}{r.pnlPct.toFixed(1)}%
-                    </td>
-                    <td className="px-4 py-2 text-foreground">{r.cash}%</td>
-                    <td className={`px-4 py-2 font-medium ${marginColor(r.margin)}`}>{r.margin}%</td>
-                    <td className="px-4 py-2">
-                      <span className={`inline-block h-2.5 w-2.5 rounded-full ${
-                        r.status === "green" ? "bg-[#22C55E]" : r.status === "yellow" ? "bg-[#F59E0B]" : "bg-[#EF4444]"
-                      }`} />
-                    </td>
-                  </tr>
-                ))}
-                <tr className="border-t-2 border-[#30363D] font-bold">
-                  <td className="px-4 py-2 text-foreground">Subtotal</td>
-                  <td className="px-4 py-2 text-muted-foreground">—</td>
-                  <td className="px-4 py-2 text-foreground">$618M</td>
-                  <td className="px-4 py-2 text-[#22C55E]">+$11.9M</td>
-                  <td className="px-4 py-2 text-[#22C55E]">—</td>
-                  <td className="px-4 py-2 text-foreground">—</td>
-                  <td className="px-4 py-2 text-foreground">—</td>
-                  <td className="px-4 py-2">—</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <ManagerTable managerRows={managerRows} managerPnlSum={managerPnlSum} />
         </CardContent>
       </Card>
 
       {/* Collapsible sections */}
-      <DirectEquitySection />
+      <DirectEquitySection equityRows={equityRows} equityTotal={equityTotal} liveValues={liveValues} />
       <CommercialRealEstateSection />
       <PrivateAlternativeSection />
 
       {/* Portfolio Allocation Summary */}
       <PortfolioAllocationSummary />
+    </div>
+  );
+}
+
+/* ───────── MANAGER TABLE ───────── */
+
+function ManagerTable({ managerRows, managerPnlSum }: { managerRows: typeof managerRowsBase; managerPnlSum: number }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-[#30363D] text-muted-foreground">
+            {["Manager","Strategy","NAV ($M)","P&L MTD ($M)","P&L MTD %","Cash %","Margin Util %","Status"].map(h => (
+              <th key={h} className="px-4 py-2 text-left font-medium">{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {managerRows.map(r => (
+            <tr key={r.mgr} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
+              <td className="px-4 py-2 font-medium text-foreground">{r.mgr}</td>
+              <td className="px-4 py-2 text-muted-foreground">{r.strat}</td>
+              <td className="px-4 py-2 text-foreground">${r.nav}M</td>
+              <FlashCell value={r.pnl} className={`px-4 py-2 ${r.pnl >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                {r.pnl >= 0 ? "+" : ""}${Math.abs(r.pnl).toFixed(1)}M
+              </FlashCell>
+              <FlashCell value={r.pnlPct} className={`px-4 py-2 ${r.pnlPct >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                {r.pnlPct >= 0 ? "+" : ""}{r.pnlPct.toFixed(1)}%
+              </FlashCell>
+              <td className="px-4 py-2 text-foreground">{r.cash}%</td>
+              <td className={`px-4 py-2 font-medium ${marginColor(r.margin)}`}>{r.margin}%</td>
+              <td className="px-4 py-2">
+                <span className={`inline-block h-2.5 w-2.5 rounded-full ${
+                  r.status === "green" ? "bg-[#22C55E]" : r.status === "yellow" ? "bg-[#F59E0B]" : "bg-[#EF4444]"
+                }`} />
+              </td>
+            </tr>
+          ))}
+          <tr className="border-t-2 border-[#30363D] font-bold">
+            <td className="px-4 py-2 text-foreground">Subtotal</td>
+            <td className="px-4 py-2 text-muted-foreground">—</td>
+            <td className="px-4 py-2 text-foreground">$618M</td>
+            <td className={`px-4 py-2 ${managerPnlSum >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+              {managerPnlSum >= 0 ? "+" : ""}${Math.abs(managerPnlSum).toFixed(1)}M
+            </td>
+            <td className="px-4 py-2 text-muted-foreground">—</td>
+            <td className="px-4 py-2 text-foreground">—</td>
+            <td className="px-4 py-2 text-foreground">—</td>
+            <td className="px-4 py-2">—</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -193,21 +329,9 @@ function CollapsibleSection({ title, children, defaultOpen = true }: { title: st
 
 /* ───────── SUBSECTION A: DIRECT EQUITY ───────── */
 
-const equityRows = [
-  { name: "NVIDIA", ticker: "NVDA", shares: 1200, price: 892.40, value: 1070880, mtd: 6.2, ytd: 42.1, weight: 4.2 },
-  { name: "Apple", ticker: "AAPL", shares: 8500, price: 189.30, value: 1609050, mtd: 2.1, ytd: 18.4, weight: 6.3 },
-  { name: "Caterpillar", ticker: "CAT", shares: 3200, price: 342.80, value: 1096960, mtd: 1.8, ytd: 12.7, weight: 4.3 },
-  { name: "SPDR S&P 500", ticker: "SPY", shares: 5500, price: 521.40, value: 2867700, mtd: 1.1, ytd: 9.2, weight: 11.3 },
-  { name: "Alphabet", ticker: "GOOGL", shares: 4800, price: 171.20, value: 821760, mtd: 3.4, ytd: 22.8, weight: 3.2 },
-  { name: "Walmart", ticker: "WMT", shares: 12000, price: 68.40, value: 820800, mtd: 0.9, ytd: 8.1, weight: 3.2 },
-  { name: "Amazon", ticker: "AMZN", shares: 6200, price: 182.50, value: 1131500, mtd: 2.8, ytd: 24.3, weight: 4.5 },
-  { name: "UnitedHealth", ticker: "UNH", shares: 2100, price: 512.80, value: 1076880, mtd: -1.2, ytd: 6.4, weight: 4.2 },
-  { name: "Pfizer", ticker: "PFE", shares: 28000, price: 27.80, value: 778400, mtd: -0.8, ytd: -14.2, weight: 3.1 },
-];
-
-function DirectEquitySection() {
+function DirectEquitySection({ equityRows, equityTotal, liveValues }: { equityRows: Array<{ name: string; ticker: string; shares: number; price: number; value: number; mtd: number; ytd: number; weight: number }>; equityTotal: number; liveValues: Record<string, number> }) {
   return (
-    <CollapsibleSection title="Direct Equity Holdings  |  $25.4M  |  Est. MTD: +$0.8M">
+    <CollapsibleSection title={`Direct Equity Holdings  |  $${(equityTotal / 1000000).toFixed(1)}M  |  Est. MTD: +$0.8M`}>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -224,9 +348,13 @@ function DirectEquitySection() {
                   <td className="px-4 py-2 font-medium text-foreground">{r.name}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.ticker}</td>
                   <td className="px-4 py-2 text-foreground">{r.shares.toLocaleString()}</td>
-                  <td className="px-4 py-2 text-foreground">${r.price.toFixed(2)}</td>
-                  <td className="px-4 py-2 text-foreground">${r.value.toLocaleString()}</td>
-                  <td className={`px-4 py-2 ${r.mtd >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>{r.mtd >= 0 ? "+" : ""}{r.mtd}%</td>
+                  <PriceCell value={r.price} className="px-4 py-2 text-foreground" />
+                  <FlashCell value={r.value} className="px-4 py-2 text-foreground">
+                    ${r.value.toLocaleString()}
+                  </FlashCell>
+                  <FlashCell value={r.mtd} className={`px-4 py-2 ${r.mtd >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                    {r.mtd >= 0 ? "+" : ""}{r.mtd.toFixed(2)}%
+                  </FlashCell>
                   <td className={`px-4 py-2 ${r.ytd >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>{r.ytd >= 0 ? "+" : ""}{r.ytd}%</td>
                   <td className="px-4 py-2 text-foreground">{r.weight}%</td>
                 </tr>
@@ -236,7 +364,7 @@ function DirectEquitySection() {
                 <td className="px-4 py-2 text-muted-foreground">—</td>
                 <td className="px-4 py-2 text-muted-foreground">—</td>
                 <td className="px-4 py-2 text-muted-foreground">—</td>
-                <td className="px-4 py-2 text-foreground">$11,273,930</td>
+                <td className="px-4 py-2 text-foreground">${equityTotal.toLocaleString()}</td>
                 <td className="px-4 py-2 text-[#22C55E]">+1.8%</td>
                 <td className="px-4 py-2 text-[#22C55E]">+14.2%</td>
                 <td className="px-4 py-2 text-foreground">44.3%</td>
@@ -1061,8 +1189,13 @@ export default function Performance() {
           <TabsTrigger value="risk" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">RISK</TabsTrigger>
           <TabsTrigger value="stress" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">STRESS TEST YOUR PORTFOLIO</TabsTrigger>
         </TabsList>
-        <TabsContent value="positions"><PositionsTab /></TabsContent>
+        <TabsContent value="positions"><PositionsTabWrapper /></TabsContent>
         <TabsContent value="exposure"><ExposureTab /></TabsContent>
+
+function PositionsTabWrapper() {
+  const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08);
+  return <PositionsTab liveValues={liveValues} isLive={isLive} toggleLive={toggleLive} />;
+}
         <TabsContent value="correlation"><CorrelationTab /></TabsContent>
         <TabsContent value="risk"><RiskTab /></TabsContent>
         <TabsContent value="stress"><StressScenariosTab /></TabsContent>
