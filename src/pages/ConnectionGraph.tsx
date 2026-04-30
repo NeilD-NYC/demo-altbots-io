@@ -415,9 +415,7 @@ export default function ConnectionGraph() {
         specular: new THREE.Color(0x554400),
       });
       group.add(new THREE.Mesh(geometry, mat));
-      // Orbital ring
       if (isLit) {
-        group.add(createOrbitalRing(color, radius));
         group.add(createAtmosphereGlow(color, radius));
         const light = new THREE.PointLight(color, 1.5, 80);
         group.add(light);
