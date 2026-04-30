@@ -23,12 +23,12 @@ const HealthGauge = ({ score }: { score: number }) => {
   const offset = circumference - (animated / 100) * circumference;
 
   return (
-    <div className="relative w-28 h-28">
+    <div className="relative w-[70px] h-[70px]">
       <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-        <circle cx="60" cy="60" r="54" fill="none" stroke="#30363D" strokeWidth="8" />
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#30363D" strokeWidth="6" />
         <circle
           cx="60" cy="60" r="54" fill="none"
-          stroke="url(#health-grad)" strokeWidth="8" strokeLinecap="round"
+          stroke="url(#health-grad)" strokeWidth="6" strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
         />
@@ -41,8 +41,8 @@ const HealthGauge = ({ score }: { score: number }) => {
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold text-warning">{animated}</span>
-        <span className="text-[9px] text-muted-foreground">/100</span>
+        <span className="text-lg font-bold text-warning">{animated}</span>
+        <span className="text-[7px] text-muted-foreground">/100</span>
       </div>
     </div>
   );
