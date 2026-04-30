@@ -198,18 +198,6 @@ function createAtmosphereGlow(color: string, radius: number): THREE.Sprite {
   return sprite;
 }
 
-// Create orbital ring for custodian nodes
-function createOrbitalRing(color: string, radius: number): THREE.Line {
-  const points: THREE.Vector3[] = [];
-  for (let i = 0; i <= 64; i++) {
-    const angle = (i / 64) * Math.PI * 2;
-    points.push(new THREE.Vector3(Math.cos(angle) * radius * 1.6, Math.sin(angle) * radius * 0.3, Math.sin(angle) * radius * 1.6));
-  }
-  const geom = new THREE.BufferGeometry().setFromPoints(points);
-  const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.5 });
-  return new THREE.Line(geom, mat);
-}
-
 // Starfield background particles
 function createStarfield(scene: THREE.Scene) {
   const starCount = 2000;
@@ -417,11 +405,26 @@ export default function ConnectionGraph() {
       group.add(new THREE.Mesh(geometry, mat));
       // Orbital ring
       if (isLit) {
-        group.add(createOrbitalRing(color, radius));
         group.add(createAtmosphereGlow(color, radius));
         const light = new THREE.PointLight(color, 1.5, 80);
         group.add(light);
       }
+    }
+
+    // Subtle idle animation — slow rotation + gentle bob
+    if (isLit) {
+      const seed = node.id.charCodeAt(node.id.length - 1) + node.id.charCodeAt(0);
+      const speed = 0.003 + (seed % 10) * 0.0004;
+      const bobAmp = 0.15 + (seed % 7) * 0.03;
+      const rotSpeed = 0.002 + (seed % 5) * 0.001;
+      let frame = seed * 10; // offset so nodes aren't in sync
+      const animate = () => {
+        frame++;
+        group.position.y = Math.sin(frame * speed) * bobAmp;
+        group.rotation.y += rotSpeed;
+        requestAnimationFrame(animate);
+      };
+      animate();
     }
 
     return group;
