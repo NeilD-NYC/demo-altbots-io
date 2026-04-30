@@ -82,4 +82,16 @@
     scrollbar-width: thin;
     scrollbar-color: hsl(215 15% 22%) transparent;
   }
+
+  @keyframes heartbeat90 {
+    0%, 1.1%, 100% { transform: scale(1); }
+    0.3% { transform: scale(1.08); }
+    0.5% { transform: scale(1); }
+    0.7% { transform: scale(1.05); }
+    0.9% { transform: scale(1); }
+  }
+
+  .tab-heartbeat-inactive {
+    animation: heartbeat90 90s ease-in-out infinite;
+  }
 }
