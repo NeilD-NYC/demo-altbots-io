@@ -483,49 +483,52 @@ function PortfolioAllocationSummary() {
 /* ───────── TAB 2: EXPOSURE ───────── */
 
 const sectorData = [
-  { name: "Technology", value: 31, color: "#3B82F6" },
-  { name: "Financials", value: 18, color: "#C9A84C" },
-  { name: "Healthcare", value: 12, color: "#22C55E" },
-  { name: "Consumer", value: 11, color: "#F59E0B" },
-  { name: "Energy", value: 8, color: "#EF4444" },
-  { name: "Industrials", value: 7, color: "#8B5CF6" },
-  { name: "Fixed Income", value: 8, color: "#06B6D4" },
-  { name: "Cash", value: 5, color: "#6B7280" },
+  { name: "Technology", value: 34, color: "#3B82F6" },
+  { name: "Financials", value: 16, color: "#C9A84C" },
+  { name: "Consumer", value: 10, color: "#F59E0B" },
+  { name: "Healthcare", value: 9, color: "#22C55E" },
+  { name: "Real Estate", value: 7, color: "#10B981" },
+  { name: "Hard Assets", value: 7, color: "#A78BFA" },
+  { name: "Industrials", value: 6, color: "#8B5CF6" },
+  { name: "Energy", value: 5, color: "#EF4444" },
+  { name: "Fixed Income", value: 5, color: "#06B6D4" },
+  { name: "Cash", value: 3, color: "#6B7280" },
+  { name: "Private/VC", value: 3, color: "#D946EF" },
 ];
 
 const geoData = [
-  { name: "North America", value: 62 },
-  { name: "Europe", value: 18 },
-  { name: "Asia Pacific", value: 12 },
-  { name: "EM", value: 6 },
-  { name: "Other", value: 2 },
+  { name: "North America", value: 72 },
+  { name: "Europe", value: 12 },
+  { name: "Asia Pacific", value: 8 },
+  { name: "Emerging Markets", value: 5 },
+  { name: "Other / Global", value: 3 },
 ];
 
 const capData = [
   { name: "Mega Cap >$200B", value: 38 },
   { name: "Large $10-200B", value: 29 },
-  { name: "Mid $2-10B", value: 19 },
-  { name: "Small <$2B", value: 9 },
-  { name: "Private/Illiquid", value: 5 },
+  { name: "Mid $2-10B", value: 18 },
+  { name: "Small <$2B", value: 7 },
+  { name: "Private / Illiquid", value: 8 },
 ];
 
 const factorData = [
-  { name: "Momentum", value: 0.62 },
-  { name: "Value", value: -0.18 },
-  { name: "Quality", value: 0.41 },
+  { name: "Momentum", value: 0.71 },
+  { name: "Value", value: -0.14 },
+  { name: "Quality", value: 0.58 },
   { name: "Size", value: -0.09 },
-  { name: "Low Vol", value: 0.23 },
-  { name: "Growth", value: 0.55 },
+  { name: "Low Vol", value: 0.22 },
+  { name: "Growth", value: 0.64 },
 ];
 
 function ExposureTab() {
   const factorDecomp = [
-    { factor: "Momentum", beta: 0.68, contrib: 2.8, pct: 31.2, dir: "Long" },
-    { factor: "Quality",  beta: 0.54, contrib: 1.9, pct: 21.1, dir: "Long" },
-    { factor: "Growth",   beta: 0.61, contrib: 1.7, pct: 18.9, dir: "Long" },
-    { factor: "Low Vol",  beta: 0.28, contrib: 0.9, pct: 10.0, dir: "Long" },
-    { factor: "Value",    beta: -0.18, contrib: 0.6, pct: 6.7, dir: "Short" },
-    { factor: "Size",     beta: -0.12, contrib: 0.4, pct: 4.4, dir: "Short" },
+    { factor: "Momentum", beta: 0.71, contrib: 2.9, pct: 32.2, dir: "Long" },
+    { factor: "Quality",  beta: 0.58, contrib: 2.0, pct: 22.2, dir: "Long" },
+    { factor: "Growth",   beta: 0.64, contrib: 1.8, pct: 20.0, dir: "Long" },
+    { factor: "Low Vol",  beta: 0.22, contrib: 0.8, pct: 8.9, dir: "Long" },
+    { factor: "Value",    beta: -0.14, contrib: 0.5, pct: 5.6, dir: "Short" },
+    { factor: "Size",     beta: -0.09, contrib: 0.3, pct: 3.3, dir: "Short" },
     { factor: "Residual", beta: null,  contrib: 0.7, pct: 7.8, dir: "--" },
   ] as const;
   return (
@@ -537,9 +540,10 @@ function ExposureTab() {
         <CardContent>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
-              <Pie data={sectorData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name} ${value}%`} labelLine={false}>
+              <Pie data={sectorData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value, cx, x }) => { const anchor = x > cx ? "start" : "end"; return <text x={x} textAnchor={anchor} dominantBaseline="central" fill="#8b949e" fontSize={9}>{`${name} ${value}%`}</text>; }} labelLine={{ stroke: "#30363D" }}>
                 {sectorData.map(s => <Cell key={s.name} fill={s.color} />)}
               </Pie>
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" fill="#C9A84C" fontSize={13} fontWeight={600}>11 Sectors</text>
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
             </PieChart>
           </ResponsiveContainer>
@@ -551,9 +555,9 @@ function ExposureTab() {
         <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Geographic Decomposition</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={geoData} layout="vertical" margin={{ left: 80 }}>
-              <XAxis type="number" domain={[0, 70]} tick={{ fill: "#8b949e", fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" tick={{ fill: "#8b949e", fontSize: 11 }} width={80} />
+            <BarChart data={geoData} layout="vertical" margin={{ left: 100 }}>
+              <XAxis type="number" domain={[0, 80]} tick={{ fill: "#8b949e", fontSize: 11 }} />
+              <YAxis type="category" dataKey="name" tick={{ fill: "#8b949e", fontSize: 11 }} width={100} />
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
               <Bar dataKey="value" fill="#C9A84C" radius={[0, 4, 4, 0]} />
             </BarChart>
@@ -570,7 +574,11 @@ function ExposureTab() {
               <XAxis dataKey="name" tick={{ fill: "#8b949e", fontSize: 9 }} angle={-15} textAnchor="end" />
               <YAxis tick={{ fill: "#8b949e", fontSize: 11 }} />
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
-              <Bar dataKey="value" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                {capData.map((d) => (
+                  <Cell key={d.name} fill={d.name === "Private / Illiquid" ? "#8B5CF6" : "#3B82F6"} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -582,7 +590,7 @@ function ExposureTab() {
         <CardContent>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={factorData} layout="vertical" margin={{ left: 60 }}>
-              <XAxis type="number" domain={[-0.3, 0.7]} tick={{ fill: "#8b949e", fontSize: 11 }} />
+              <XAxis type="number" domain={[-0.3, 0.8]} tick={{ fill: "#8b949e", fontSize: 11 }} />
               <YAxis type="category" dataKey="name" tick={{ fill: "#8b949e", fontSize: 11 }} width={60} />
               <ReferenceLine x={0} stroke="#30363D" />
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
@@ -651,7 +659,54 @@ function ExposureTab() {
           </p>
         </CardContent>
       </Card>
+
+      {/* Asset Class Allocation */}
+      <AssetClassAllocationChart />
     </div>
+  );
+}
+
+/* ───────── ASSET CLASS ALLOCATION CHART ───────── */
+
+const assetClassData = [
+  { name: "Hedge Funds (Liquid Alt)", value: 618, pct: 86.1, color: "#C9A84C" },
+  { name: "Direct Equity", value: 25, pct: 3.5, color: "#3B82F6" },
+  { name: "Commercial Real Estate", value: 25, pct: 3.5, color: "#22C55E" },
+  { name: "Private / VC", value: 25, pct: 3.5, color: "#8B5CF6" },
+  { name: "Hard Assets", value: 50, pct: 7.0, color: "#9CA3AF" },
+];
+
+function AssetClassAllocationChart() {
+  return (
+    <Card className="bg-[#161B22] border-[#30363D]">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm text-[#C9A84C]">Asset Class Allocation — Full Portfolio ($718M)</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {assetClassData.map((d) => (
+          <div key={d.name} className="flex items-center gap-3 text-xs">
+            <span className="w-[180px] text-foreground shrink-0 truncate">{d.name}</span>
+            <div className="flex-1 h-6 bg-[#0D1117] rounded overflow-hidden relative">
+              <div
+                className="h-full rounded flex items-center justify-end pr-2"
+                style={{ width: `${Math.max(d.pct, 4)}%`, backgroundColor: d.color }}
+              >
+                {d.pct > 10 && <span className="text-[10px] font-semibold text-white">${d.value}M</span>}
+              </div>
+              {d.pct <= 10 && (
+                <span className="absolute left-[calc(max(4%,_var(--w))_+_8px)] top-1/2 -translate-y-1/2 text-[10px] text-foreground" style={{ left: `calc(${Math.max(d.pct, 4)}% + 8px)` }}>
+                  ${d.value}M
+                </span>
+              )}
+            </div>
+            <span className="w-12 text-right text-muted-foreground font-mono">{d.pct}%</span>
+          </div>
+        ))}
+        <p className="text-[10px] text-muted-foreground text-center border-t border-[#30363D] pt-3 mt-4">
+          Liquid: $643M (89.6%)  |  Semi-liquid: $25M (3.5%)  |  Illiquid: $75M (10.4%)  |  Total AUM: $718M
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
