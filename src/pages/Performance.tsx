@@ -1053,13 +1053,25 @@ function StressScenariosTab() {
 export default function Performance() {
   return (
     <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
+      <style>{`
+        @keyframes heartbeat90 {
+          0%, 1.1%, 100% { transform: scale(1); opacity: 1; }
+          0.3% { transform: scale(1.08); opacity: 1; }
+          0.5% { transform: scale(1); opacity: 1; }
+          0.7% { transform: scale(1.05); opacity: 1; }
+          0.9% { transform: scale(1); opacity: 1; }
+        }
+        [data-state="inactive"].tab-heartbeat {
+          animation: heartbeat90 90s ease-in-out infinite;
+        }
+      `}</style>
       <Tabs defaultValue="positions" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D]">
-          <TabsTrigger value="positions" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:animate-pulse">HOLDINGS OVERVIEW</TabsTrigger>
-          <TabsTrigger value="exposure" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">EXPOSURE</TabsTrigger>
-          <TabsTrigger value="correlation" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">CORRELATION</TabsTrigger>
-          <TabsTrigger value="risk" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">RISK METRICS</TabsTrigger>
-          <TabsTrigger value="stress" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">STRESS SCENARIOS</TabsTrigger>
+          <TabsTrigger value="positions" className="tab-heartbeat text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">HOLDINGS OVERVIEW</TabsTrigger>
+          <TabsTrigger value="exposure" className="tab-heartbeat text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">EXPOSURE</TabsTrigger>
+          <TabsTrigger value="correlation" className="tab-heartbeat text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">CORRELATION</TabsTrigger>
+          <TabsTrigger value="risk" className="tab-heartbeat text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">RISK METRICS</TabsTrigger>
+          <TabsTrigger value="stress" className="tab-heartbeat text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">STRESS SCENARIOS</TabsTrigger>
         </TabsList>
         <TabsContent value="positions"><PositionsTab /></TabsContent>
         <TabsContent value="exposure"><ExposureTab /></TabsContent>
