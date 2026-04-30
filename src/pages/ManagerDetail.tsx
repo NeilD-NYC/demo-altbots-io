@@ -341,8 +341,10 @@ const ManagerDetail = () => {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "px-4 py-2.5 text-sm font-medium transition-colors relative",
-                activeTab === tab ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                "px-4 py-2.5 text-sm font-medium transition-all duration-200 relative cursor-pointer",
+                activeTab === tab
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:scale-105 tab-heartbeat-inactive"
               )}
             >
               {tab}
