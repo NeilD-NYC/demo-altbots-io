@@ -179,13 +179,9 @@ export default function ConnectionGraph() {
   const selectNodeFromSearch = useCallback((nodeData: any) => {
     setSearchQuery(nodeData.name);
     setSearchOpen(false);
-    const fg = fgRef.current;
-    if (!fg) return;
-    const liveData = typeof fg.graphData === 'function' ? fg.graphData() : fg.graphData;
-    const liveNode = liveData?.nodes?.find((n: any) => n.id === nodeData.id);
-    if (liveNode) {
-      handleNodeClick(liveNode);
-    }
+    // The graphData.nodes objects are mutated in-place by the force engine with x/y/z
+    const liveNode = graphData.nodes.find((n: any) => n.id === nodeData.id);
+    if (liveNode) handleNodeClick(liveNode as any);
   }, [handleNodeClick]);
 
   const handleBackgroundClick = useCallback(() => {
