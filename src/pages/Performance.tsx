@@ -66,6 +66,96 @@ function PriceCell({ value, className = "" }: { value: number; className?: strin
 
 /* ───────── TAB 1: POSITIONS & NAV ───────── */
 
+/* ───────── PORTFOLIO PERFORMANCE CARD ───────── */
+
+function PerfFlashValue({ value, prev, format }: { value: string; prev: React.MutableRefObject<string>; format?: string }) {
+  const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  const keyRef = useRef(0);
+
+  useEffect(() => {
+    if (value !== prev.current) {
+      setFlash(value > prev.current ? "up" : "down");
+      keyRef.current++;
+      prev.current = value;
+      const t = setTimeout(() => setFlash(null), 650);
+      return () => clearTimeout(t);
+    }
+  }, [value]);
+
+  return (
+    <span key={keyRef.current} className={flash === "up" ? "flash-up" : flash === "down" ? "flash-down" : ""}>
+      {value}
+    </span>
+  );
+}
+
+const perfSparklines = {
+  today: "M2 30 L12 28 L22 26 L35 27 L48 24 L62 22 L78 18",
+  mtd: "M2 32 L6 30 L10 28 L15 26 L20 25 L25 27 L30 24 L35 22 L40 20 L45 19 L50 18 L55 16 L60 17 L65 15 L70 13 L75 11 L80 10 L85 9 L90 8 L98 6",
+  ytd: "M2 34 L4 33 L6 32 L8 30 L10 29 L12 28 L14 27 L16 28 L18 30 L20 31 L22 29 L24 27 L26 25 L28 24 L30 23 L32 22 L34 21 L36 20 L38 19 L40 18 L42 19 L44 17 L46 16 L48 15 L50 14 L52 15 L54 13 L56 12 L58 13 L60 11 L62 10 L64 11 L66 9 L68 8 L70 9 L72 7 L74 8 L76 6 L78 7 L80 5 L82 6 L84 4 L86 5 L88 4 L90 3 L92 4 L94 3 L96 3 L98 2",
+  m36: "M2 28 L5 26 L8 24 L11 22 L14 20 L17 22 L20 24 L23 26 L26 28 L29 30 L32 32 L35 30 L38 27 L41 24 L44 21 L47 18 L50 16 L53 14 L56 12 L59 11 L62 10 L65 9 L68 8 L71 7 L74 6 L77 5 L80 6 L83 4 L86 5 L89 3 L92 4 L95 3 L98 2",
+};
+
+function PortfolioPerformanceCard({ liveValues }: { liveValues: Record<string, number> }) {
+  const todayPct = liveValues["perf_today"] ?? 0.34;
+  const mtdPct = liveValues["perf_mtd"] ?? 1.82;
+  const todayDollar = (todayPct / 100) * 718;
+  const mtdDollar = (mtdPct / 100) * 718;
+
+  const prevTodayPct = useRef(`${todayPct >= 0 ? "+" : ""}${todayPct.toFixed(2)}%`);
+  const prevTodayDol = useRef(`${todayDollar >= 0 ? "+" : ""}$${Math.abs(todayDollar).toFixed(1)}M`);
+  const prevMtdPct = useRef(`${mtdPct >= 0 ? "+" : ""}${mtdPct.toFixed(2)}%`);
+  const prevMtdDol = useRef(`${mtdDollar >= 0 ? "+" : ""}$${Math.abs(mtdDollar).toFixed(1)}M`);
+
+  const blocks = [
+    { label: "TODAY", pct: todayPct, dollar: todayDollar, spark: perfSparklines.today, live: true, prevPct: prevTodayPct, prevDol: prevTodayDol },
+    { label: "MTD", pct: mtdPct, dollar: mtdDollar, spark: perfSparklines.mtd, live: true, prevPct: prevMtdPct, prevDol: prevMtdDol },
+    { label: "YTD", pct: 9.47, dollar: 62.1, spark: perfSparklines.ytd, live: false, prevPct: useRef(""), prevDol: useRef("") },
+    { label: "36-MONTH", pct: 34.2, dollar: 183.4, spark: perfSparklines.m36, live: false, prevPct: useRef(""), prevDol: useRef("") },
+  ];
+
+  return (
+    <Card className="bg-[#161B22] border-[#30363D]">
+      <CardContent className="p-4">
+        <div className="flex items-baseline justify-between mb-3">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-[#C9A84C] font-semibold">PORTFOLIO PERFORMANCE</p>
+            <p className="text-[11px] text-muted-foreground">Net of fees · All strategies · $718M base</p>
+          </div>
+        </div>
+        <div className="flex">
+          {blocks.map((b, i) => {
+            const pctStr = `${b.pct >= 0 ? "+" : ""}${b.pct.toFixed(2)}%`;
+            const dolStr = `${b.dollar >= 0 ? "+" : ""}$${Math.abs(b.dollar).toFixed(1)}M`;
+            const color = b.pct >= 0 ? "text-[#22C55E]" : "text-[#EF4444]";
+            return (
+              <div key={b.label} className={`flex-1 px-4 ${i > 0 ? "border-l border-[rgba(255,255,255,0.08)]" : ""}`}>
+                <p className="text-[10px] uppercase tracking-widest text-[#C9A84C] mb-1">{b.label}</p>
+                <p className={`text-[26px] font-bold leading-tight ${color}`}>
+                  {b.live ? <PerfFlashValue value={pctStr} prev={b.prevPct} /> : pctStr}
+                </p>
+                <p className={`text-[13px] ${color} opacity-70`}>
+                  {b.live ? <PerfFlashValue value={dolStr} prev={b.prevDol} /> : dolStr}
+                </p>
+                <svg width="100" height="36" viewBox="0 0 100 36" fill="none" className="mt-1">
+                  <path d={b.spark} stroke="#C5A55A" strokeWidth={1.5} fill="none" />
+                </svg>
+              </div>
+            );
+          })}
+        </div>
+        <div className="border-t border-[rgba(255,255,255,0.08)] mt-3 pt-2 flex gap-4 text-[11px]">
+          <span className="text-muted-foreground">vs HFRI Fund Wtd: +1.1% MTD</span>
+          <span className="text-muted-foreground">|</span>
+          <span className="text-muted-foreground">vs S&amp;P 500: +0.8% MTD</span>
+          <span className="text-muted-foreground">|</span>
+          <span className="text-[#C9A84C]">Excess Return MTD: +0.72%</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 const managerRowsBase = [
   { mgr: "Arcturus Capital", strat: "Global Macro", nav: 98, pnl: 2.1, pnlPct: 2.1, cash: 12, margin: 18, status: "green" },
   { mgr: "Meridian Capital", strat: "L/S Equity", nav: 42, pnl: 0.6, pnlPct: 1.5, cash: 9, margin: 41, status: "yellow" },
@@ -103,6 +193,8 @@ function buildInitialValues() {
   vals["kpi_aum"] = 718;
   vals["kpi_hf_mtd"] = 11.9;
   vals["kpi_liquid"] = 31;
+  vals["perf_today"] = 0.34;
+  vals["perf_mtd"] = 1.82;
   return vals;
 }
 
@@ -128,7 +220,8 @@ function PositionsTab({ liveValues, isLive, toggleLive }: { liveValues: Record<s
     pnlPct: liveValues[`mgr_pnlPct_${r.mgr}`] ?? r.pnlPct,
   })), [liveValues]);
 
-  const totalAum = liveValues["kpi_aum"] ?? 718;
+  const perfToday = liveValues["perf_today"] ?? 0.34;
+  const totalAum = 718 * (1 + perfToday / 100);
   const hfMtd = liveValues["kpi_hf_mtd"] ?? 11.9;
   const liquidAssets = liveValues["kpi_liquid"] ?? 31;
   const managerPnlSum = managerRows.reduce((s, r) => s + r.pnl, 0);
@@ -214,6 +307,9 @@ function PositionsTab({ liveValues, isLive, toggleLive }: { liveValues: Record<s
           </CardContent>
         </Card>
       </div>
+
+      {/* Portfolio Performance Card */}
+      <PortfolioPerformanceCard liveValues={liveValues} />
 
       {/* Manager table */}
       <Card className="bg-[#161B22] border-[#30363D]">
@@ -1200,7 +1296,11 @@ export default function Performance() {
 }
 
 function PositionsTabWrapper() {
-  const keyConfigs = useMemo(() => ({ "kpi_liquid": { drift: 0.03 } }), []);
+  const keyConfigs = useMemo(() => ({
+    "kpi_liquid": { drift: 0.03 },
+    "perf_today": { drift: 0.08, absolute: true, floor: -0.5, ceiling: 1.2, tickMin: 15000, tickMax: 30000 },
+    "perf_mtd": { drift: 0.04, absolute: true, floor: 0, ceiling: 4, tickMin: 20000, tickMax: 45000 },
+  }), []);
   const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08, keyConfigs);
   return <PositionsTab liveValues={liveValues} isLive={isLive} toggleLive={toggleLive} />;
 }
