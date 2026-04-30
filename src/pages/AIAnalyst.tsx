@@ -167,7 +167,7 @@ const AIAnalyst = () => {
   const currentChips = mode === "standard" ? standardChips : activePersona?.chips ?? [];
   const currentPlaceholder =
     mode === "standard"
-      ? "Ask about your portfolio managers…"
+     ? "Talk to your portfolio…"
       : activePersona?.placeholder ?? "Select a persona first…";
 
   /* ── Render ──────────────────────────────────────── */
