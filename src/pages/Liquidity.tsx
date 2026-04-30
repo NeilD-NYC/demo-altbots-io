@@ -121,20 +121,20 @@ function CashTab() {
 /* ═══════════ TAB 2: BUYING POWER ═══════════ */
 
 const bpKpis = [
-  { label: "Total Available Buying Power", value: "$4.83B", color: "#C9A84C" },
-  { label: "Margin Capacity Remaining", value: "$2.71B", color: "#C9A84C" },
-  { label: "Credit Facility Undrawn", value: "$1.50B", color: "#3B82F6" },
+  { label: "Total Available Buying Power", value: "$48.4M", color: "#C9A84C" },
+  { label: "Margin Capacity Remaining", value: "$27.1M", color: "#C9A84C" },
+  { label: "Credit Facility Undrawn", value: "$15.0M", color: "#3B82F6" },
   { label: "Leverage Ratio (Portfolio)", value: "1.34x", color: "#F59E0B" },
 ];
 
 const waterfallData = [
-  { name: "Starting NAV", value: 26500, total: 26500, fill: "#C9A84C" },
-  { name: "Less: Illiquid", value: -4200, total: 22300, fill: "#EF4444" },
-  { name: "Less: Locked Capital", value: -2800, total: 19500, fill: "#EF4444" },
-  { name: "Less: Margin Posted", value: -1600, total: 17900, fill: "#EF4444" },
-  { name: "Plus: Credit Facility", value: 1500, total: 19400, fill: "#22C55E" },
-  { name: "Plus: Undrawn Commits", value: 800, total: 20200, fill: "#22C55E" },
-  { name: "Net Buying Power", value: 4830, total: 4830, fill: "#C9A84C" },
+  { name: "Starting NAV", value: 718, total: 718, fill: "#C9A84C" },
+  { name: "Less: Illiquid", value: -100, total: 618, fill: "#EF4444" },
+  { name: "Less: Locked Capital", value: -42, total: 576, fill: "#EF4444" },
+  { name: "Less: Margin Posted", value: -24, total: 552, fill: "#EF4444" },
+  { name: "Plus: Credit Facility", value: 15, total: 567, fill: "#22C55E" },
+  { name: "Plus: Undrawn Commits", value: 8, total: 575, fill: "#22C55E" },
+  { name: "Net Buying Power", value: 48.4, total: 48.4, fill: "#C9A84C" },
 ];
 
 // waterfall needs base + visible
