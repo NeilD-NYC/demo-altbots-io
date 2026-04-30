@@ -159,16 +159,15 @@ const marginByMgr = [
 
 function genBPTimeline() {
   const data: { day: string; bp: number; deployed: number }[] = [];
-  let bp = 4800, dep = 21700;
+  let bp = 48, dep = 670;
   for (let i = 0; i < 90; i++) {
     const d = new Date(2026, 0, 8 + i);
     const label = `${d.getMonth() + 1}/${d.getDate()}`;
-    const noise = (Math.random() - 0.5) * 150;
-    // dip event around day 47 (late Feb)
-    const dip = (i >= 45 && i <= 52) ? -600 + (i - 45) * 80 : 0;
-    bp = Math.max(4200, Math.min(5400, bp + noise + dip));
-    dep = 26500 - bp - 1500 + (Math.random() - 0.5) * 100;
-    data.push({ day: label, bp: +bp.toFixed(0), deployed: +dep.toFixed(0) });
+    const noise = (Math.random() - 0.5) * 2;
+    const dip = (i >= 45 && i <= 52) ? -8 + (i - 45) * 1.1 : 0;
+    bp = Math.max(42, Math.min(55, bp + noise + dip));
+    dep = 718 - bp - 15 + (Math.random() - 0.5) * 1.5;
+    data.push({ day: label, bp: +bp.toFixed(1), deployed: +dep.toFixed(1) });
   }
   return data;
 }
