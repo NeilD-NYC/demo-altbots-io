@@ -9,22 +9,22 @@ import {
 /* ═══════════ TAB 1: CASH & BALANCES ═══════════ */
 
 const cashKpis = [
-  { label: "Total Cash & Equivalents", value: "$2.14B", color: "#C9A84C" },
-  { label: "Money Market Holdings", value: "$1.31B", sub: "61% of cash", color: "#3B82F6" },
-  { label: "Uninvested Cash", value: "$830M", color: "#F59E0B" },
+  { label: "Total Cash & Equivalents", value: "$31.2M", color: "#C9A84C" },
+  { label: "Money Market Holdings", value: "$19.0M", sub: "61% of cash", color: "#3B82F6" },
+  { label: "Uninvested Cash", value: "$12.2M", color: "#F59E0B" },
   { label: "Weighted Cash Yield", value: "5.12%", sub: "annualized", color: "#22C55E" },
-  { label: "Cash as % of Total NAV", value: "8.1%", color: "#6B7280" },
+  { label: "Cash as % of Total NAV", value: "4.3%", color: "#F59E0B" },
 ];
 
 const cashByManager = [
-  { name: "Tundra Macro", value: 770, status: "green" },
-  { name: "Arcturus Capital", value: 504, status: "green" },
-  { name: "Northgate Event", value: 396, status: "green" },
-  { name: "Solaris Private Credit", value: 162, status: "green" },
-  { name: "Ironwood Systematic", value: 142, status: "amber" },
-  { name: "Vega Special Sits", value: 77, status: "red" },
-  { name: "Meridian Capital", value: 63, status: "amber" },
-  { name: "Helix Credit", value: 28, status: "red" },
+  { name: "Tundra Macro", value: 11.2, status: "green" },
+  { name: "Arcturus Capital", value: 7.3, status: "green" },
+  { name: "Northgate Event", value: 5.8, status: "green" },
+  { name: "Solaris Private Credit", value: 2.4, status: "green" },
+  { name: "Ironwood Systematic", value: 2.1, status: "amber" },
+  { name: "Vega Special Sits", value: 1.1, status: "red" },
+  { name: "Meridian Capital", value: 0.9, status: "amber" },
+  { name: "Helix Credit", value: 0.4, status: "red" },
 ];
 
 const cashComposition = [
