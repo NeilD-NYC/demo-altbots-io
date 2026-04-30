@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { managers } from "@/data/managers";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
-import { AlertTriangle, TrendingUp, Users, Shield, DollarSign } from "lucide-react";
+import { AlertTriangle, TrendingUp, Shield, DollarSign } from "lucide-react";
 
 const HealthGauge = ({ score }: { score: number }) => {
   const [animated, setAnimated] = useState(0);
@@ -83,6 +83,65 @@ const trendData = [
 const totalAUM = managers.reduce((s, m) => s + m.aum_bn, 0);
 const avgRisk = (managers.reduce((s, m) => s + m.risk_score, 0) / managers.length).toFixed(1);
 
+const PerformanceSparkline = ({ path }: { path: string }) => (
+  <svg width="80" height="36" viewBox="0 0 80 36" fill="none" className="block">
+    <path d={path} stroke="#C5A55A" strokeWidth={1.5} fill="none" />
+  </svg>
+);
+
+const PerformanceCard = () => {
+  const metrics = [
+    { label: "TODAY", value: "+0.34%", sub: "+$2.4M", path: "M2 28 L12 26 L24 25 L36 24 L48 23 L60 21 L72 18 L78 16" },
+    { label: "MTD", value: "+1.82%", sub: "+$13.1M", path: "M2 30 L6 28 L10 26 L14 24 L18 23 L22 25 L26 27 L30 25 L34 22 L38 20 L42 18 L46 16 L50 14 L54 13 L58 11 L62 10 L66 9 L70 8 L74 7 L78 6" },
+    { label: "YTD", value: "+9.47%", sub: "+$62.1M", path: "M2 32 L4 31 L6 30 L8 29 L10 28 L12 29 L14 31 L16 30 L18 28 L20 26 L22 25 L24 24 L26 23 L28 22 L30 21 L32 20 L34 19 L36 18 L38 17 L40 16 L42 15 L44 16 L46 15 L48 14 L50 13 L52 12 L54 11 L56 12 L58 11 L60 10 L62 9 L64 8 L66 9 L68 8 L70 7 L72 6 L74 6 L76 5 L78 4" },
+    { label: "36-MONTH", value: "+34.2%", sub: "+$183.4M (on $535M base)", path: "M2 28 L4 26 L7 24 L10 22 L13 20 L16 18 L19 16 L22 15 L25 14 L28 16 L30 19 L32 22 L34 24 L36 23 L38 21 L40 18 L42 16 L44 14 L46 12 L48 11 L50 10 L52 9 L54 8 L56 9 L58 8 L60 7 L62 6 L64 7 L66 6 L68 5 L70 6 L72 5 L74 4 L76 4 L78 3" },
+  ];
+
+  return (
+    <div className="bg-card border border-border rounded-lg p-5 flex flex-col hover:border-primary/30 transition-colors col-span-1 sm:col-span-2">
+      <div className="flex items-center gap-2.5 mb-1">
+        <div className="p-2 rounded-md bg-secondary">
+          <TrendingUp className="h-4 w-4 text-primary" />
+        </div>
+        <div>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Portfolio Performance</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">Net of fees · All strategies</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 flex-1 mt-3">
+        {metrics.map((m, i) => (
+          <div
+            key={m.label}
+            className="flex items-start justify-between px-4 py-3"
+            style={{
+              borderRight: i % 2 === 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
+              borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
+            }}
+          >
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-primary font-medium">{m.label}</p>
+              <p className="text-[22px] font-bold text-success leading-tight mt-1">{m.value}</p>
+              <p className="text-[12px] text-muted-foreground mt-0.5">{m.sub}</p>
+            </div>
+            <div className="mt-2">
+              <PerformanceSparkline path={m.path} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="border-t mt-3 pt-2" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+        <p className="text-[11px] text-muted-foreground">
+          vs HFRI Fund Wtd: <span className="text-muted-foreground">+1.1% MTD</span>
+          <span className="mx-2 text-border">|</span>
+          vs S&amp;P 500: <span className="text-muted-foreground">+0.8% MTD</span>
+          <span className="mx-2 text-border">|</span>
+          Excess Return MTD: <span className="text-primary font-medium">+0.72%</span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const KPIShell = ({
   icon: Icon,
   label,
@@ -122,7 +181,7 @@ const PortfolioOverview = () => {
   return (
     <div className="p-8 space-y-8 max-w-[1400px] mx-auto">
       {/* KPI Row — 5 cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_2fr_1fr_1fr] gap-4">
         {/* Card 1 — Total AUM */}
         <KPIShell icon={DollarSign} label="Total AUM Under Monitoring">
           <div>
@@ -145,39 +204,10 @@ const PortfolioOverview = () => {
           </div>
         </KPIShell>
 
-        {/* Card 2 — Managers Monitored */}
-        <KPIShell icon={Users} label="Managers Monitored">
-          <div>
-            <p className="text-3xl font-bold text-foreground tabular-nums">8</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              <span className="text-foreground/80">3</span> HF
-              <span className="mx-1.5 text-border">|</span>
-              <span className="text-foreground/80">2</span> PE
-              <span className="mx-1.5 text-border">|</span>
-              <span className="text-foreground/80">2</span> Credit
-              <span className="mx-1.5 text-border">|</span>
-              <span className="text-foreground/80">1</span> Real Assets
-            </p>
-          </div>
-        </KPIShell>
+        {/* Card 2 — Portfolio Performance (wide) */}
+        <PerformanceCard />
 
-        {/* Card 3 — Active Alerts */}
-        <KPIShell icon={AlertTriangle} label="Active Alerts" accent>
-          <div>
-            <p className="text-3xl font-bold text-foreground flex items-center gap-2">
-              1
-              <span className="text-[10px] bg-destructive/20 text-destructive px-2 py-0.5 rounded-full font-semibold tracking-wide">ALERT</span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">0 new since last sweep</p>
-          </div>
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-destructive" /> 1 Critical</span>
-            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-warning/40" /> 0 Watch</span>
-            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-success/40" /> 0 Clear</span>
-          </div>
-        </KPIShell>
-
-        {/* Card 4 — Avg Risk Score */}
+        {/* Card 3 — Avg Risk Score */}
         <KPIShell icon={Shield} label="Avg Risk Score">
           <div>
             <p className="text-3xl font-bold text-foreground tabular-nums">33.9 <span className="text-base text-muted-foreground font-normal">/ 100</span></p>
@@ -196,7 +226,7 @@ const PortfolioOverview = () => {
           </div>
         </KPIShell>
 
-        {/* Card 5 — Portfolio Health Score */}
+        {/* Card 4 — Portfolio Health Score */}
         <KPIShell icon={TrendingUp} label="Portfolio Health Score">
           <div className="flex flex-col items-center justify-center -mt-1">
             <HealthGauge score={71} />
