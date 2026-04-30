@@ -6,7 +6,7 @@ const DashboardHeader = () => {
         <span className="text-sm text-muted-foreground hidden sm:inline">Portfolio Intelligence Monitor</span>
       </div>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="hidden md:inline">Last Sweep: April 8, 2026</span>
+       <span className="hidden md:inline">Last Sweep: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
         <span className="hidden md:inline">|</span>
         <span>1579 Managers Active</span>
         <span>|</span>
