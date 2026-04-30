@@ -184,9 +184,9 @@ function createAtmosphereGlow(color: string, radius: number): THREE.Sprite {
   canvas.height = s;
   const ctx = canvas.getContext("2d")!;
   const grad = ctx.createRadialGradient(s / 2, s / 2, s * 0.15, s / 2, s / 2, s / 2);
-  grad.addColorStop(0, color + "66");
-  grad.addColorStop(0.4, color + "33");
-  grad.addColorStop(0.7, color + "11");
+  grad.addColorStop(0, color + "33");
+  grad.addColorStop(0.4, color + "18");
+  grad.addColorStop(0.7, color + "08");
   grad.addColorStop(1, "transparent");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, s, s);
@@ -194,7 +194,7 @@ function createAtmosphereGlow(color: string, radius: number): THREE.Sprite {
   const tex = new THREE.CanvasTexture(canvas);
   const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(radius * 5, radius * 5, 1);
+  sprite.scale.set(radius * 3, radius * 3, 1);
   return sprite;
 }
 
@@ -585,11 +585,11 @@ export default function ConnectionGraph() {
         nodeLabel={getNodeLabel}
         nodeThreeObjectExtend={false}
         linkColor={(link: any) => {
-          if (!focusedNode) return link.type === "custodied_by" ? "#ffd86644" : "#4dc9f644";
-          return highlightLinks.has(link) ? (link.type === "custodied_by" ? "#ffd866" : "#4dc9f6") : "#08081a";
+          if (!focusedNode) return link.type === "custodied_by" ? "#ffd866aa" : "#4dc9f6aa";
+          return highlightLinks.has(link) ? (link.type === "custodied_by" ? "#ffd866" : "#4dc9f6") : "#0a0a2a";
         }}
-        linkWidth={(link: any) => highlightLinks.has(link) ? 2 : 0.3}
-        linkOpacity={0.3}
+        linkWidth={(link: any) => highlightLinks.has(link) ? 2.5 : 0.8}
+        linkOpacity={0.7}
         linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 4 : 0}
         linkDirectionalParticleSpeed={0.003}
         linkDirectionalParticleWidth={(link: any) => highlightLinks.has(link) ? 3 : 1}
