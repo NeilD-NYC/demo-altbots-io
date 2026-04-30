@@ -153,7 +153,7 @@ const KPIShell = ({
   accent?: boolean;
   children: React.ReactNode;
 }) => (
-  <div className="bg-card border border-border rounded-lg p-5 flex flex-col gap-3 min-h-[170px] hover:border-primary/30 transition-colors">
+  <div className="bg-card border border-border rounded-lg p-5 flex flex-col gap-3 hover:border-primary/30 transition-colors">
     <div className="flex items-center gap-2.5">
       <div className="p-2 rounded-md bg-secondary">
         <Icon className={`h-4 w-4 ${accent ? "text-destructive" : "text-primary"}`} />
