@@ -1,6 +1,7 @@
 import { useRef, useCallback, useState, useEffect } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
+import { Search, X } from "lucide-react";
 
 const graphData = {
   nodes: [
@@ -133,6 +134,8 @@ export default function ConnectionGraph() {
   const [focusedNode, setFocusedNode] = useState<any>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -172,6 +175,18 @@ export default function ConnectionGraph() {
     setHighlightLinks(newLinks);
     setFocusedNode(node);
   }, []);
+
+  const selectNodeFromSearch = useCallback((nodeData: any) => {
+    setSearchQuery(nodeData.name);
+    setSearchOpen(false);
+    const fg = fgRef.current;
+    if (!fg) return;
+    const liveData = fg.graphData();
+    const liveNode = liveData.nodes.find((n: any) => n.id === nodeData.id);
+    if (liveNode) {
+      handleNodeClick(liveNode);
+    }
+  }, [handleNodeClick]);
 
   const handleBackgroundClick = useCallback(() => {
     setFocusedNode(null);
@@ -269,6 +284,61 @@ export default function ConnectionGraph() {
         ))}
         <div style={{ borderTop: "1px solid #2a2a3a", marginTop: 8, paddingTop: 8, color: "#666", fontSize: 11 }}>
           Click any node to focus
+        </div>
+        <div style={{ borderTop: "1px solid #2a2a3a", marginTop: 8, paddingTop: 8, position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#0d0f1a", border: "1px solid #2a2a3a", borderRadius: 6, padding: "4px 8px" }}>
+            <Search size={14} color="#666" />
+            <input
+              type="text"
+              placeholder="Search nodes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setSearchOpen(true)}
+              style={{
+                background: "transparent", border: "none", outline: "none",
+                color: "#fff", fontSize: 12, width: "100%", fontFamily: "Inter,sans-serif"
+              }}
+            />
+            {searchQuery && (
+              <button onClick={() => { setSearchQuery(""); setSearchOpen(false); handleBackgroundClick(); }}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+                <X size={14} color="#666" />
+              </button>
+            )}
+          </div>
+          {searchOpen && searchQuery.length > 0 && (
+            <div style={{
+              position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4,
+              background: "rgba(8,8,20,0.96)", border: "1px solid #2a2a3a", borderRadius: 6,
+              maxHeight: 200, overflowY: "auto", zIndex: 20
+            }}>
+              {graphData.nodes
+                .filter(n => n.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .slice(0, 15)
+                .map(node => {
+                  const color = (node as any).flag ? FLAG_COLORS[(node as any).flag] : TYPE_COLORS[node.type];
+                  const typeLabel = node.type === "fund_manager" ? "●" : node.type === "holding" ? "■" : "◆";
+                  return (
+                    <div
+                      key={node.id}
+                      onClick={() => selectNodeFromSearch(node)}
+                      style={{
+                        padding: "6px 10px", cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
+                        fontSize: 12, color: "#ccc", borderBottom: "1px solid #1a1a2a",
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#1a1a2e"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
+                    >
+                      <span style={{ color, fontSize: 14 }}>{typeLabel}</span>
+                      <span>{node.name}</span>
+                    </div>
+                  );
+                })}
+              {graphData.nodes.filter(n => n.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                <div style={{ padding: "8px 10px", color: "#555", fontSize: 12 }}>No results</div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
