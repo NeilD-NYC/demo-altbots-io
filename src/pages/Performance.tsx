@@ -1191,15 +1191,15 @@ export default function Performance() {
         </TabsList>
         <TabsContent value="positions"><PositionsTabWrapper /></TabsContent>
         <TabsContent value="exposure"><ExposureTab /></TabsContent>
-
-function PositionsTabWrapper() {
-  const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08);
-  return <PositionsTab liveValues={liveValues} isLive={isLive} toggleLive={toggleLive} />;
-}
         <TabsContent value="correlation"><CorrelationTab /></TabsContent>
         <TabsContent value="risk"><RiskTab /></TabsContent>
         <TabsContent value="stress"><StressScenariosTab /></TabsContent>
       </Tabs>
     </div>
   );
+}
+
+function PositionsTabWrapper() {
+  const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08);
+  return <PositionsTab liveValues={liveValues} isLive={isLive} toggleLive={toggleLive} />;
 }
