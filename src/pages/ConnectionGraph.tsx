@@ -181,8 +181,8 @@ export default function ConnectionGraph() {
     setSearchOpen(false);
     const fg = fgRef.current;
     if (!fg) return;
-    const liveData = fg.graphData();
-    const liveNode = liveData.nodes.find((n: any) => n.id === nodeData.id);
+    const liveData = typeof fg.graphData === 'function' ? fg.graphData() : fg.graphData;
+    const liveNode = liveData?.nodes?.find((n: any) => n.id === nodeData.id);
     if (liveNode) {
       handleNodeClick(liveNode);
     }
