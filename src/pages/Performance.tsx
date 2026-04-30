@@ -31,12 +31,12 @@ function PositionsTab() {
   return (
     <div className="space-y-6">
       {/* KPI cards */}
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Card 1 */}
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Family Office AUM</p>
-            <p className="text-xl font-bold text-foreground">$718M</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground">$718M</p>
             <span className="text-xs flex items-center gap-1 text-[#22C55E]">
               <ArrowUp className="h-3 w-3" />+$8.4M MTD (+1.2%)
             </span>
@@ -46,7 +46,7 @@ function PositionsTab() {
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Hedge Fund Sleeve</p>
-            <p className="text-xl font-bold text-foreground">$618M</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground">$618M</p>
             <span className="text-xs flex items-center gap-1 text-[#22C55E]">
               <ArrowUp className="h-3 w-3" />86.1% of portfolio | +$11.9M MTD
             </span>
@@ -56,7 +56,7 @@ function PositionsTab() {
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Liquid Assets (Cash & Equivalents)</p>
-            <p className="text-xl font-bold text-foreground">$31M</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground">$31M</p>
             <span className="text-xs flex items-center gap-1 text-[#EF4444]">
               4.3% of NAV — below 5% threshold
             </span>
@@ -66,7 +66,7 @@ function PositionsTab() {
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Illiquid & Alternatives</p>
-            <p className="text-xl font-bold text-foreground">$100M</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground">$100M</p>
             <span className="text-xs text-muted-foreground">13.9% of portfolio</span>
           </CardContent>
         </Card>
@@ -74,7 +74,7 @@ function PositionsTab() {
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardContent className="p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Avg Manager Risk Score</p>
-            <p className="text-xl font-bold text-foreground">38.1 / 100</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground">38.1 / 100</p>
             <span className="text-xs flex items-center gap-1 text-[#F59E0B]">
               <ArrowUp className="h-3 w-3" />+2.1 pts vs prior month
             </span>
@@ -685,7 +685,7 @@ function AssetClassAllocationChart() {
       <CardContent className="space-y-3">
         {assetClassData.map((d) => (
           <div key={d.name} className="flex items-center gap-3 text-xs">
-            <span className="w-[180px] text-foreground shrink-0 truncate">{d.name}</span>
+            <span className="w-[100px] sm:w-[180px] text-foreground shrink-0 truncate text-[10px] sm:text-xs">{d.name}</span>
             <div className="flex-1 h-6 bg-[#0D1117] rounded overflow-hidden relative">
               <div
                 className="h-full rounded flex items-center justify-end pr-2"
@@ -1052,14 +1052,14 @@ function StressScenariosTab() {
 
 export default function Performance() {
   return (
-    <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
+    <div className="p-3 sm:p-6 space-y-4 bg-[#0D1117] min-h-full">
       <Tabs defaultValue="positions" className="w-full">
-        <TabsList className="bg-[#161B22] border border-[#30363D]">
-          <TabsTrigger value="positions" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">HOLDINGS OVERVIEW</TabsTrigger>
-          <TabsTrigger value="exposure" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">EXPOSURE</TabsTrigger>
-          <TabsTrigger value="correlation" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">CORRELATION</TabsTrigger>
-          <TabsTrigger value="risk" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">RISK METRICS</TabsTrigger>
-          <TabsTrigger value="stress" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">STRESS SCENARIOS</TabsTrigger>
+        <TabsList className="bg-[#161B22] border border-[#30363D] flex flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="positions" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">HOLDINGS</TabsTrigger>
+          <TabsTrigger value="exposure" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">EXPOSURE</TabsTrigger>
+          <TabsTrigger value="correlation" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">CORREL</TabsTrigger>
+          <TabsTrigger value="risk" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">RISK</TabsTrigger>
+          <TabsTrigger value="stress" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">STRESS</TabsTrigger>
         </TabsList>
         <TabsContent value="positions"><PositionsTab /></TabsContent>
         <TabsContent value="exposure"><ExposureTab /></TabsContent>
