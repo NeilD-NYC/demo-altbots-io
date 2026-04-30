@@ -9,22 +9,22 @@ import {
 /* ═══════════ TAB 1: CASH & BALANCES ═══════════ */
 
 const cashKpis = [
-  { label: "Total Cash & Equivalents", value: "$2.14B", color: "#C9A84C" },
-  { label: "Money Market Holdings", value: "$1.31B", sub: "61% of cash", color: "#3B82F6" },
-  { label: "Uninvested Cash", value: "$830M", color: "#F59E0B" },
+  { label: "Total Cash & Equivalents", value: "$31.2M", color: "#C9A84C" },
+  { label: "Money Market Holdings", value: "$19.0M", sub: "61% of cash", color: "#3B82F6" },
+  { label: "Uninvested Cash", value: "$12.2M", color: "#F59E0B" },
   { label: "Weighted Cash Yield", value: "5.12%", sub: "annualized", color: "#22C55E" },
-  { label: "Cash as % of Total NAV", value: "8.1%", color: "#6B7280" },
+  { label: "Cash as % of Total NAV", value: "4.3%", color: "#F59E0B" },
 ];
 
 const cashByManager = [
-  { name: "Tundra Macro", value: 770, status: "green" },
-  { name: "Arcturus Capital", value: 504, status: "green" },
-  { name: "Northgate Event", value: 396, status: "green" },
-  { name: "Solaris Private Credit", value: 162, status: "green" },
-  { name: "Ironwood Systematic", value: 142, status: "amber" },
-  { name: "Vega Special Sits", value: 77, status: "red" },
-  { name: "Meridian Capital", value: 63, status: "amber" },
-  { name: "Helix Credit", value: 28, status: "red" },
+  { name: "Tundra Macro", value: 11.2, status: "green" },
+  { name: "Arcturus Capital", value: 7.3, status: "green" },
+  { name: "Northgate Event", value: 5.8, status: "green" },
+  { name: "Solaris Private Credit", value: 2.4, status: "green" },
+  { name: "Ironwood Systematic", value: 2.1, status: "amber" },
+  { name: "Vega Special Sits", value: 1.1, status: "red" },
+  { name: "Meridian Capital", value: 0.9, status: "amber" },
+  { name: "Helix Credit", value: 0.4, status: "red" },
 ];
 
 const cashComposition = [
@@ -35,10 +35,10 @@ const cashComposition = [
 ];
 
 const mmfTable = [
-  { fund: "Fidelity Government MMF", provider: "Fidelity", balance: 412, yield7d: "5.18%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "Vanguard Federal MMF", provider: "Vanguard", balance: 338, yield7d: "5.09%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "BlackRock Liquid Envir", provider: "BlackRock", balance: 289, yield7d: "5.21%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
-  { fund: "JPM Prime MMF", provider: "JPMorgan", balance: 271, yield7d: "5.31%", maturity: "7-day", rating: "AA+", liq: "Weekly" },
+  { fund: "Fidelity Government MMF", provider: "Fidelity", balance: 6.0, yield7d: "5.18%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "Vanguard Federal MMF", provider: "Vanguard", balance: 4.9, yield7d: "5.09%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "BlackRock Liquid Envir", provider: "BlackRock", balance: 4.2, yield7d: "5.21%", maturity: "Overnight", rating: "AAA", liq: "Daily" },
+  { fund: "JPM Prime MMF", provider: "JPMorgan", balance: 3.9, yield7d: "5.31%", maturity: "7-day", rating: "AA+", liq: "Weekly" },
 ];
 
 function barColor(s: string) { return s === "red" ? "#EF4444" : s === "amber" ? "#F59E0B" : "#22C55E"; }
@@ -65,8 +65,8 @@ function CashTab() {
               <BarChart data={cashByManager} layout="vertical" margin={{ left: 110 }}>
                 <XAxis type="number" tick={{ fill: "#8b949e", fontSize: 11 }} />
                 <YAxis type="category" dataKey="name" tick={{ fill: "#8b949e", fontSize: 10 }} width={110} />
-                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v}M`} />
-                <ReferenceLine x={100} stroke="#EF4444" strokeDasharray="4 4" label={{ value: "Min Cash Target $100M", fill: "#EF4444", fontSize: 9, position: "insideTopRight" }} />
+                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
+                <ReferenceLine x={1.5} stroke="#EF4444" strokeDasharray="4 4" label={{ value: "Min Cash Target $1.5M", fill: "#EF4444", fontSize: 9, position: "insideTopRight" }} />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                   {cashByManager.map(d => <Cell key={d.name} fill={barColor(d.status)} />)}
                 </Bar>
@@ -100,7 +100,7 @@ function CashTab() {
                 <tr key={r.fund} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
                   <td className="px-4 py-2 text-foreground font-medium">{r.fund}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.provider}</td>
-                  <td className="px-4 py-2 text-foreground">${r.balance}M</td>
+                  <td className="px-4 py-2 text-foreground">${r.balance.toFixed(1)}M</td>
                   <td className="px-4 py-2 text-[#22C55E]">{r.yield7d}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.maturity}</td>
                   <td className="px-4 py-2 text-foreground">{r.rating}</td>
@@ -108,7 +108,7 @@ function CashTab() {
                 </tr>
               ))}
               <tr className="border-t border-[#C9A84C]/30 font-semibold text-[#C9A84C]">
-                <td className="px-4 py-2">Total</td><td /><td className="px-4 py-2">$1,310M</td><td className="px-4 py-2">Avg 5.20%</td><td /><td /><td />
+                <td className="px-4 py-2">Total</td><td /><td className="px-4 py-2">$19.0M</td><td className="px-4 py-2">Avg 5.20%</td><td /><td /><td />
               </tr>
             </tbody>
           </table>
@@ -121,20 +121,20 @@ function CashTab() {
 /* ═══════════ TAB 2: BUYING POWER ═══════════ */
 
 const bpKpis = [
-  { label: "Total Available Buying Power", value: "$4.83B", color: "#C9A84C" },
-  { label: "Margin Capacity Remaining", value: "$2.71B", color: "#C9A84C" },
-  { label: "Credit Facility Undrawn", value: "$1.50B", color: "#3B82F6" },
+  { label: "Total Available Buying Power", value: "$48.4M", color: "#C9A84C" },
+  { label: "Margin Capacity Remaining", value: "$27.1M", color: "#C9A84C" },
+  { label: "Credit Facility Undrawn", value: "$15.0M", color: "#3B82F6" },
   { label: "Leverage Ratio (Portfolio)", value: "1.34x", color: "#F59E0B" },
 ];
 
 const waterfallData = [
-  { name: "Starting NAV", value: 26500, total: 26500, fill: "#C9A84C" },
-  { name: "Less: Illiquid", value: -4200, total: 22300, fill: "#EF4444" },
-  { name: "Less: Locked Capital", value: -2800, total: 19500, fill: "#EF4444" },
-  { name: "Less: Margin Posted", value: -1600, total: 17900, fill: "#EF4444" },
-  { name: "Plus: Credit Facility", value: 1500, total: 19400, fill: "#22C55E" },
-  { name: "Plus: Undrawn Commits", value: 800, total: 20200, fill: "#22C55E" },
-  { name: "Net Buying Power", value: 4830, total: 4830, fill: "#C9A84C" },
+  { name: "Starting NAV", value: 718, total: 718, fill: "#C9A84C" },
+  { name: "Less: Illiquid", value: -100, total: 618, fill: "#EF4444" },
+  { name: "Less: Locked Capital", value: -42, total: 576, fill: "#EF4444" },
+  { name: "Less: Margin Posted", value: -24, total: 552, fill: "#EF4444" },
+  { name: "Plus: Credit Facility", value: 15, total: 567, fill: "#22C55E" },
+  { name: "Plus: Undrawn Commits", value: 8, total: 575, fill: "#22C55E" },
+  { name: "Net Buying Power", value: 48.4, total: 48.4, fill: "#C9A84C" },
 ];
 
 // waterfall needs base + visible
@@ -159,16 +159,15 @@ const marginByMgr = [
 
 function genBPTimeline() {
   const data: { day: string; bp: number; deployed: number }[] = [];
-  let bp = 4800, dep = 21700;
+  let bp = 48, dep = 670;
   for (let i = 0; i < 90; i++) {
     const d = new Date(2026, 0, 8 + i);
     const label = `${d.getMonth() + 1}/${d.getDate()}`;
-    const noise = (Math.random() - 0.5) * 150;
-    // dip event around day 47 (late Feb)
-    const dip = (i >= 45 && i <= 52) ? -600 + (i - 45) * 80 : 0;
-    bp = Math.max(4200, Math.min(5400, bp + noise + dip));
-    dep = 26500 - bp - 1500 + (Math.random() - 0.5) * 100;
-    data.push({ day: label, bp: +bp.toFixed(0), deployed: +dep.toFixed(0) });
+    const noise = (Math.random() - 0.5) * 2;
+    const dip = (i >= 45 && i <= 52) ? -8 + (i - 45) * 1.1 : 0;
+    bp = Math.max(42, Math.min(55, bp + noise + dip));
+    dep = 718 - bp - 15 + (Math.random() - 0.5) * 1.5;
+    data.push({ day: label, bp: +bp.toFixed(1), deployed: +dep.toFixed(1) });
   }
   return data;
 }
@@ -194,8 +193,8 @@ function BuyingPowerTab() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={waterfallBars} margin={{ bottom: 30 }}>
                 <XAxis dataKey="name" tick={{ fill: "#8b949e", fontSize: 8 }} angle={-20} textAnchor="end" />
-                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} />
-                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${(v / 1000).toFixed(2)}B`} />
+                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
+                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
                 <Bar dataKey="base" stackId="a" fill="transparent" />
                 <Bar dataKey="bar" stackId="a" radius={[4, 4, 0, 0]}>
                   {waterfallBars.map(d => <Cell key={d.name} fill={d.fill} />)}
@@ -229,8 +228,8 @@ function BuyingPowerTab() {
             <AreaChart data={bpTimeline}>
               <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
               <XAxis dataKey="day" tick={{ fill: "#8b949e", fontSize: 9 }} interval={14} />
-              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} />
-              <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${(v / 1000).toFixed(2)}B`} />
+              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
+              <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
               <Area type="monotone" dataKey="bp" name="Available Buying Power" stroke="#C9A84C" fill="rgba(201,168,76,0.15)" strokeWidth={2} />
               <Area type="monotone" dataKey="deployed" name="Capital Deployed" stroke="#3B82F6" fill="rgba(59,130,246,0.1)" strokeWidth={2} />
               <Legend wrapperStyle={{ fontSize: 10 }} />
@@ -245,32 +244,32 @@ function BuyingPowerTab() {
 /* ═══════════ TAB 3: CAPITAL CALLS ═══════════ */
 
 const ccKpis = [
-  { label: "Pending Capital Calls", value: "$380M", badge: "4 Active", badgeColor: "#EF4444" },
-  { label: "Due Within 30 Days", value: "$215M", color: "#EF4444" },
-  { label: "Due 31-90 Days", value: "$165M", color: "#F59E0B" },
-  { label: "YTD Capital Called", value: "$1.24B", color: "#6B7280" },
+  { label: "Pending Capital Calls", value: "$3.8M", badge: "4 Active", badgeColor: "#EF4444" },
+  { label: "Due Within 30 Days", value: "$2.2M", color: "#EF4444" },
+  { label: "Due 31-90 Days", value: "$1.6M", color: "#F59E0B" },
+  { label: "YTD Capital Called", value: "$12.4M", color: "#6B7280" },
 ];
 
 const ccRows = [
-  { fund: "Helix Credit Opportunities", strat: "Distressed", amount: "$85M", due: "Apr 15 2026", status: "URGENT", days: 7, cash: "$28M", action: "SHORTFALL", urgent: true },
-  { fund: "Granite Point Capital", strat: "Distressed", amount: "$60M", due: "Apr 22 2026", status: "PENDING", days: 14, cash: "$142M", action: "FUNDED", urgent: false },
-  { fund: "Solaris Private Credit", strat: "Private Credit", amount: "$45M", due: "May 1 2026", status: "PENDING", days: 23, cash: "$162M", action: "FUNDED", urgent: false },
-  { fund: "Dune Credit Strategies", strat: "Distressed", amount: "$190M", due: "May 28 2026", status: "SCHEDULED", days: 50, cash: "$396M", action: "FUNDED", urgent: false },
+  { fund: "Helix Credit Opportunities", strat: "Distressed", amount: "$0.9M", due: "Apr 15 2026", status: "URGENT", days: 7, cash: "$0.4M", action: "SHORTFALL", urgent: true },
+  { fund: "Granite Point Capital", strat: "Distressed", amount: "$0.6M", due: "Apr 22 2026", status: "PENDING", days: 14, cash: "$2.1M", action: "FUNDED", urgent: false },
+  { fund: "Solaris Private Credit", strat: "Private Credit", amount: "$0.5M", due: "May 1 2026", status: "PENDING", days: 23, cash: "$2.4M", action: "FUNDED", urgent: false },
+  { fund: "Dune Credit Strategies", strat: "Distressed", amount: "$1.8M", due: "May 28 2026", status: "SCHEDULED", days: 50, cash: "$5.8M", action: "FUNDED", urgent: false },
 ];
 
 const ccHistory = [
-  { month: "May 25", calls: 180, distributions: 0 },
-  { month: "Jun 25", calls: 95, distributions: 120 },
-  { month: "Jul 25", calls: 220, distributions: 45 },
-  { month: "Aug 25", calls: 145, distributions: 0 },
-  { month: "Sep 25", calls: 310, distributions: 85 },
-  { month: "Oct 25", calls: 85, distributions: 200 },
-  { month: "Nov 25", calls: 195, distributions: 0 },
-  { month: "Dec 25", calls: 260, distributions: 140 },
-  { month: "Jan 26", calls: 110, distributions: 310 },
-  { month: "Feb 26", calls: 175, distributions: 65 },
-  { month: "Mar 26", calls: 340, distributions: 0 },
-  { month: "Apr 26", calls: 85, distributions: 180 },
+  { month: "May 25", calls: 1.8, distributions: 0 },
+  { month: "Jun 25", calls: 1.0, distributions: 1.2 },
+  { month: "Jul 25", calls: 2.2, distributions: 0.5 },
+  { month: "Aug 25", calls: 1.5, distributions: 0 },
+  { month: "Sep 25", calls: 3.1, distributions: 0.9 },
+  { month: "Oct 25", calls: 0.9, distributions: 2.0 },
+  { month: "Nov 25", calls: 2.0, distributions: 0 },
+  { month: "Dec 25", calls: 2.6, distributions: 1.4 },
+  { month: "Jan 26", calls: 1.1, distributions: 3.1 },
+  { month: "Feb 26", calls: 1.8, distributions: 0.7 },
+  { month: "Mar 26", calls: 3.4, distributions: 0 },
+  { month: "Apr 26", calls: 0.9, distributions: 1.8 },
 ].map(d => ({ ...d, net: d.distributions - d.calls }));
 
 function statusBadge(s: string) {
@@ -330,7 +329,7 @@ function CapitalCallsTab() {
             <ComposedChart data={ccHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
               <XAxis dataKey="month" tick={{ fill: "#8b949e", fontSize: 10 }} />
-              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+              <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
               <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
               <Bar dataKey="calls" name="Calls" fill="#EF4444" radius={[2, 2, 0, 0]} />
               <Bar dataKey="distributions" name="Distributions" fill="#22C55E" radius={[2, 2, 0, 0]} />
@@ -338,7 +337,7 @@ function CapitalCallsTab() {
               <Legend wrapperStyle={{ fontSize: 10 }} />
             </ComposedChart>
           </ResponsiveContainer>
-          <p className="text-[10px] text-muted-foreground mt-2 text-center">YTD Calls: $1,240M | YTD Distributions: $1,145M | Net: -$95M</p>
+          <p className="text-[10px] text-muted-foreground mt-2 text-center">YTD Calls: $12.4M | YTD Distributions: $11.5M | Net: -$0.9M</p>
         </CardContent>
       </Card>
     </div>
@@ -348,47 +347,47 @@ function CapitalCallsTab() {
 /* ═══════════ TAB 4: PE/VC PACING ═══════════ */
 
 const peKpis = [
-  { label: "Total Illiquid Commitments", value: "$6.8B", color: "#C9A84C" },
-  { label: "Capital Called to Date", value: "$4.2B", sub: "62%", color: "#C9A84C" },
-  { label: "Remaining Unfunded", value: "$2.6B", color: "#F59E0B" },
-  { label: "Estimated NAV (Illiquid)", value: "$5.1B", sub: "TVPI 1.21x", color: "#22C55E" },
-  { label: "Target Illiquid Alloc", value: "20% | Actual 19.2%", color: "#22C55E" },
+  { label: "Total Illiquid Commitments", value: "$68.5M", color: "#C9A84C" },
+  { label: "Capital Called to Date", value: "$42.1M", sub: "61%", color: "#C9A84C" },
+  { label: "Remaining Unfunded", value: "$26.4M", color: "#F59E0B" },
+  { label: "Estimated NAV (Illiquid)", value: "$51.2M", sub: "TVPI 1.22x", color: "#22C55E" },
+  { label: "Target Illiquid Alloc", value: "10% | Actual 9.6%", color: "#22C55E" },
 ];
 
 const vintageData = [
-  { year: "2019", called: 850, uncalled: 50, tvpi: 1.61 },
-  { year: "2020", called: 720, uncalled: 80, tvpi: 1.43 },
-  { year: "2021", called: 1100, uncalled: 100, tvpi: 1.28 },
-  { year: "2022", called: 980, uncalled: 320, tvpi: 1.14 },
-  { year: "2023", called: 620, uncalled: 480, tvpi: 1.08 },
-  { year: "2024", called: 410, uncalled: 590, tvpi: 1.02 },
-  { year: "2025", called: 120, uncalled: 980, tvpi: 1.00 },
+  { year: "2019", called: 9.2, uncalled: 0.1, tvpi: 1.61 },
+  { year: "2020", called: 6.8, uncalled: 0.7, tvpi: 1.43 },
+  { year: "2021", called: 8.4, uncalled: 1.6, tvpi: 1.28 },
+  { year: "2022", called: 5.4, uncalled: 1.8, tvpi: 1.14 },
+  { year: "2023", called: 4.8, uncalled: 2.6, tvpi: 1.08 },
+  { year: "2024", called: 3.4, uncalled: 3.3, tvpi: 1.02 },
+  { year: "2025", called: 2.4, uncalled: 8.4, tvpi: 1.00 },
 ];
 
 const pacingData = [
-  { q: "Q2 26", base: 165, bear: 220, bull: 110 },
-  { q: "Q3 26", base: 180, bear: 245, bull: 120 },
-  { q: "Q4 26", base: 195, bear: 260, bull: 135 },
-  { q: "Q1 27", base: 210, bear: 280, bull: 145 },
-  { q: "Q2 27", base: 185, bear: 255, bull: 130 },
-  { q: "Q3 27", base: 175, bear: 240, bull: 120 },
-  { q: "Q4 27", base: 160, bear: 215, bull: 110 },
-  { q: "Q1 28", base: 145, bear: 190, bull: 100 },
-  { q: "Q2 28", base: 130, bear: 170, bull: 90 },
-  { q: "Q3 28", base: 115, bear: 145, bull: 80 },
-  { q: "Q4 28", base: 100, bear: 120, bull: 75 },
-  { q: "Q1 29", base: 85, bear: 95, bull: 65 },
+  { q: "Q2 26", base: 1.0, bear: 1.2, bull: 0.8 },
+  { q: "Q3 26", base: 1.5, bear: 1.8, bull: 1.1 },
+  { q: "Q4 26", base: 2.0, bear: 2.4, bull: 1.5 },
+  { q: "Q1 27", base: 2.3, bear: 2.8, bull: 1.7 },
+  { q: "Q2 27", base: 2.6, bear: 3.2, bull: 1.9 },
+  { q: "Q3 27", base: 2.5, bear: 3.4, bull: 1.8 },
+  { q: "Q4 27", base: 2.2, bear: 3.1, bull: 1.6 },
+  { q: "Q1 28", base: 1.9, bear: 2.6, bull: 1.3 },
+  { q: "Q2 28", base: 1.5, bear: 2.1, bull: 1.0 },
+  { q: "Q3 28", base: 1.2, bear: 1.7, bull: 0.8 },
+  { q: "Q4 28", base: 0.9, bear: 1.2, bull: 0.6 },
+  { q: "Q1 29", base: 0.6, bear: 0.8, bull: 0.4 },
 ];
 
 const fundDetail = [
-  { fund: "Arcturus PE Fund III", strat: "Buyout", vintage: 2019, commit: 400, called: 392, uncalled: 8, nav: 631, tvpi: 1.61, dpi: 0.82, moic: 1.61, irr: 18.4, status: "Harvesting" },
-  { fund: "Meridian Ventures II", strat: "Venture", vintage: 2020, commit: 250, called: 228, uncalled: 22, nav: 326, tvpi: 1.43, dpi: 0.41, moic: 1.43, irr: 14.2, status: "Active" },
-  { fund: "Ironwood Growth IV", strat: "Growth", vintage: 2021, commit: 500, called: 451, uncalled: 49, nav: 577, tvpi: 1.28, dpi: 0.28, moic: 1.28, irr: 11.7, status: "Active" },
-  { fund: "Northgate Opps I", strat: "Special Sits", vintage: 2022, commit: 350, called: 298, uncalled: 52, nav: 340, tvpi: 1.14, dpi: 0.09, moic: 1.14, irr: 9.3, status: "Investing" },
-  { fund: "Solaris Credit Fund", strat: "Private Credit", vintage: 2022, commit: 200, called: 156, uncalled: 44, nav: 178, tvpi: 1.14, dpi: 0.31, moic: 1.14, irr: 8.8, status: "Active" },
-  { fund: "Helix Distressed III", strat: "Distressed", vintage: 2023, commit: 300, called: 198, uncalled: 102, nav: 214, tvpi: 1.08, dpi: 0.00, moic: 1.08, irr: 6.1, status: "Investing" },
-  { fund: "Vega Special II", strat: "Special Sits", vintage: 2024, commit: 280, called: 142, uncalled: 138, nav: 145, tvpi: 1.02, dpi: 0.00, moic: 1.02, irr: 2.4, status: "Early" },
-  { fund: "Tundra Real Assets", strat: "Real Assets", vintage: 2025, commit: 450, called: 98, uncalled: 352, nav: 100, tvpi: 1.00, dpi: 0.00, moic: 1.00, irr: 0.0, status: "Funding" },
+  { fund: "Arcturus PE Fund III", strat: "Buyout", vintage: 2019, commit: 9.5, called: 9.3, uncalled: 0.2, nav: 15.3, tvpi: 1.61, dpi: 0.82, moic: 1.61, irr: 18.4, status: "Harvesting" },
+  { fund: "Meridian Ventures II", strat: "Venture", vintage: 2020, commit: 7.5, called: 6.8, uncalled: 0.7, nav: 10.7, tvpi: 1.43, dpi: 0.41, moic: 1.43, irr: 14.2, status: "Active" },
+  { fund: "Ironwood Growth IV", strat: "Growth", vintage: 2021, commit: 9.0, called: 8.1, uncalled: 0.9, nav: 11.5, tvpi: 1.28, dpi: 0.28, moic: 1.28, irr: 11.7, status: "Active" },
+  { fund: "Northgate Opps I", strat: "Special Sits", vintage: 2022, commit: 8.5, called: 7.2, uncalled: 1.3, nav: 9.7, tvpi: 1.14, dpi: 0.09, moic: 1.14, irr: 9.3, status: "Investing" },
+  { fund: "Solaris Credit Fund", strat: "Private Credit", vintage: 2022, commit: 7.0, called: 5.5, uncalled: 1.5, nav: 8.0, tvpi: 1.14, dpi: 0.31, moic: 1.14, irr: 8.8, status: "Active" },
+  { fund: "Helix Distressed III", strat: "Distressed", vintage: 2023, commit: 8.5, called: 5.6, uncalled: 2.9, nav: 9.2, tvpi: 1.08, dpi: 0.00, moic: 1.08, irr: 6.1, status: "Investing" },
+  { fund: "Vega Special II", strat: "Special Sits", vintage: 2024, commit: 7.5, called: 4.0, uncalled: 3.5, nav: 7.7, tvpi: 1.02, dpi: 0.00, moic: 1.02, irr: 2.4, status: "Early" },
+  { fund: "Tundra Real Assets", strat: "Real Assets", vintage: 2025, commit: 11.5, called: 2.8, uncalled: 8.7, nav: 11.6, tvpi: 1.00, dpi: 0.00, moic: 1.00, irr: 0.0, status: "Funding" },
 ];
 
 function tvpiColor(v: number) { return v > 1.2 ? "text-[#22C55E]" : v >= 1.0 ? "text-[#F59E0B]" : "text-[#EF4444]"; }
@@ -417,7 +416,7 @@ function PEPacingTab() {
               <ComposedChart data={vintageData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
                 <XAxis dataKey="year" tick={{ fill: "#8b949e", fontSize: 11 }} />
-                <YAxis yAxisId="left" tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+                <YAxis yAxisId="left" tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} domain={[0, 12]} />
                 <YAxis yAxisId="right" orientation="right" tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `${v}x`} domain={[0.8, 1.8]} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
                 <Bar yAxisId="left" dataKey="called" name="Called" fill="#C9A84C" radius={[2, 2, 0, 0]} />
@@ -435,7 +434,7 @@ function PEPacingTab() {
               <AreaChart data={pacingData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
                 <XAxis dataKey="q" tick={{ fill: "#8b949e", fontSize: 9 }} />
-                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v.toFixed(1)}M`} domain={[0, 3.5]} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
                 <Area type="monotone" dataKey="bear" name="Bear Case" stroke="#EF4444" fill="rgba(239,68,68,0.05)" strokeDasharray="5 3" strokeWidth={1.5} />
                 <Area type="monotone" dataKey="base" name="Base Case" stroke="#C9A84C" fill="rgba(201,168,76,0.15)" strokeWidth={2} />
@@ -443,7 +442,7 @@ function PEPacingTab() {
                 <Legend wrapperStyle={{ fontSize: 10 }} />
               </AreaChart>
             </ResponsiveContainer>
-            <p className="text-[10px] text-muted-foreground italic mt-1">Peak call period Q3 2026 - Q2 2027</p>
+            <p className="text-[10px] text-muted-foreground italic mt-1">Peak Q2 2027 — Q3 2027</p>
           </CardContent>
         </Card>
       </div>
@@ -462,9 +461,9 @@ function PEPacingTab() {
                     <td className="px-3 py-2 text-muted-foreground">{r.strat}</td>
                     <td className="px-3 py-2 text-foreground">{r.vintage}</td>
                     <td className="px-3 py-2 text-foreground">${r.commit}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.called}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.uncalled}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.nav}M</td>
+                    <td className="px-3 py-2 text-foreground">${r.called.toFixed(1)}M</td>
+                    <td className="px-3 py-2 text-foreground">${r.uncalled.toFixed(1)}M</td>
+                    <td className="px-3 py-2 text-foreground">${r.nav.toFixed(1)}M</td>
                     <td className={`px-3 py-2 font-semibold ${tvpiColor(r.tvpi)}`}>{r.tvpi.toFixed(2)}x</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.dpi.toFixed(2)}x</td>
                     <td className={`px-3 py-2 font-semibold ${moicColor(r.moic)}`}>{r.moic.toFixed(2)}x</td>
@@ -485,8 +484,8 @@ function PEPacingTab() {
 
 const stressKpis = [
   { label: "Liquidity Coverage Ratio", value: "2.14x", sub: "Adequate", color: "#22C55E" },
-  { label: "Stressed Liquidity Gap (30-day)", value: "+$842M surplus", color: "#22C55E" },
-  { label: "Gate Risk Exposure", value: "$1.8B", sub: "3 managers with redemption gates", color: "#F59E0B" },
+  { label: "Stressed Liquidity Gap (30-day)", value: "+$8.4M surplus", color: "#22C55E" },
+  { label: "Gate Risk Exposure", value: "$18M", sub: "3 managers with redemption gates", color: "#F59E0B" },
 ];
 
 const liquidityLadder = [
@@ -501,18 +500,18 @@ const liquidityLadder = [
 ];
 
 const stressWaterfall = [
-  { name: "Available Liquidity", value: 4830, base: 0, bar: 4830, fill: "#C9A84C" },
-  { name: "Capital Calls", value: -380, base: 4450, bar: 380, fill: "#EF4444" },
-  { name: "Redemption Gates", value: -1800, base: 2650, bar: 1800, fill: "#EF4444" },
-  { name: "Margin Call (2σ)", value: -920, base: 1730, bar: 920, fill: "#EF4444" },
-  { name: "Operational Reserve", value: -250, base: 1480, bar: 250, fill: "#EF4444" },
-  { name: "Net Stressed Liquidity", value: 1480, base: 0, bar: 1480, fill: "#22C55E" },
+  { name: "Available Liquidity", value: 48.4, base: 0, bar: 48.4, fill: "#C9A84C" },
+  { name: "Capital Calls", value: -3.8, base: 44.6, bar: 3.8, fill: "#EF4444" },
+  { name: "Redemption Gates", value: -18, base: 26.6, bar: 18, fill: "#EF4444" },
+  { name: "Margin Call (2σ)", value: -9.2, base: 17.4, bar: 9.2, fill: "#EF4444" },
+  { name: "Operational Reserve", value: -2.5, base: 14.9, bar: 2.5, fill: "#EF4444" },
+  { name: "Net Stressed Liquidity", value: 14.9, base: 0, bar: 14.9, fill: "#22C55E" },
 ];
 
 const gateRows = [
-  { mgr: "Helix Credit Opportunities", gate: "15% quarterly", aum: "$2.3B", trigger: "$345M redemption", notice: "90 days", risk: "HIGH" },
-  { mgr: "Solaris Private Credit", gate: "10% quarterly", aum: "$900M", trigger: "$90M redemption", notice: "60 days", risk: "MEDIUM" },
-  { mgr: "Granite Point Capital", gate: "20% quarterly", aum: "$1.3B", trigger: "$260M redemption", notice: "90 days", risk: "MEDIUM" },
+  { mgr: "Helix Credit Opportunities", gate: "15% quarterly", aum: "$54M", trigger: "$8.1M redemption", notice: "90 days", risk: "HIGH" },
+  { mgr: "Solaris Private Credit", gate: "10% quarterly", aum: "$21M", trigger: "$2.1M redemption", notice: "60 days", risk: "MEDIUM" },
+  { mgr: "Granite Point Capital", gate: "20% quarterly", aum: "$26M", trigger: "$5.2M redemption", notice: "90 days", risk: "MEDIUM" },
 ];
 
 function LiquidityStressTab() {
@@ -555,8 +554,8 @@ function LiquidityStressTab() {
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={stressWaterfall} margin={{ bottom: 30 }}>
                 <XAxis dataKey="name" tick={{ fill: "#8b949e", fontSize: 8 }} angle={-15} textAnchor="end" />
-                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} />
-                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${(v / 1000).toFixed(2)}B`} />
+                <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
                 <Bar dataKey="base" stackId="a" fill="transparent" />
                 <Bar dataKey="bar" stackId="a" radius={[4, 4, 0, 0]}>
                   {stressWaterfall.map(d => <Cell key={d.name} fill={d.fill} />)}
@@ -594,7 +593,7 @@ function LiquidityStressTab() {
         <CardContent className="py-3 px-6">
           <p className="text-xs text-[#F59E0B] flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-            <span><strong>Liquidity Advisory:</strong> Helix Credit gate risk combined with $85M capital call due Apr 15 creates a potential $113M funding gap. Recommend immediate review and standby credit facility activation.</span>
+            <span><strong>Liquidity Advisory:</strong> Helix Credit gate risk combined with $0.9M capital call due Apr 15 creates a potential $1.3M funding gap. Recommend immediate review and standby credit facility activation.</span>
           </p>
         </CardContent>
       </Card>
