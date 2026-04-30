@@ -461,9 +461,9 @@ function PEPacingTab() {
                     <td className="px-3 py-2 text-muted-foreground">{r.strat}</td>
                     <td className="px-3 py-2 text-foreground">{r.vintage}</td>
                     <td className="px-3 py-2 text-foreground">${r.commit}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.called}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.uncalled}M</td>
-                    <td className="px-3 py-2 text-foreground">${r.nav}M</td>
+                    <td className="px-3 py-2 text-foreground">${r.called.toFixed(1)}M</td>
+                    <td className="px-3 py-2 text-foreground">${r.uncalled.toFixed(1)}M</td>
+                    <td className="px-3 py-2 text-foreground">${r.nav.toFixed(1)}M</td>
                     <td className={`px-3 py-2 font-semibold ${tvpiColor(r.tvpi)}`}>{r.tvpi.toFixed(2)}x</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.dpi.toFixed(2)}x</td>
                     <td className={`px-3 py-2 font-semibold ${moicColor(r.moic)}`}>{r.moic.toFixed(2)}x</td>
