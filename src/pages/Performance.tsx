@@ -533,7 +533,7 @@ function ExposureTab() {
   ] as const;
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Sector donut */}
       <Card className="bg-[#161B22] border-[#30363D]">
         <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Sector Breakdown</CardTitle></CardHeader>
@@ -881,7 +881,7 @@ function RiskTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Drawdown */}
         <Card className="bg-[#161B22] border-[#30363D]">
           <CardHeader className="pb-2"><CardTitle className="text-sm text-[#C9A84C]">Drawdown from Peak — Portfolio vs Benchmarks</CardTitle></CardHeader>
