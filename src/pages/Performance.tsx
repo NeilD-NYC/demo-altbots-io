@@ -1200,7 +1200,7 @@ export default function Performance() {
 }
 
 function PositionsTabWrapper() {
-  const driftOverrides = useMemo(() => ({ "kpi_liquid": 0.03 }), []);
-  const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08, driftOverrides);
+  const keyConfigs = useMemo(() => ({ "kpi_liquid": { drift: 0.03 } }), []);
+  const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08, keyConfigs);
   return <PositionsTab liveValues={liveValues} isLive={isLive} toggleLive={toggleLive} />;
 }
