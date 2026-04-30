@@ -221,6 +221,25 @@ const AIAnalyst = () => {
         </div>
       </div>
 
+      {/* Input — always visible at top */}
+      <form onSubmit={handleSubmit} className="px-6 pb-4">
+        <div className="flex gap-2">
+          <input
+            className="flex-1 bg-secondary border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder={currentPlaceholder}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !input.trim()}
+            className="bg-primary text-primary-foreground rounded-lg px-4 py-3 hover:bg-primary/90 transition-colors disabled:opacity-40"
+          >
+            <Send className="h-4 w-4" />
+          </button>
+        </div>
+      </form>
+
       {/* ── Persona Selection Grid ──────────────────── */}
       {mode === "persona" && !activePersona && (
         <div className="flex-1 overflow-y-auto px-6 pb-6">
@@ -255,25 +274,6 @@ const AIAnalyst = () => {
               </button>
             </div>
           )}
-
-          {/* Input — top of chat */}
-          <form onSubmit={handleSubmit} className="px-6 pb-4">
-            <div className="flex gap-2">
-              <input
-                className="flex-1 bg-secondary border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder={currentPlaceholder}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-              />
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="bg-primary text-primary-foreground rounded-lg px-4 py-3 hover:bg-primary/90 transition-colors disabled:opacity-40"
-              >
-                <Send className="h-4 w-4" />
-              </button>
-            </div>
-          </form>
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 space-y-4 scrollbar-thin">
