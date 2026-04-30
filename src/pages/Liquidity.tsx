@@ -555,7 +555,7 @@ function LiquidityStressTab() {
               <BarChart data={stressWaterfall} margin={{ bottom: 30 }}>
                 <XAxis dataKey="name" tick={{ fill: "#8b949e", fontSize: 8 }} angle={-15} textAnchor="end" />
                 <YAxis tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} />
-                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${(v / 1000).toFixed(2)}B`} />
+                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
                 <Bar dataKey="base" stackId="a" fill="transparent" />
                 <Bar dataKey="bar" stackId="a" radius={[4, 4, 0, 0]}>
                   {stressWaterfall.map(d => <Cell key={d.name} fill={d.fill} />)}
@@ -593,7 +593,7 @@ function LiquidityStressTab() {
         <CardContent className="py-3 px-6">
           <p className="text-xs text-[#F59E0B] flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-            <span><strong>Liquidity Advisory:</strong> Helix Credit gate risk combined with $85M capital call due Apr 15 creates a potential $113M funding gap. Recommend immediate review and standby credit facility activation.</span>
+            <span><strong>Liquidity Advisory:</strong> Helix Credit gate risk combined with $0.9M capital call due Apr 15 creates a potential $1.3M funding gap. Recommend immediate review and standby credit facility activation.</span>
           </p>
         </CardContent>
       </Card>
