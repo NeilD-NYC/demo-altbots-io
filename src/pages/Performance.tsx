@@ -103,6 +103,8 @@ function buildInitialValues() {
   vals["kpi_aum"] = 718;
   vals["kpi_hf_mtd"] = 11.9;
   vals["kpi_liquid"] = 31;
+  vals["perf_today"] = 0.34;
+  vals["perf_mtd"] = 1.82;
   return vals;
 }
 
@@ -128,7 +130,8 @@ function PositionsTab({ liveValues, isLive, toggleLive }: { liveValues: Record<s
     pnlPct: liveValues[`mgr_pnlPct_${r.mgr}`] ?? r.pnlPct,
   })), [liveValues]);
 
-  const totalAum = liveValues["kpi_aum"] ?? 718;
+  const perfToday = liveValues["perf_today"] ?? 0.34;
+  const totalAum = 718 * (1 + perfToday / 100);
   const hfMtd = liveValues["kpi_hf_mtd"] ?? 11.9;
   const liquidAssets = liveValues["kpi_liquid"] ?? 31;
   const managerPnlSum = managerRows.reduce((s, r) => s + r.pnl, 0);
@@ -214,6 +217,9 @@ function PositionsTab({ liveValues, isLive, toggleLive }: { liveValues: Record<s
           </CardContent>
         </Card>
       </div>
+
+      {/* Portfolio Performance Card */}
+      <PortfolioPerformanceCard liveValues={liveValues} />
 
       {/* Manager table */}
       <Card className="bg-[#161B22] border-[#30363D]">
@@ -1200,7 +1206,11 @@ export default function Performance() {
 }
 
 function PositionsTabWrapper() {
-  const keyConfigs = useMemo(() => ({ "kpi_liquid": { drift: 0.03 } }), []);
+  const keyConfigs = useMemo(() => ({
+    "kpi_liquid": { drift: 0.03 },
+    "perf_today": { drift: 0.08, absolute: true, floor: -0.5, ceiling: 1.2, tickMin: 15000, tickMax: 30000 },
+    "perf_mtd": { drift: 0.04, absolute: true, floor: 0, ceiling: 4, tickMin: 20000, tickMax: 45000 },
+  }), []);
   const { liveValues, isLive, toggleLive } = useMarketSimulation(INITIAL_SIM_VALUES, 0.08, keyConfigs);
   return <PositionsTab liveValues={liveValues} isLive={isLive} toggleLive={toggleLive} />;
 }
