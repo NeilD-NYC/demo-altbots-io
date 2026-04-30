@@ -337,7 +337,7 @@ function CapitalCallsTab() {
               <Legend wrapperStyle={{ fontSize: 10 }} />
             </ComposedChart>
           </ResponsiveContainer>
-          <p className="text-[10px] text-muted-foreground mt-2 text-center">YTD Calls: $1,240M | YTD Distributions: $1,145M | Net: -$95M</p>
+          <p className="text-[10px] text-muted-foreground mt-2 text-center">YTD Calls: $12.4M | YTD Distributions: $11.5M | Net: -$0.9M</p>
         </CardContent>
       </Card>
     </div>
@@ -347,47 +347,47 @@ function CapitalCallsTab() {
 /* ═══════════ TAB 4: PE/VC PACING ═══════════ */
 
 const peKpis = [
-  { label: "Total Illiquid Commitments", value: "$6.8B", color: "#C9A84C" },
-  { label: "Capital Called to Date", value: "$4.2B", sub: "62%", color: "#C9A84C" },
-  { label: "Remaining Unfunded", value: "$2.6B", color: "#F59E0B" },
-  { label: "Estimated NAV (Illiquid)", value: "$5.1B", sub: "TVPI 1.21x", color: "#22C55E" },
-  { label: "Target Illiquid Alloc", value: "20% | Actual 19.2%", color: "#22C55E" },
+  { label: "Total Illiquid Commitments", value: "$68.5M", color: "#C9A84C" },
+  { label: "Capital Called to Date", value: "$42.1M", sub: "61%", color: "#C9A84C" },
+  { label: "Remaining Unfunded", value: "$26.4M", color: "#F59E0B" },
+  { label: "Estimated NAV (Illiquid)", value: "$51.2M", sub: "TVPI 1.22x", color: "#22C55E" },
+  { label: "Target Illiquid Alloc", value: "10% | Actual 9.6%", color: "#22C55E" },
 ];
 
 const vintageData = [
-  { year: "2019", called: 850, uncalled: 50, tvpi: 1.61 },
-  { year: "2020", called: 720, uncalled: 80, tvpi: 1.43 },
-  { year: "2021", called: 1100, uncalled: 100, tvpi: 1.28 },
-  { year: "2022", called: 980, uncalled: 320, tvpi: 1.14 },
-  { year: "2023", called: 620, uncalled: 480, tvpi: 1.08 },
-  { year: "2024", called: 410, uncalled: 590, tvpi: 1.02 },
-  { year: "2025", called: 120, uncalled: 980, tvpi: 1.00 },
+  { year: "2019", called: 9.2, uncalled: 0.1, tvpi: 1.61 },
+  { year: "2020", called: 6.8, uncalled: 0.7, tvpi: 1.43 },
+  { year: "2021", called: 8.4, uncalled: 1.6, tvpi: 1.28 },
+  { year: "2022", called: 5.4, uncalled: 1.8, tvpi: 1.14 },
+  { year: "2023", called: 4.8, uncalled: 2.6, tvpi: 1.08 },
+  { year: "2024", called: 3.4, uncalled: 3.3, tvpi: 1.02 },
+  { year: "2025", called: 2.4, uncalled: 8.4, tvpi: 1.00 },
 ];
 
 const pacingData = [
-  { q: "Q2 26", base: 165, bear: 220, bull: 110 },
-  { q: "Q3 26", base: 180, bear: 245, bull: 120 },
-  { q: "Q4 26", base: 195, bear: 260, bull: 135 },
-  { q: "Q1 27", base: 210, bear: 280, bull: 145 },
-  { q: "Q2 27", base: 185, bear: 255, bull: 130 },
-  { q: "Q3 27", base: 175, bear: 240, bull: 120 },
-  { q: "Q4 27", base: 160, bear: 215, bull: 110 },
-  { q: "Q1 28", base: 145, bear: 190, bull: 100 },
-  { q: "Q2 28", base: 130, bear: 170, bull: 90 },
-  { q: "Q3 28", base: 115, bear: 145, bull: 80 },
-  { q: "Q4 28", base: 100, bear: 120, bull: 75 },
-  { q: "Q1 29", base: 85, bear: 95, bull: 65 },
+  { q: "Q2 26", base: 1.0, bear: 1.2, bull: 0.8 },
+  { q: "Q3 26", base: 1.5, bear: 1.8, bull: 1.1 },
+  { q: "Q4 26", base: 2.0, bear: 2.4, bull: 1.5 },
+  { q: "Q1 27", base: 2.3, bear: 2.8, bull: 1.7 },
+  { q: "Q2 27", base: 2.6, bear: 3.2, bull: 1.9 },
+  { q: "Q3 27", base: 2.5, bear: 3.4, bull: 1.8 },
+  { q: "Q4 27", base: 2.2, bear: 3.1, bull: 1.6 },
+  { q: "Q1 28", base: 1.9, bear: 2.6, bull: 1.3 },
+  { q: "Q2 28", base: 1.5, bear: 2.1, bull: 1.0 },
+  { q: "Q3 28", base: 1.2, bear: 1.7, bull: 0.8 },
+  { q: "Q4 28", base: 0.9, bear: 1.2, bull: 0.6 },
+  { q: "Q1 29", base: 0.6, bear: 0.8, bull: 0.4 },
 ];
 
 const fundDetail = [
-  { fund: "Arcturus PE Fund III", strat: "Buyout", vintage: 2019, commit: 400, called: 392, uncalled: 8, nav: 631, tvpi: 1.61, dpi: 0.82, moic: 1.61, irr: 18.4, status: "Harvesting" },
-  { fund: "Meridian Ventures II", strat: "Venture", vintage: 2020, commit: 250, called: 228, uncalled: 22, nav: 326, tvpi: 1.43, dpi: 0.41, moic: 1.43, irr: 14.2, status: "Active" },
-  { fund: "Ironwood Growth IV", strat: "Growth", vintage: 2021, commit: 500, called: 451, uncalled: 49, nav: 577, tvpi: 1.28, dpi: 0.28, moic: 1.28, irr: 11.7, status: "Active" },
-  { fund: "Northgate Opps I", strat: "Special Sits", vintage: 2022, commit: 350, called: 298, uncalled: 52, nav: 340, tvpi: 1.14, dpi: 0.09, moic: 1.14, irr: 9.3, status: "Investing" },
-  { fund: "Solaris Credit Fund", strat: "Private Credit", vintage: 2022, commit: 200, called: 156, uncalled: 44, nav: 178, tvpi: 1.14, dpi: 0.31, moic: 1.14, irr: 8.8, status: "Active" },
-  { fund: "Helix Distressed III", strat: "Distressed", vintage: 2023, commit: 300, called: 198, uncalled: 102, nav: 214, tvpi: 1.08, dpi: 0.00, moic: 1.08, irr: 6.1, status: "Investing" },
-  { fund: "Vega Special II", strat: "Special Sits", vintage: 2024, commit: 280, called: 142, uncalled: 138, nav: 145, tvpi: 1.02, dpi: 0.00, moic: 1.02, irr: 2.4, status: "Early" },
-  { fund: "Tundra Real Assets", strat: "Real Assets", vintage: 2025, commit: 450, called: 98, uncalled: 352, nav: 100, tvpi: 1.00, dpi: 0.00, moic: 1.00, irr: 0.0, status: "Funding" },
+  { fund: "Arcturus PE Fund III", strat: "Buyout", vintage: 2019, commit: 9.5, called: 9.3, uncalled: 0.2, nav: 15.3, tvpi: 1.61, dpi: 0.82, moic: 1.61, irr: 18.4, status: "Harvesting" },
+  { fund: "Meridian Ventures II", strat: "Venture", vintage: 2020, commit: 7.5, called: 6.8, uncalled: 0.7, nav: 10.7, tvpi: 1.43, dpi: 0.41, moic: 1.43, irr: 14.2, status: "Active" },
+  { fund: "Ironwood Growth IV", strat: "Growth", vintage: 2021, commit: 9.0, called: 8.1, uncalled: 0.9, nav: 11.5, tvpi: 1.28, dpi: 0.28, moic: 1.28, irr: 11.7, status: "Active" },
+  { fund: "Northgate Opps I", strat: "Special Sits", vintage: 2022, commit: 8.5, called: 7.2, uncalled: 1.3, nav: 9.7, tvpi: 1.14, dpi: 0.09, moic: 1.14, irr: 9.3, status: "Investing" },
+  { fund: "Solaris Credit Fund", strat: "Private Credit", vintage: 2022, commit: 7.0, called: 5.5, uncalled: 1.5, nav: 8.0, tvpi: 1.14, dpi: 0.31, moic: 1.14, irr: 8.8, status: "Active" },
+  { fund: "Helix Distressed III", strat: "Distressed", vintage: 2023, commit: 8.5, called: 5.6, uncalled: 2.9, nav: 9.2, tvpi: 1.08, dpi: 0.00, moic: 1.08, irr: 6.1, status: "Investing" },
+  { fund: "Vega Special II", strat: "Special Sits", vintage: 2024, commit: 7.5, called: 4.0, uncalled: 3.5, nav: 7.7, tvpi: 1.02, dpi: 0.00, moic: 1.02, irr: 2.4, status: "Early" },
+  { fund: "Tundra Real Assets", strat: "Real Assets", vintage: 2025, commit: 11.5, called: 2.8, uncalled: 8.7, nav: 11.6, tvpi: 1.00, dpi: 0.00, moic: 1.00, irr: 0.0, status: "Funding" },
 ];
 
 function tvpiColor(v: number) { return v > 1.2 ? "text-[#22C55E]" : v >= 1.0 ? "text-[#F59E0B]" : "text-[#EF4444]"; }
