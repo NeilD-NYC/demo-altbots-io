@@ -23,12 +23,12 @@ const HealthGauge = ({ score }: { score: number }) => {
   const offset = circumference - (animated / 100) * circumference;
 
   return (
-    <div className="relative w-28 h-28">
+    <div className="relative w-[70px] h-[70px]">
       <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-        <circle cx="60" cy="60" r="54" fill="none" stroke="#30363D" strokeWidth="8" />
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#30363D" strokeWidth="6" />
         <circle
           cx="60" cy="60" r="54" fill="none"
-          stroke="url(#health-grad)" strokeWidth="8" strokeLinecap="round"
+          stroke="url(#health-grad)" strokeWidth="6" strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
         />
@@ -41,8 +41,8 @@ const HealthGauge = ({ score }: { score: number }) => {
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold text-warning">{animated}</span>
-        <span className="text-[9px] text-muted-foreground">/100</span>
+        <span className="text-lg font-bold text-warning">{animated}</span>
+        <span className="text-[7px] text-muted-foreground">/100</span>
       </div>
     </div>
   );
@@ -98,7 +98,7 @@ const PerformanceCard = () => {
   ];
 
   return (
-    <div className="bg-card border border-border rounded-lg p-5 flex flex-col hover:border-primary/30 transition-colors col-span-1 sm:col-span-2">
+    <div className="bg-card border border-border rounded-lg p-5 flex flex-col hover:border-primary/30 transition-colors">
       <div className="flex items-center gap-2.5 mb-1">
         <div className="p-2 rounded-md bg-secondary">
           <TrendingUp className="h-4 w-4 text-primary" />
@@ -153,7 +153,7 @@ const KPIShell = ({
   accent?: boolean;
   children: React.ReactNode;
 }) => (
-  <div className="bg-card border border-border rounded-lg p-5 flex flex-col gap-3 min-h-[170px] hover:border-primary/30 transition-colors">
+  <div className="bg-card border border-border rounded-lg p-5 flex flex-col gap-3 hover:border-primary/30 transition-colors">
     <div className="flex items-center gap-2.5">
       <div className="p-2 rounded-md bg-secondary">
         <Icon className={`h-4 w-4 ${accent ? "text-destructive" : "text-primary"}`} />
@@ -180,8 +180,8 @@ const PortfolioOverview = () => {
 
   return (
     <div className="p-8 space-y-8 max-w-[1400px] mx-auto">
-      {/* KPI Row — 5 cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_2fr_1fr_1fr] gap-4">
+      {/* KPI Row — 3 columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[22%_1fr_23%] gap-4">
         {/* Card 1 — Total AUM */}
         <KPIShell icon={DollarSign} label="Total AUM Under Monitoring">
           <div>
@@ -207,39 +207,50 @@ const PortfolioOverview = () => {
         {/* Card 2 — Portfolio Performance (wide) */}
         <PerformanceCard />
 
-        {/* Card 3 — Avg Risk Score */}
-        <KPIShell icon={Shield} label="Avg Risk Score">
-          <div>
-            <p className="text-3xl font-bold text-foreground tabular-nums">33.9 <span className="text-base text-muted-foreground font-normal">/ 100</span></p>
-            <p className="text-xs text-warning mt-1 font-medium">↑ +2.1 pts vs prior month</p>
-          </div>
-          <div>
-            <div className="relative h-1.5 rounded-full" style={{ background: "linear-gradient(to right, #22C55E, #F59E0B, #EF4444)" }}>
-              <div
-                className="absolute -top-1 h-3.5 w-0.5 bg-foreground rounded-sm"
-                style={{ left: "33.9%" }}
-              />
+        {/* Column 3 — Stacked compact cards */}
+        <div className="flex flex-col gap-3">
+          {/* Avg Risk Score — compact */}
+          <div className="bg-card border border-border rounded-lg p-3 flex flex-col gap-2 flex-1 hover:border-primary/30 transition-colors">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-secondary">
+                <Shield className="h-3.5 w-3.5 text-primary" />
+              </div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Avg Risk Score</p>
             </div>
-            <div className="flex justify-between text-[9px] text-muted-foreground mt-1 tabular-nums">
-              <span>0</span><span>50</span><span>100</span>
+            <div>
+              <p className="text-2xl font-bold text-foreground tabular-nums">33.9 <span className="text-sm text-muted-foreground font-normal">/ 100</span></p>
+              <p className="text-[11px] text-warning mt-0.5 font-medium">↑ +2.1 pts vs prior month</p>
+            </div>
+            <div>
+              <div className="relative h-1.5 rounded-full" style={{ background: "linear-gradient(to right, #22C55E, #F59E0B, #EF4444)" }}>
+                <div className="absolute -top-1 h-3.5 w-0.5 bg-foreground rounded-sm" style={{ left: "33.9%" }} />
+              </div>
+              <div className="flex justify-between text-[9px] text-muted-foreground mt-1 tabular-nums">
+                <span>0</span><span>50</span><span>100</span>
+              </div>
             </div>
           </div>
-        </KPIShell>
-
-        {/* Card 4 — Portfolio Health Score */}
-        <KPIShell icon={TrendingUp} label="Portfolio Health Score">
-          <div className="flex flex-col items-center justify-center -mt-1">
-            <HealthGauge score={71} />
-            <span className="text-[10px] font-bold tracking-widest text-warning mt-1">MODERATE RISK</span>
+          {/* Portfolio Health Score — compact */}
+          <div className="bg-card border border-border rounded-lg p-3 flex flex-col gap-1 flex-1 hover:border-primary/30 transition-colors">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-secondary">
+                <TrendingUp className="h-3.5 w-3.5 text-primary" />
+              </div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Portfolio Health Score</p>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <HealthGauge score={71} />
+              <span className="text-[10px] font-bold tracking-widest text-warning mt-1">MODERATE RISK</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground text-center tabular-nums">
+              Sharpe <span className="text-foreground/80">1.74</span>
+              <span className="mx-1 text-border">|</span>
+              Sortino <span className="text-foreground/80">2.31</span>
+              <span className="mx-1 text-border">|</span>
+              Max DD <span className="text-destructive">-6.8%</span>
+            </p>
           </div>
-          <p className="text-[10px] text-muted-foreground text-center tabular-nums">
-            Sharpe <span className="text-foreground/80">1.74</span>
-            <span className="mx-1 text-border">|</span>
-            Sortino <span className="text-foreground/80">2.31</span>
-            <span className="mx-1 text-border">|</span>
-            Max DD <span className="text-destructive">-6.8%</span>
-          </p>
-        </KPIShell>
+        </div>
       </div>
 
       {/* Recent Alerts — horizontal strip directly below KPIs */}
