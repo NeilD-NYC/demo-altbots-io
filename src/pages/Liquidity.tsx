@@ -65,8 +65,8 @@ function CashTab() {
               <BarChart data={cashByManager} layout="vertical" margin={{ left: 110 }}>
                 <XAxis type="number" tick={{ fill: "#8b949e", fontSize: 11 }} />
                 <YAxis type="category" dataKey="name" tick={{ fill: "#8b949e", fontSize: 10 }} width={110} />
-                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v}M`} />
-                <ReferenceLine x={100} stroke="#EF4444" strokeDasharray="4 4" label={{ value: "Min Cash Target $100M", fill: "#EF4444", fontSize: 9, position: "insideTopRight" }} />
+                <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} formatter={(v: number) => `$${v.toFixed(1)}M`} />
+                <ReferenceLine x={1.5} stroke="#EF4444" strokeDasharray="4 4" label={{ value: "Min Cash Target $1.5M", fill: "#EF4444", fontSize: 9, position: "insideTopRight" }} />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                   {cashByManager.map(d => <Cell key={d.name} fill={barColor(d.status)} />)}
                 </Bar>
