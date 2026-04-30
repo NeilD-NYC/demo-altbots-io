@@ -484,8 +484,8 @@ function PEPacingTab() {
 
 const stressKpis = [
   { label: "Liquidity Coverage Ratio", value: "2.14x", sub: "Adequate", color: "#22C55E" },
-  { label: "Stressed Liquidity Gap (30-day)", value: "+$842M surplus", color: "#22C55E" },
-  { label: "Gate Risk Exposure", value: "$1.8B", sub: "3 managers with redemption gates", color: "#F59E0B" },
+  { label: "Stressed Liquidity Gap (30-day)", value: "+$8.4M surplus", color: "#22C55E" },
+  { label: "Gate Risk Exposure", value: "$18M", sub: "3 managers with redemption gates", color: "#F59E0B" },
 ];
 
 const liquidityLadder = [
@@ -500,18 +500,18 @@ const liquidityLadder = [
 ];
 
 const stressWaterfall = [
-  { name: "Available Liquidity", value: 4830, base: 0, bar: 4830, fill: "#C9A84C" },
-  { name: "Capital Calls", value: -380, base: 4450, bar: 380, fill: "#EF4444" },
-  { name: "Redemption Gates", value: -1800, base: 2650, bar: 1800, fill: "#EF4444" },
-  { name: "Margin Call (2σ)", value: -920, base: 1730, bar: 920, fill: "#EF4444" },
-  { name: "Operational Reserve", value: -250, base: 1480, bar: 250, fill: "#EF4444" },
-  { name: "Net Stressed Liquidity", value: 1480, base: 0, bar: 1480, fill: "#22C55E" },
+  { name: "Available Liquidity", value: 48.4, base: 0, bar: 48.4, fill: "#C9A84C" },
+  { name: "Capital Calls", value: -3.8, base: 44.6, bar: 3.8, fill: "#EF4444" },
+  { name: "Redemption Gates", value: -18, base: 26.6, bar: 18, fill: "#EF4444" },
+  { name: "Margin Call (2σ)", value: -9.2, base: 17.4, bar: 9.2, fill: "#EF4444" },
+  { name: "Operational Reserve", value: -2.5, base: 14.9, bar: 2.5, fill: "#EF4444" },
+  { name: "Net Stressed Liquidity", value: 14.9, base: 0, bar: 14.9, fill: "#22C55E" },
 ];
 
 const gateRows = [
-  { mgr: "Helix Credit Opportunities", gate: "15% quarterly", aum: "$2.3B", trigger: "$345M redemption", notice: "90 days", risk: "HIGH" },
-  { mgr: "Solaris Private Credit", gate: "10% quarterly", aum: "$900M", trigger: "$90M redemption", notice: "60 days", risk: "MEDIUM" },
-  { mgr: "Granite Point Capital", gate: "20% quarterly", aum: "$1.3B", trigger: "$260M redemption", notice: "90 days", risk: "MEDIUM" },
+  { mgr: "Helix Credit Opportunities", gate: "15% quarterly", aum: "$54M", trigger: "$8.1M redemption", notice: "90 days", risk: "HIGH" },
+  { mgr: "Solaris Private Credit", gate: "10% quarterly", aum: "$21M", trigger: "$2.1M redemption", notice: "60 days", risk: "MEDIUM" },
+  { mgr: "Granite Point Capital", gate: "20% quarterly", aum: "$26M", trigger: "$5.2M redemption", notice: "90 days", risk: "MEDIUM" },
 ];
 
 function LiquidityStressTab() {
