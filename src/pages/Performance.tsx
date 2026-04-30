@@ -1055,11 +1055,11 @@ export default function Performance() {
     <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
       <Tabs defaultValue="positions" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D]">
-          <TabsTrigger value="positions" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">HOLDINGS OVERVIEW</TabsTrigger>
-          <TabsTrigger value="exposure" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">EXPOSURE</TabsTrigger>
-          <TabsTrigger value="correlation" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">CORRELATION</TabsTrigger>
-          <TabsTrigger value="risk" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">RISK METRICS</TabsTrigger>
-          <TabsTrigger value="stress" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">STRESS SCENARIOS</TabsTrigger>
+          <TabsTrigger value="positions" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:animate-pulse">HOLDINGS OVERVIEW</TabsTrigger>
+          <TabsTrigger value="exposure" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">EXPOSURE</TabsTrigger>
+          <TabsTrigger value="correlation" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">CORRELATION</TabsTrigger>
+          <TabsTrigger value="risk" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">RISK METRICS</TabsTrigger>
+          <TabsTrigger value="stress" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)]">STRESS SCENARIOS</TabsTrigger>
         </TabsList>
         <TabsContent value="positions"><PositionsTab /></TabsContent>
         <TabsContent value="exposure"><ExposureTab /></TabsContent>
