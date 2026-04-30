@@ -416,7 +416,7 @@ function PEPacingTab() {
               <ComposedChart data={vintageData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
                 <XAxis dataKey="year" tick={{ fill: "#8b949e", fontSize: 11 }} />
-                <YAxis yAxisId="left" tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} />
+                <YAxis yAxisId="left" tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `$${v}M`} domain={[0, 12]} />
                 <YAxis yAxisId="right" orientation="right" tick={{ fill: "#8b949e", fontSize: 10 }} tickFormatter={v => `${v}x`} domain={[0.8, 1.8]} />
                 <Tooltip contentStyle={{ background: "#161B22", border: "1px solid #30363D", color: "#fff", fontSize: 11 }} />
                 <Bar yAxisId="left" dataKey="called" name="Called" fill="#C9A84C" radius={[2, 2, 0, 0]} />
