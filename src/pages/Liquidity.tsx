@@ -100,7 +100,7 @@ function CashTab() {
                 <tr key={r.fund} className="border-b border-[#30363D]/50 hover:bg-[#0D1117]/60">
                   <td className="px-4 py-2 text-foreground font-medium">{r.fund}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.provider}</td>
-                  <td className="px-4 py-2 text-foreground">${r.balance}M</td>
+                  <td className="px-4 py-2 text-foreground">${r.balance.toFixed(1)}M</td>
                   <td className="px-4 py-2 text-[#22C55E]">{r.yield7d}</td>
                   <td className="px-4 py-2 text-muted-foreground">{r.maturity}</td>
                   <td className="px-4 py-2 text-foreground">{r.rating}</td>
@@ -108,7 +108,7 @@ function CashTab() {
                 </tr>
               ))}
               <tr className="border-t border-[#C9A84C]/30 font-semibold text-[#C9A84C]">
-                <td className="px-4 py-2">Total</td><td /><td className="px-4 py-2">$1,310M</td><td className="px-4 py-2">Avg 5.20%</td><td /><td /><td />
+                <td className="px-4 py-2">Total</td><td /><td className="px-4 py-2">$19.0M</td><td className="px-4 py-2">Avg 5.20%</td><td /><td /><td />
               </tr>
             </tbody>
           </table>
