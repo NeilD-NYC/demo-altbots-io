@@ -224,12 +224,12 @@ const AIAnalyst = () => {
       {/* ── Persona Selection Grid ──────────────────── */}
       {mode === "persona" && !activePersona && (
         <div className="flex-1 overflow-y-auto px-6 pb-6">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {personas.slice(0, 3).map((p) => (
               <PersonaCard key={p.id} persona={p} onSelect={() => setActivePersona(p)} />
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-4 mt-4 max-w-[66%] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 sm:max-w-[66%] mx-auto">
             {personas.slice(3).map((p) => (
               <PersonaCard key={p.id} persona={p} onSelect={() => setActivePersona(p)} />
             ))}
