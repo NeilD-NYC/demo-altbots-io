@@ -609,11 +609,11 @@ export default function Liquidity() {
     <div className="p-6 space-y-4 bg-[#0D1117] min-h-full">
       <Tabs defaultValue="cash" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D]">
-          <TabsTrigger value="cash" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">CASH & BALANCES</TabsTrigger>
-          <TabsTrigger value="buying" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">BUYING POWER</TabsTrigger>
-          <TabsTrigger value="calls" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">CAPITAL CALLS</TabsTrigger>
-          <TabsTrigger value="pacing" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">PE/VC PACING</TabsTrigger>
-          <TabsTrigger value="stress" className="text-xs data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C]">LIQUIDITY STRESS</TabsTrigger>
+          <TabsTrigger value="cash" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">CASH & BALANCES</TabsTrigger>
+          <TabsTrigger value="buying" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">BUYING POWER</TabsTrigger>
+          <TabsTrigger value="calls" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">CAPITAL CALLS</TabsTrigger>
+          <TabsTrigger value="pacing" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">PE/VC PACING</TabsTrigger>
+          <TabsTrigger value="stress" className="text-xs cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">LIQUIDITY STRESS</TabsTrigger>
         </TabsList>
         <TabsContent value="cash"><CashTab /></TabsContent>
         <TabsContent value="buying"><BuyingPowerTab /></TabsContent>
