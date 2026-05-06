@@ -298,6 +298,26 @@ export default function ConnectionGraph() {
         createStarfield(scene);
         // Soft fog for depth
         scene.fog = new THREE.FogExp2(0x050510, 0.0008);
+
+        // Slow galaxy rotation via camera orbit
+        const controls = fgRef.current?.controls?.();
+        if (controls) {
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = 0.35;
+        }
+
+        // Animate planet self-rotation
+        let rafId = 0;
+        const animate = () => {
+          scene.traverse((obj: any) => {
+            if (obj.userData?.isPlanet) {
+              obj.rotation.y += obj.userData.spinSpeed;
+            }
+          });
+          rafId = requestAnimationFrame(animate);
+        };
+        animate();
+        (scene as any).__galaxyRaf = rafId;
       }
     }, 100);
     return () => clearTimeout(t);
@@ -364,7 +384,10 @@ export default function ConnectionGraph() {
         shininess: 40,
         specular: new THREE.Color(0x333344),
       });
-      group.add(new THREE.Mesh(geometry, mat));
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.userData.isPlanet = true;
+      mesh.userData.spinSpeed = 0.003 + Math.random() * 0.004;
+      group.add(mesh);
       
       // Atmospheric glow
       if (isLit) {
@@ -396,7 +419,10 @@ export default function ConnectionGraph() {
         emissiveIntensity: isLit ? 0.4 : 0,
         shininess: 30,
       });
-      group.add(new THREE.Mesh(geometry, mat));
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.userData.isPlanet = true;
+      mesh.userData.spinSpeed = 0.006 + Math.random() * 0.008;
+      group.add(mesh);
       if (isLit) {
         group.add(createAtmosphereGlow(color, radius));
       }
@@ -414,7 +440,23 @@ export default function ConnectionGraph() {
         shininess: 50,
         specular: new THREE.Color(0x554400),
       });
-      group.add(new THREE.Mesh(geometry, mat));
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.userData.isPlanet = true;
+      mesh.userData.spinSpeed = 0.004 + Math.random() * 0.003;
+      group.add(mesh);
+      // Saturn-like ring
+      const ringGeom = new THREE.RingGeometry(radius * 1.5, radius * 2.1, 64);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: isLit ? color : "#222",
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: isLit ? 0.35 : 0.08,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const ring = new THREE.Mesh(ringGeom, ringMat);
+      ring.rotation.x = Math.PI / 2.4;
+      group.add(ring);
       if (isLit) {
         group.add(createAtmosphereGlow(color, radius));
         const light = new THREE.PointLight(color, 1.5, 80);
@@ -585,14 +627,16 @@ export default function ConnectionGraph() {
         nodeLabel={getNodeLabel}
         nodeThreeObjectExtend={false}
         linkColor={(link: any) => {
-          if (!focusedNode) return link.type === "custodied_by" ? "#ffd866aa" : "#4dc9f6aa";
+          if (!focusedNode) return link.type === "custodied_by" ? "#ffd86655" : "#4dc9f655";
           return highlightLinks.has(link) ? (link.type === "custodied_by" ? "#ffd866" : "#4dc9f6") : "#0a0a2a";
         }}
-        linkWidth={(link: any) => highlightLinks.has(link) ? 2.5 : 0.8}
-        linkOpacity={0.7}
-        linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 4 : 0}
-        linkDirectionalParticleSpeed={0.003}
-        linkDirectionalParticleWidth={(link: any) => highlightLinks.has(link) ? 3 : 1}
+        linkWidth={(link: any) => highlightLinks.has(link) ? 2.5 : 0.4}
+        linkOpacity={0.55}
+        linkDirectionalParticles={(link: any) => highlightLinks.has(link) ? 6 : 2}
+        linkDirectionalParticleSpeed={(link: any) =>
+          link.type === "custodied_by" ? 0.0035 : 0.0055
+        }
+        linkDirectionalParticleWidth={(link: any) => highlightLinks.has(link) ? 3.5 : 1.8}
         linkDirectionalParticleColor={(link: any) =>
           link.type === "custodied_by" ? "#ffd866" : "#4dc9f6"
         }
