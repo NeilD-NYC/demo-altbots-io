@@ -19,7 +19,7 @@ const DataSourcesStrip = () => {
         <span className="text-[#C9A84C] font-bold uppercase tracking-wider">DATA SOURCES:</span>
         <span>SEC EDGAR <span className="text-[#22C55E]">✅</span> April 8, 2026</span>
         <span className="text-[#30363D]">|</span>
-        <span>Fund Admin Feeds <span className="text-[#22C55E]">✅</span> April 8, 2026</span>
+        <span>Fund Admin Feeds <span className="text-[#22C55E]">✅</span> April 30, 2026</span>
         <span className="text-[#30363D]">|</span>
         <span>Market Data <span className="text-[#22C55E]">✅</span> Real-time</span>
         <span className="text-[#30363D]">|</span>
