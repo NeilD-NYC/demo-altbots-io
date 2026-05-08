@@ -8,6 +8,8 @@ const DashboardHeader = () => {
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
        <span className="hidden md:inline">Last Sweep: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
         <span className="hidden md:inline">|</span>
+        <span className="animate-pulse text-primary font-medium">18 Agents Running</span>
+        <span className="hidden md:inline">|</span>
         <span>1579 Managers Active</span>
         <span>|</span>
         <span className="flex items-center gap-1.5">
