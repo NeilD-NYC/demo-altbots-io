@@ -84,8 +84,8 @@ const totalAUM = managers.reduce((s, m) => s + m.aum_bn, 0);
 const avgRisk = (managers.reduce((s, m) => s + m.risk_score, 0) / managers.length).toFixed(1);
 
 const PerformanceSparkline = ({ path }: { path: string }) => (
-  <svg viewBox="0 0 80 36" preserveAspectRatio="none" fill="none" className="block w-full h-9">
-    <path d={path} stroke="#C5A55A" strokeWidth={1.5} fill="none" vectorEffect="non-scaling-stroke" />
+  <svg width="80" height="36" viewBox="0 0 80 36" fill="none" className="block">
+    <path d={path} stroke="#C5A55A" strokeWidth={1.5} fill="none" />
   </svg>
 );
 
@@ -112,7 +112,7 @@ const PerformanceCard = () => {
         {metrics.map((m, i) => (
           <div
             key={m.label}
-            className="flex flex-col px-4 py-3 overflow-hidden"
+            className="flex items-start justify-between px-4 py-3"
             style={{
               borderRight: i % 2 === 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
               borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
@@ -123,7 +123,7 @@ const PerformanceCard = () => {
               <p className="text-[22px] font-bold text-success leading-tight mt-1">{m.value}</p>
               <p className="text-[12px] text-muted-foreground mt-0.5">{m.sub}</p>
             </div>
-            <div className="mt-2 w-full">
+            <div className="mt-2">
               <PerformanceSparkline path={m.path} />
             </div>
           </div>
