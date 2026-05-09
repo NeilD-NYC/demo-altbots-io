@@ -248,7 +248,7 @@ export default function PpliRiskMonitor() {
           <button className={styles.ghostBtn} onClick={() => triggerAdvisor("wyden")}>
             Mitigation Options
           </button>
-          <button id="ppli-btn" className={styles.agentBtn}>⚡ Run Compliance Audit</button>
+          <button id="ppli-btn" className={styles.agentBtn} onClick={runAudit}>⚡ Run Compliance Audit</button>
         </div>
       </div>
 
@@ -285,7 +285,18 @@ export default function PpliRiskMonitor() {
         <span><strong>Broker:</strong> {policies[0]?.broker_name ?? "—"}</span>
       </div>
 
-      <div id="ppli-log" className={styles.agentLog} />
+      <div id="ppli-log" className={`${styles.agentLog} ${isLogOpen ? styles.open : ""}`} style={{ padding: isLogOpen ? "10px 12px" : 0 }}>
+        {currentLogs.map((l, i) => {
+          const color = l.type === "ok" ? "#10b981" : l.type === "warn" ? "#fbbf24" : l.type === "err" ? "#ef4444" : "#60a5fa";
+          return (
+            <div key={i} style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", color: "#aaa", padding: "2px 0" }}>
+              <span style={{ color: "#555", marginRight: 6 }}>{l.ts}</span>
+              <span style={{ color, fontWeight: 600, marginRight: 6 }}>[{l.tag}]</span>
+              {l.message}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
