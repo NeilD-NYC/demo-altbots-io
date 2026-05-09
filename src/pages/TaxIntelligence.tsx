@@ -6,6 +6,7 @@ import KpiGrid from "@/components/tax/KpiGrid";
 import PpliRiskMonitor from "@/components/tax/PpliRiskMonitor";
 import ResidencyAuditCard from "@/components/tax/ResidencyAuditCard";
 import K1Pipeline from "@/components/tax/K1Pipeline";
+import EstateAndCarry from "@/components/tax/EstateAndCarry";
 import residencyStyles from "@/components/tax/ResidencyAuditCard.module.css";
 import { useActiveEntity } from "@/lib/active-entity";
 
@@ -29,6 +30,7 @@ export default function TaxIntelligence() {
           <ResidencyAuditCard />
           <K1Pipeline />
         </div>
+        <EstateAndCarry />
       </div>
     </div>
   );
