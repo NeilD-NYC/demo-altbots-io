@@ -1,0 +1,194 @@
+.row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 1100px) {
+  .row { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: #141414;
+  border: 1px solid #1f1f1f;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.titleRow { display: flex; align-items: center; gap: 8px; }
+.title { color: #fff; font-size: 14px; font-weight: 500; }
+.subtitle { color: #666; font-size: 11px; margin-top: 4px; }
+
+.actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.ghostBtn {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.ghostBtn:hover { border-color: #f59e0b; color: #fff; }
+
+.agentBtn {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  border: none;
+  color: #1a0a00;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dayCounter {
+  background: #0a0a0a;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 14px;
+  transition: box-shadow 0.4s ease, background 0.4s ease;
+}
+.dayCounter.flash {
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.6);
+  background: #161208;
+}
+
+.counterTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.counterLabel { color: #888; font-size: 11px; }
+.counterSubLabel { color: #666; font-size: 9px; margin-top: 2px; }
+.counterDays { color: #fbbf24; font-size: 18px; font-weight: 500; }
+.counterMax { color: #888; font-size: 11px; }
+
+.track {
+  background: #1a1a1a;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.trackFill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #fbbf24 70%, #ef4444 100%);
+  transition: width 0.6s ease;
+}
+.trackLegend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #666;
+}
+
+.heatLabel {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.heatGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.heatCell {
+  position: relative;
+  background: #1a1a1a;
+  height: 32px;
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: default;
+}
+.heatCell:hover { outline: 1px solid #f59e0b; }
+
+.heatFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.85;
+  transition: height 0.4s ease;
+}
+
+.monthLabels {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin-bottom: 14px;
+}
+.monthLabel { font-size: 9px; color: #555; text-align: center; }
+
+.dataGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.dataRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #161616;
+  font-size: 11px;
+}
+.dataKey { color: #888; }
+.green { color: #10b981; }
+.amber { color: #fbbf24; }
+
+.warnBox {
+  background: #050505;
+  border-left: 2px solid #fbbf24;
+  padding: 9px 12px;
+  font-size: 11px;
+  color: #ccc;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.5;
+}
+
+.agentLog {
+  background: #050505;
+  border: 1px solid #1a1a1a;
+  border-radius: 6px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease, margin-top 0.4s ease;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  color: #ccc;
+  padding: 0 12px;
+}
+.agentLog.open {
+  max-height: 360px;
+  padding: 10px 12px;
+  margin-top: 12px;
+  overflow-y: auto;
+}
+.logLine { padding: 2px 0; }
+.logTag {
+  display: inline-block;
+  width: 36px;
+  font-weight: 600;
+  margin-right: 8px;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.tagInfo { color: #60a5fa; }
+.tagOk { color: #10b981; }
+.tagWarn { color: #fbbf24; }
