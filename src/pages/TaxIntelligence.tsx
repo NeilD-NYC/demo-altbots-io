@@ -1,6 +1,7 @@
 import styles from "./TaxIntelligence.module.css";
 import TaxHeader from "@/components/tax/TaxHeader";
 import AITaxAdvisor from "@/components/tax/AITaxAdvisor";
+import LegislativeAlert from "@/components/tax/LegislativeAlert";
 import { useActiveEntity } from "@/lib/active-entity";
 
 export default function TaxIntelligence() {
@@ -16,6 +17,7 @@ export default function TaxIntelligence() {
       >
         <TaxHeader />
         <AITaxAdvisor />
+        <LegislativeAlert />
       </div>
     </div>
   );
