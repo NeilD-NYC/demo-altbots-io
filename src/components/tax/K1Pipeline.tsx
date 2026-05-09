@@ -110,11 +110,11 @@ export default function K1Pipeline() {
       </div>
 
       <div className={styles.counters}>
-        <div className={`${styles.counter} ${styles.received} ${flash.received ? styles.flash : ""}`}>
+        <div id="k1-received" className={`${styles.counter} ${styles.received}`}>
           <div className={styles.cLabel}>Received</div>
           <div className={`${styles.cNum} ${styles.numReceived}`}>{counts.received + delta.received}</div>
         </div>
-        <div className={`${styles.counter} ${styles.pending} ${flash.pending ? styles.flash : ""}`}>
+        <div id="k1-pending" className={`${styles.counter} ${styles.pending}`}>
           <div className={styles.cLabel}>Pending</div>
           <div className={`${styles.cNum} ${styles.numPending}`}>{counts.pending + delta.pending}</div>
         </div>
@@ -196,13 +196,14 @@ export default function K1Pipeline() {
         );
       })()}
 
-      <div id="k1-log" className={`${styles.agentLog} ${logOpen ? styles.open : ""}`}>
-        {logVisible.map((l, i) => (
+      <div id="k1-log" className={`${styles.agentLog} ${isLogOpen ? styles.open : ""}`}>
+        {currentLogs.map((l, i) => (
           <div key={i} className={styles.logLine}>
-            <span className={`${styles.logTag} ${l.tag === "ok" ? styles.tagOk : l.tag === "warn" ? styles.tagWarn : styles.tagInfo}`}>
+            <span style={{ color: "#555", marginRight: 6 }}>{l.ts}</span>
+            <span className={`${styles.logTag} ${l.type === "ok" ? styles.tagOk : l.type === "warn" ? styles.tagWarn : styles.tagInfo}`}>
               {l.tag}
             </span>
-            {l.text}
+            {l.message}
           </div>
         ))}
       </div>
