@@ -1,0 +1,6 @@
+
+INSERT INTO public.tax_kpis (entity_id, snapshot_date, tax_alpha_ytd, fed_tax_ytd, ppli_cash_value, exemption_remaining, exemption_used, ny_days_ytd, ny_days_limit, harvest_available, harvest_tax_savings)
+VALUES
+  ('11111111-1111-1111-1111-111111111111', CURRENT_DATE, 4700000, 47200000, 84300000, 18400000, 11600000, 167, 183, 12800000, 3100000),
+  ('22222222-2222-2222-2222-222222222222', CURRENT_DATE, 1200000, 8400000, 0, 30000000, 0, 42, 183, 2100000, 520000),
+  ('33333333-3333-3333-3333-333333333333', CURRENT_DATE, 2800000, 19500000, 31200000, 24000000, 6000000, 98, 183, 5400000, 1340000);
