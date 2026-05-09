@@ -1,0 +1,75 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.left { display: flex; flex-direction: column; gap: 6px; }
+
+.titleRow { display: flex; align-items: center; gap: 10px; }
+
+.brand { color: #f59e0b; font-size: 18px; font-weight: 500; }
+
+.divider { width: 1px; height: 14px; background: #333; display: inline-block; }
+
+.product { color: #ccc; font-size: 14px; }
+
+.beta {
+  background: #2a1500;
+  color: #fbbf24;
+  font-size: 9px;
+  letter-spacing: 0.6px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.subtitle { color: #666; font-size: 11px; }
+
+.right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+.entitySelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #141414;
+  color: #ccc;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 7px 30px 7px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1L5 5L9 1' stroke='%23f59e0b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 320px;
+}
+
+.entitySelect:hover { border-color: #f59e0b; }
+.entitySelect option { background: #141414; color: #ccc; }
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  color: #888;
+  letter-spacing: 0.04em;
+}
+
+.statusItem { display: inline-flex; align-items: center; gap: 6px; }
+
+.sep { color: #444; }
+
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.dotGreen { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.6); animation: tax-pulse 2s ease-in-out infinite; }
+.dotRed { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.6); animation: tax-pulse 1.2s ease-in-out infinite; }
+
+.fyYear { color: #fbbf24; }
+
+@keyframes tax-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
