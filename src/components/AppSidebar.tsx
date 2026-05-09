@@ -1,4 +1,4 @@
-import { LayoutDashboard, TrendingUp, Droplets, Table2, FileText, Bot, Network } from "lucide-react";
+import { LayoutDashboard, TrendingUp, Droplets, Table2, FileText, Bot, Network, Calculator } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -19,6 +19,7 @@ const navItems = [
   { title: "Liquidity", url: "/liquidity", icon: Droplets },
   { title: "Manager Grid", url: "/managers", icon: Table2 },
   { title: "Manager Detail", url: "/manager/4", icon: FileText },
+  { title: "Tax Intelligence", url: "/tax-intelligence", icon: Calculator },
   { title: "Analyst & Personas", url: "/analyst", icon: Bot },
   { title: "Interconnection Map", url: "/connections", icon: Network },
 ];
