@@ -55,6 +55,12 @@ export default function PpliRiskMonitor() {
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [openLetter, setOpenLetter] = useState<string | null>(null);
 
+  const { isLogOpen, currentLogs, run: runAudit } = useAgentSimulation({
+    agentKey: "ppli",
+    logSequence: PPLI_AUDIT_LOG,
+    flashElementIds: ["ppli-btn"],
+  });
+
   useEffect(() => {
     supabase
       .from("ppli_policies")
