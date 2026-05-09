@@ -15,6 +15,7 @@ import AIAnalyst from "./pages/AIAnalyst";
 import ConnectionGraph from "./pages/ConnectionGraph";
 import Performance from "./pages/Performance";
 import Liquidity from "./pages/Liquidity";
+import TaxIntelligence from "./pages/TaxIntelligence";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
                   <Route path="/liquidity" element={<Liquidity />} />
                   <Route path="/managers" element={<ManagerGrid />} />
                   <Route path="/manager/:id" element={<ManagerDetail />} />
+                  <Route path="/tax-intelligence" element={<TaxIntelligence />} />
                   <Route path="/analyst" element={<AIAnalyst />} />
                   <Route path="/connections" element={<ConnectionGraph />} />
                   <Route path="*" element={<NotFound />} />

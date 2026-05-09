@@ -1,0 +1,87 @@
+:root,
+.taxRoot {
+  --text-primary: #fff;
+  --text-secondary: #ccc;
+  --text-muted: #888;
+  --text-tertiary: #666;
+  --border-default: #1f1f1f;
+  --bg-card: #141414;
+  --bg-subcard: #0a0a0a;
+  --accent-amber: #f59e0b;
+  --accent-amber-light: #fbbf24;
+}
+
+.taxRoot {
+  background: #0a0a0a;
+  padding: 22px;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.shell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  padding: 22px;
+}
+
+:global(.card) {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+:global(.sub-card) {
+  background: var(--bg-subcard);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+:global(.label) {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+:global(.num-xl) {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+:global(.pill-red),
+:global(.pill-amber),
+:global(.pill-green) {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+:global(.pill-red) {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+:global(.pill-amber) {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--accent-amber-light);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+:global(.pill-green) {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.3);
+}
