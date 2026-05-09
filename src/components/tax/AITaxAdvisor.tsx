@@ -1,67 +1,28 @@
-import { useState, KeyboardEvent } from "react";
-import { Sparkles } from "lucide-react";
+import { KeyboardEvent } from "react";
+import { Sparkles, Loader2, Zap, Shield, AlertTriangle, Clock, FileDown, Mail } from "lucide-react";
 import styles from "./AITaxAdvisor.module.css";
+import { useTaxAdvisor, ADVISOR_QUESTIONS, AdvisorKey } from "@/hooks/useTaxAdvisor";
 
-const CANNED: Record<string, { title: string; body: string }> = {
-  wyden: {
-    title: "Wyden PPLI Bill — Exposure Estimate",
-    body:
-      "If S.1117 passes as currently marked-up, your two PPLI policies (cash value $42.0M) face a clawback range of $7.8M–$11.2M based on lifetime PV shield analysis. Mitigation: accelerate Policy B premium, restructure IDF allocations, and review investor-control flags before Jun 18 markup.",
-  },
-  slat: {
-    title: "Second SLAT Under OBBBA",
-    body:
-      "With $18.6M of lifetime exemption remaining and OBBBA's $13.99M sunset reverting Jan 2026, a second SLAT funded before Sep 15 captures ~$4.6M of additional shield. Recommend a 9-year GRAT overlay if the spousal SLAT path triggers reciprocal-trust scrutiny.",
-  },
-  ny: {
-    title: "NY Tax Bill — 40% YoY Driver Analysis",
-    body:
-      "FY26 NY liability rose from $11.4M → $16.0M (+40%). Drivers: (1) +$2.1M from PTET cap erosion, (2) +$1.4M from carry recharacterization on Aurora exit, (3) +$0.9M from 127 NY-day count vs. 96 prior year. Risk: 56 days from statutory residency tripwire.",
-  },
-  qsbs: {
-    title: "QSBS 5-Year Clocks",
-    body:
-      "Three positions cross §1202 5-year hold in the next 9 months: Aurora Therapeutics (Jul 31, $4.2M gain), Helix Compute (Oct 14, $1.8M), Northwind Bio (Mar 03, $2.6M). Aggregate exclusion eligible: $8.6M. Action: confirm gross-asset test at issuance for each.",
-  },
-};
+const ICONS = { zap: Zap, shield: Shield, "alert-triangle": AlertTriangle, clock: Clock };
 
-function lookupResponse(q: string): { title: string; body: string } {
-  const key = q.toLowerCase();
-  if (CANNED[key]) return CANNED[key];
-  if (key.includes("wyden") || key.includes("ppli")) return CANNED.wyden;
-  if (key.includes("slat") || key.includes("obbba")) return CANNED.slat;
-  if (key.includes("ny") || key.includes("new york")) return CANNED.ny;
-  if (key.includes("qsbs") || key.includes("1202")) return CANNED.qsbs;
-  return {
-    title: "AltBots Tax Advisor",
-    body: `Analyzing "${q}" against IRC, Treasury Regulations, and your entity's structural posture. Demo response: full reasoning would synthesize K-1 timing, PPLI compliance state, and current legislative risk into a citation-backed memo.`,
-  };
-}
-
-const CHIPS: Array<{ label: string; key: string; query: string }> = [
-  { label: "⚡ Wyden PPLI bill exposure", key: "wyden", query: "Wyden PPLI bill exposure" },
-  { label: "Should I do another SLAT given OBBBA?", key: "slat", query: "Should I do another SLAT given OBBBA?" },
-  { label: "Why did NY tax bill jump 40% YoY?", key: "ny", query: "Why did NY tax bill jump 40% YoY?" },
-  { label: "When do my QSBS clocks run out?", key: "qsbs", query: "When do my QSBS clocks run out?" },
+const CHIPS: Array<{ label: string; key: AdvisorKey }> = [
+  { label: "⚡ Wyden PPLI bill exposure", key: "wyden" },
+  { label: "Should I do another SLAT given OBBBA?", key: "slat" },
+  { label: "Why did NY tax bill jump 40% YoY?", key: "ny" },
+  { label: "When do my QSBS clocks run out?", key: "qsbs" },
 ];
 
 export default function AITaxAdvisor() {
-  const [value, setValue] = useState("");
-  const [open, setOpen] = useState(false);
-  const [response, setResponse] = useState<{ title: string; body: string } | null>(null);
-
-  function runAdvisor(q: string) {
-    if (!q.trim()) return;
-    setResponse(lookupResponse(q));
-    setOpen(true);
-  }
+  const { input, setInput, isOpen, isLoading, response, runAdvisor } = useTaxAdvisor();
 
   function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
-      runAdvisor(value);
+      if (input.trim()) runAdvisor(input);
     }
   }
+
+  const TitleIcon = response ? ICONS[response.iconName] : null;
 
   return (
     <div className={styles.container}>
@@ -73,8 +34,8 @@ export default function AITaxAdvisor() {
 
       <input
         className={styles.input}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
         onKeyDown={onKeyDown}
         placeholder="e.g. How much would the Wyden PPLI bill cost us if it passes?"
       />
@@ -85,21 +46,49 @@ export default function AITaxAdvisor() {
             key={c.key}
             type="button"
             className={`suggestion-chip ${styles.chip}`}
-            onClick={() => {
-              setValue(c.query);
-              runAdvisor(c.key);
-            }}
+            onClick={() => runAdvisor(c.key)}
+            title={ADVISOR_QUESTIONS[c.key]}
           >
             {c.label}
           </button>
         ))}
       </div>
 
-      <div className={`${styles.response} ${open ? styles.open : ""}`}>
-        {response && (
+      <div className={`${styles.response} ${isOpen ? styles.open : ""}`}>
+        {isLoading && (
+          <div className={styles.loading}>
+            <Loader2 size={14} className={styles.spinner} color="#f59e0b" />
+            <span>Analyzing across IRC, Treasury Regs, your portfolio data, and 4 service provider memos…</span>
+          </div>
+        )}
+
+        {!isLoading && response && (
           <div className={styles.responseInner}>
-            <div className={styles.responseTitle}>{response.title}</div>
-            <div className={styles.responseBody}>{response.body}</div>
+            <div className={styles.responseTitle}>
+              {TitleIcon ? <TitleIcon size={14} color="#f59e0b" /> : null}
+              <span>{response.title}</span>
+            </div>
+            <div
+              className={styles.responseBody}
+              dangerouslySetInnerHTML={{ __html: response.bodyHtml }}
+            />
+            <div className={styles.footer}>
+              <div className={styles.meta}>
+                <span className={styles.metaConfidence}>Confidence: {response.confidence}</span>
+                <span className={styles.metaSep}>·</span>
+                <span>Latency: {response.latencySeconds.toFixed(1)}s</span>
+                <span className={styles.metaSep}>·</span>
+                <span>Sources: {response.sources}</span>
+              </div>
+              <div className={styles.actions}>
+                <button type="button" className={styles.ghostBtn}>
+                  <FileDown size={11} /> Export Memo
+                </button>
+                <button type="button" className={styles.ghostBtn}>
+                  <Mail size={11} /> Email Cravath
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
