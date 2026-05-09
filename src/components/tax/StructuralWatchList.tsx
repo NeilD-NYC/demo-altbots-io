@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Radar, Flag, Clock, ShieldX, Percent, Globe, Shuffle, ReceiptText, Heart, Building2,
+  type LucideIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveEntity } from "@/lib/active-entity";
@@ -31,7 +32,7 @@ const SCAN_LOG: LogLine[] = [
   { tag: "ok",   text: "DONE 14 items scanned · 0 new alerts" },
 ];
 
-const TYPE_META: Record<string, { color: string; Icon: React.ComponentType<{ size?: number; color?: string }> }> = {
+const TYPE_META: Record<string, { color: string; Icon: LucideIcon }> = {
   pfic:        { color: "#ef4444", Icon: Flag },
   qsbs:        { color: "#fbbf24", Icon: Clock },
   ubti:        { color: "#fbbf24", Icon: ShieldX },
