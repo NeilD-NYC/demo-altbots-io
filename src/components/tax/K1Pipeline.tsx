@@ -88,8 +88,25 @@ export default function K1Pipeline() {
   }, [rows]);
 
   const sorted = useMemo(() => {
+    const nameOrder = [
+      "Solaris Private Credit III",
+      "Helix Credit Opportunities",
+      "Vega Special Situations II",
+      "Arcturus Master",
+      "Meridian Capital",
+      "Ironwood Systematic",
+      "Tundra Macro",
+    ];
+    const idx = (n: string | null) => {
+      const i = nameOrder.indexOf(n ?? "");
+      return i === -1 ? 999 : i;
+    };
     const order = { overdue: 0, amended: 0, pending: 1, received: 2 } as Record<string, number>;
-    return [...rows].sort((a, b) => (order[a.status ?? ""] ?? 9) - (order[b.status ?? ""] ?? 9));
+    return [...rows].sort((a, b) => {
+      const ai = idx(a.manager_name), bi = idx(b.manager_name);
+      if (ai !== 999 || bi !== 999) return ai - bi;
+      return (order[a.status ?? ""] ?? 9) - (order[b.status ?? ""] ?? 9);
+    });
   }, [rows]);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -157,6 +174,11 @@ export default function K1Pipeline() {
                 </tr>
               );
             })}
+            <tr>
+              <td colSpan={3} style={{ color: "#666", fontStyle: "italic", padding: "6px 8px" }}>
+                + 7 more pending
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
