@@ -609,7 +609,7 @@ export type Database = {
           secondary_residency_state: string | null
           tax_year: number | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           aum?: number | null
@@ -621,7 +621,7 @@ export type Database = {
           secondary_residency_state?: string | null
           tax_year?: number | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           aum?: number | null
@@ -633,7 +633,7 @@ export type Database = {
           secondary_residency_state?: string | null
           tax_year?: number | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

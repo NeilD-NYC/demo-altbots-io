@@ -18,7 +18,7 @@ import Liquidity from "./pages/Liquidity";
 import TaxIntelligence from "./pages/TaxIntelligence";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
-import { AuthGuard } from "@/components/AuthGuard";
+import { ActiveEntityProvider } from "@/lib/active-entity";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +33,7 @@ const App = () => (
           <Route
             path="*"
             element={
-              <AuthGuard>
+              <ActiveEntityProvider>
                 <SidebarProvider>
           <div className="min-h-screen flex w-full">
             <AppSidebar />
@@ -57,10 +57,13 @@ const App = () => (
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
+              <footer className="px-4 py-2 text-[10px] text-muted-foreground/70 border-t border-border bg-card/30 text-center">
+                Live demo · Read-only · Wynfield is fictional. Contact for your own data.
+              </footer>
             </div>
           </div>
                 </SidebarProvider>
-              </AuthGuard>
+              </ActiveEntityProvider>
             }
           />
         </Routes>
