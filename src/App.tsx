@@ -17,6 +17,8 @@ import Performance from "./pages/Performance";
 import Liquidity from "./pages/Liquidity";
 import TaxIntelligence from "./pages/TaxIntelligence";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
+import { AuthGuard } from "@/components/AuthGuard";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +28,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <SidebarProvider>
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          <Route
+            path="*"
+            element={
+              <AuthGuard>
+                <SidebarProvider>
           <div className="min-h-screen flex w-full">
             <AppSidebar />
             <div className="flex-1 flex flex-col min-w-0">
@@ -51,7 +59,11 @@ const App = () => (
               </main>
             </div>
           </div>
-        </SidebarProvider>
+                </SidebarProvider>
+              </AuthGuard>
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
