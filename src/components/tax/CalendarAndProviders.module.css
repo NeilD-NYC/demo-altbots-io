@@ -1,0 +1,106 @@
+.row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 1100px) { .row { grid-template-columns: 1fr; } }
+
+.card {
+  background: #141414;
+  border: 1px solid #1f1f1f;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.titleRow { display: flex; align-items: center; gap: 8px; }
+.title { color: #fff; font-size: 14px; font-weight: 500; }
+
+.ghostBtn {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ghostBtn:hover { border-color: #f59e0b; color: #fff; }
+
+.list { display: flex; flex-direction: column; gap: 6px; }
+
+.calRow {
+  background: #0a0a0a;
+  border-left: 3px solid #888;
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.dateCell {
+  font-size: 10px;
+  font-weight: 500;
+  min-width: 60px;
+  letter-spacing: 0.5px;
+}
+.calBody {
+  flex: 1;
+  font-size: 11px;
+  color: #ccc;
+  min-width: 0;
+}
+.calCount { color: #666; font-size: 10px; margin-left: 6px; }
+
+.pill {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+.pillRed { background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.3); }
+.pillAmber { background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+.pillBlue { background: rgba(96,165,250,0.12); color: #93c5fd; border-color: rgba(96,165,250,0.3); }
+.pillPurple { background: rgba(167,139,250,0.12); color: #c4b5fd; border-color: rgba(167,139,250,0.3); }
+.pillGold { background: rgba(245,158,11,0.12); color: #f59e0b; border-color: rgba(245,158,11,0.3); }
+.pillGreen { background: rgba(34,197,94,0.12); color: #4ade80; border-color: rgba(34,197,94,0.3); }
+
+.provRow {
+  background: #0a0a0a;
+  padding: 6px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 28px;
+  height: 28px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f59e0b;
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.provBody { flex: 1; min-width: 0; }
+.provName { font-size: 11px; color: #ccc; }
+.provRole { font-size: 9px; color: #666; margin-top: 2px; }
