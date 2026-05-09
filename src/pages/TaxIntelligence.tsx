@@ -4,6 +4,8 @@ import AITaxAdvisor from "@/components/tax/AITaxAdvisor";
 import LegislativeAlert from "@/components/tax/LegislativeAlert";
 import KpiGrid from "@/components/tax/KpiGrid";
 import PpliRiskMonitor from "@/components/tax/PpliRiskMonitor";
+import ResidencyAuditCard from "@/components/tax/ResidencyAuditCard";
+import residencyStyles from "@/components/tax/ResidencyAuditCard.module.css";
 import { useActiveEntity } from "@/lib/active-entity";
 
 export default function TaxIntelligence() {
@@ -22,6 +24,10 @@ export default function TaxIntelligence() {
         <LegislativeAlert />
         <KpiGrid />
         <PpliRiskMonitor />
+        <div className={residencyStyles.row}>
+          <ResidencyAuditCard />
+          <div />
+        </div>
       </div>
     </div>
   );
