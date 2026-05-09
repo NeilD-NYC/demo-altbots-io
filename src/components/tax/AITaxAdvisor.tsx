@@ -1,4 +1,4 @@
-import { KeyboardEvent } from "react";
+import { KeyboardEvent, useEffect } from "react";
 import { Sparkles, Loader2, Zap, Shield, AlertTriangle, Clock, FileDown, Mail } from "lucide-react";
 import styles from "./AITaxAdvisor.module.css";
 import { useTaxAdvisor, ADVISOR_QUESTIONS, AdvisorKey } from "@/hooks/useTaxAdvisor";
@@ -14,6 +14,15 @@ const CHIPS: Array<{ label: string; key: AdvisorKey }> = [
 
 export default function AITaxAdvisor() {
   const { input, setInput, isOpen, isLoading, response, runAdvisor } = useTaxAdvisor();
+
+  useEffect(() => {
+    function onExternal(e: Event) {
+      const detail = (e as CustomEvent<string>).detail;
+      if (detail) runAdvisor(detail);
+    }
+    window.addEventListener("altbots:advisor", onExternal as EventListener);
+    return () => window.removeEventListener("altbots:advisor", onExternal as EventListener);
+  }, [runAdvisor]);
 
   function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
