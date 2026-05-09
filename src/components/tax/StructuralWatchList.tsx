@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Radar, Flag, Clock, ShieldX, Percent, Globe, Shuffle, ReceiptText, Heart, Building2,
   type LucideIcon,
@@ -6,6 +6,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveEntity } from "@/lib/active-entity";
 import styles from "./StructuralWatchList.module.css";
+import { useAgentSimulation, type AgentLogLine } from "@/hooks/useAgentSimulation";
 
 type Flag = {
   id: string;
@@ -15,21 +16,19 @@ type Flag = {
   description: string | null;
 };
 
-type LogLine = { tag: "info" | "ok" | "warn"; text: string };
-
-const SCAN_LOG: LogLine[] = [
-  { tag: "info", text: "INIT Full tax structural scan starting" },
-  { tag: "ok",   text: "CHECK PFIC elections · QEF vs MTM windows" },
-  { tag: "ok",   text: "CHECK QSBS clocks across 12 portcos" },
-  { tag: "ok",   text: "CHECK UBTI exposure · foundation entities" },
-  { tag: "ok",   text: "CHECK NIIT 3.8% on net investment income" },
-  { tag: "ok",   text: "CHECK FTC carryovers approaching expiration" },
-  { tag: "ok",   text: "CHECK Wash sale windows on harvest candidates" },
-  { tag: "ok",   text: "CHECK PTET / SALT workaround utilization" },
-  { tag: "ok",   text: "CHECK DAF / CRT capacity vs AGI deduction limits" },
-  { tag: "ok",   text: "CHECK Trust situs · DAPT compliance · SD/NV" },
-  { tag: "ok",   text: "CHECK GST exemption allocation tracking" },
-  { tag: "ok",   text: "DONE 14 items scanned · 0 new alerts" },
+const SCAN_LOG: AgentLogLine[] = [
+  { type: "info", tag: "INIT",  message: "Full tax structural scan starting" },
+  { type: "ok",   tag: "CHECK", message: "PFIC elections · QEF vs MTM windows" },
+  { type: "ok",   tag: "CHECK", message: "QSBS clocks across 12 portcos" },
+  { type: "ok",   tag: "CHECK", message: "UBTI exposure · foundation entities" },
+  { type: "ok",   tag: "CHECK", message: "NIIT 3.8% on net investment income" },
+  { type: "ok",   tag: "CHECK", message: "FTC carryovers approaching expiration" },
+  { type: "ok",   tag: "CHECK", message: "Wash sale windows on harvest candidates" },
+  { type: "ok",   tag: "CHECK", message: "PTET / SALT workaround utilization" },
+  { type: "ok",   tag: "CHECK", message: "DAF / CRT capacity vs AGI deduction limits" },
+  { type: "ok",   tag: "CHECK", message: "Trust situs · DAPT compliance · SD/NV" },
+  { type: "ok",   tag: "CHECK", message: "GST exemption allocation tracking" },
+  { type: "ok",   tag: "DONE",  message: "14 items scanned · 0 new alerts" },
 ];
 
 const TYPE_META: Record<string, { color: string; Icon: LucideIcon }> = {
@@ -47,9 +46,12 @@ const TYPE_META: Record<string, { color: string; Icon: LucideIcon }> = {
 export default function StructuralWatchList() {
   const { activeEntityId } = useActiveEntity();
   const [flags, setFlags] = useState<Flag[]>([]);
-  const [logOpen, setLogOpen] = useState(false);
-  const [logVisible, setLogVisible] = useState<LogLine[]>([]);
-  const runningRef = useRef(false);
+
+  const { isLogOpen, currentLogs, run: runScan } = useAgentSimulation({
+    agentKey: "scan",
+    logSequence: SCAN_LOG,
+    flashElementIds: ["scan-btn"],
+  });
 
   useEffect(() => {
     supabase
@@ -59,19 +61,6 @@ export default function StructuralWatchList() {
       .order("created_at", { ascending: true })
       .then(({ data }) => setFlags((data as Flag[]) ?? []));
   }, [activeEntityId]);
-
-  const runScan = () => {
-    if (runningRef.current) return;
-    runningRef.current = true;
-    setLogVisible([]);
-    setLogOpen(true);
-    SCAN_LOG.forEach((line, i) => {
-      setTimeout(() => {
-        setLogVisible((prev) => [...prev, line]);
-        if (i === SCAN_LOG.length - 1) runningRef.current = false;
-      }, 280 + i * 280);
-    });
-  };
 
   return (
     <div className={styles.card}>
@@ -107,13 +96,14 @@ export default function StructuralWatchList() {
         })}
       </div>
 
-      <div id="scan-log" className={`${styles.agentLog} ${logOpen ? styles.open : ""}`}>
-        {logVisible.map((l, i) => (
+      <div id="scan-log" className={`${styles.agentLog} ${isLogOpen ? styles.open : ""}`}>
+        {currentLogs.map((l, i) => (
           <div key={i} className={styles.logLine}>
-            <span className={`${styles.logTag} ${l.tag === "ok" ? styles.tagOk : l.tag === "warn" ? styles.tagWarn : styles.tagInfo}`}>
+            <span style={{ color: "#555", marginRight: 6 }}>{l.ts}</span>
+            <span className={`${styles.logTag} ${l.type === "ok" ? styles.tagOk : l.type === "warn" ? styles.tagWarn : styles.tagInfo}`}>
               {l.tag}
             </span>
-            {l.text}
+            {l.message}
           </div>
         ))}
       </div>
