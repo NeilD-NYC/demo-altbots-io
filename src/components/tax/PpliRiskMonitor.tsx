@@ -3,6 +3,18 @@ import { ShieldCheck, ChevronDown, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveEntity } from "@/lib/active-entity";
 import styles from "./PpliRiskMonitor.module.css";
+import { useAgentSimulation, type AgentLogLine } from "@/hooks/useAgentSimulation";
+
+const PPLI_AUDIT_LOG: AgentLogLine[] = [
+  { type: "info", tag: "INIT",  message: "PPLI compliance audit · Policies A & B" },
+  { type: "info", tag: "CHECK", message: "IRC §817(h) diversification (5/25/40)" },
+  { type: "ok",   tag: "PASS",  message: "Policy A · 5 holdings · max 28%" },
+  { type: "warn", tag: "FLAG",  message: "Policy A · 3 allocation memos in 12mo" },
+  { type: "info", tag: "CHECK", message: "Investor control doctrine · Rev. Rul. 2003-91" },
+  { type: "ok",   tag: "PASS",  message: "Policy B · §7702A MEC clean" },
+  { type: "info", tag: "SCAN",  message: "Wyden S.4421 clawback exposure refresh" },
+  { type: "ok",   tag: "DONE",  message: "Audit complete · 1 flag · memo queued" },
+];
 
 type Policy = {
   id: string;
