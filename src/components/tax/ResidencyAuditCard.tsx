@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveEntity } from "@/lib/active-entity";
 import styles from "./ResidencyAuditCard.module.css";
+import { useAgentSimulation, type AgentLogLine } from "@/hooks/useAgentSimulation";
 
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 const DAYS_IN_MONTH_2026 = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -19,31 +20,31 @@ type Kpi = {
 
 type DayRow = { date: string; location_state: string | null; location_city: string | null };
 
-type LogLine = { tag: "info" | "ok" | "warn"; text: string };
-
-const SYNC_LOG: LogLine[] = [
-  { tag: "info", text: "SYNC Google Calendar OAuth" },
-  { tag: "info", text: "SYNC iCloud Calendar IMAP" },
-  { tag: "info", text: "SYNC NetJets manifest pull" },
-  { tag: "info", text: "SYNC AmEx geolocated transactions" },
-  { tag: "info", text: "PARSE GPS tower triangulation log" },
-  { tag: "ok",   text: "COUNT NY days YTD: 127 (+0 from prior)" },
-  { tag: "ok",   text: "COUNT FL days YTD: 189" },
-  { tag: "warn", text: "FLAG NYC days: 94 · city tax watch" },
-  { tag: "info", text: "CHECK Domicile factors per TSB-M-09(15)I" },
-  { tag: "warn", text: "WEAK Treating physicians: NY (kept)" },
-  { tag: "warn", text: "WEAK Art collection: NY-stored (kept)" },
-  { tag: "ok",   text: "DONE Audit win probability: 62%" },
+const SYNC_LOG: AgentLogLine[] = [
+  { type: "info", tag: "SYNC",  message: "Google Calendar OAuth" },
+  { type: "info", tag: "SYNC",  message: "iCloud Calendar IMAP" },
+  { type: "info", tag: "SYNC",  message: "NetJets manifest pull" },
+  { type: "info", tag: "SYNC",  message: "AmEx geolocated transactions" },
+  { type: "info", tag: "PARSE", message: "GPS tower triangulation log" },
+  { type: "ok",   tag: "COUNT", message: "NY days YTD: 127 (+0 from prior)" },
+  { type: "ok",   tag: "COUNT", message: "FL days YTD: 189" },
+  { type: "warn", tag: "FLAG",  message: "NYC days: 94 · city tax watch" },
+  { type: "info", tag: "CHECK", message: "Domicile factors per TSB-M-09(15)I" },
+  { type: "warn", tag: "WEAK",  message: "Treating physicians: NY (kept)" },
+  { type: "warn", tag: "WEAK",  message: "Art collection: NY-stored (kept)" },
+  { type: "ok",   tag: "DONE",  message: "Audit win probability: 62%" },
 ];
 
 export default function ResidencyAuditCard() {
   const { activeEntityId } = useActiveEntity();
   const [kpi, setKpi] = useState<Kpi | null>(null);
   const [days, setDays] = useState<DayRow[]>([]);
-  const [logOpen, setLogOpen] = useState(false);
-  const [logVisible, setLogVisible] = useState<LogLine[]>([]);
-  const [flash, setFlash] = useState(false);
-  const runningRef = useRef(false);
+
+  const { isLogOpen, currentLogs, run: runSync } = useAgentSimulation({
+    agentKey: "residency",
+    logSequence: SYNC_LOG,
+    flashElementIds: ["res-day-counter", "res-btn"],
+  });
 
   useEffect(() => {
     supabase
@@ -81,23 +82,6 @@ export default function ResidencyAuditCard() {
 
   const factors = Array.isArray(kpi?.domicile_factors_weak) ? (kpi!.domicile_factors_weak as string[]) : [];
 
-  const runSync = () => {
-    if (runningRef.current) return;
-    runningRef.current = true;
-    setLogVisible([]);
-    setLogOpen(true);
-    SYNC_LOG.forEach((line, i) => {
-      setTimeout(() => {
-        setLogVisible((prev) => [...prev, line]);
-        if (i === SYNC_LOG.length - 1) {
-          runningRef.current = false;
-          setFlash(true);
-          setTimeout(() => setFlash(false), 1200);
-        }
-      }, 350 + i * 320);
-    });
-  };
-
   return (
     <div className={styles.card}>
       <div className={styles.header}>
@@ -114,7 +98,7 @@ export default function ResidencyAuditCard() {
         </div>
       </div>
 
-      <div className={`${styles.dayCounter} ${flash ? styles.flash : ""}`}>
+      <div id="res-day-counter" className={styles.dayCounter}>
         <div className={styles.counterTop}>
           <div>
             <div className={styles.counterLabel}>NY days · calendar 2026</div>
@@ -187,13 +171,14 @@ export default function ResidencyAuditCard() {
         ⚠ Domicile factors ({factors.length} of 7 weak): {factors.join(", ") || "—"}. Audit win probability: {kpi?.audit_win_probability ?? 0}%.
       </div>
 
-      <div id="res-log" className={`${styles.agentLog} ${logOpen ? styles.open : ""}`}>
-        {logVisible.map((l, i) => (
+      <div id="res-log" className={`${styles.agentLog} ${isLogOpen ? styles.open : ""}`}>
+        {currentLogs.map((l, i) => (
           <div key={i} className={styles.logLine}>
-            <span className={`${styles.logTag} ${l.tag === "ok" ? styles.tagOk : l.tag === "warn" ? styles.tagWarn : styles.tagInfo}`}>
+            <span style={{ color: "#555", marginRight: 6 }}>{l.ts}</span>
+            <span className={`${styles.logTag} ${l.type === "ok" ? styles.tagOk : l.type === "warn" ? styles.tagWarn : styles.tagInfo}`}>
               {l.tag}
             </span>
-            {l.text}
+            {l.message}
           </div>
         ))}
       </div>
