@@ -9,6 +9,7 @@ import K1Pipeline from "@/components/tax/K1Pipeline";
 import EstateAndCarry from "@/components/tax/EstateAndCarry";
 import CalendarAndProviders from "@/components/tax/CalendarAndProviders";
 import StructuralWatchList from "@/components/tax/StructuralWatchList";
+import AgentActivityVault from "@/components/tax/AgentActivityVault";
 import residencyStyles from "@/components/tax/ResidencyAuditCard.module.css";
 import { useActiveEntity } from "@/lib/active-entity";
 
@@ -35,6 +36,7 @@ export default function TaxIntelligence() {
         <EstateAndCarry />
         <CalendarAndProviders />
         <StructuralWatchList />
+        <AgentActivityVault />
       </div>
     </div>
   );
