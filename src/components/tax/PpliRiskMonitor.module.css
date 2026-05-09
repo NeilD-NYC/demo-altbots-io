@@ -1,0 +1,204 @@
+.card {
+  background: #141414;
+  border: 1px solid #1f1f1f;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.titleRow { display: flex; align-items: center; gap: 8px; }
+.title { color: #fff; font-size: 14px; font-weight: 500; }
+.subtitle { color: #666; font-size: 11px; margin-top: 4px; line-height: 1.5; }
+
+.actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.ghostBtn {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ghostBtn:hover { border-color: #f59e0b; color: #fff; }
+
+.agentBtn {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  border: none;
+  color: #1a0a00;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.agentBtn:hover { filter: brightness(1.1); }
+
+.policyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .policyGrid { grid-template-columns: 1fr; }
+}
+
+.policyCol { display: flex; flex-direction: column; }
+
+.policyCard {
+  background: #0a0a0a;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid #1a1a1a;
+}
+.policyCard:hover { background: #181818; }
+
+.policyHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.policyName { color: #fff; font-size: 12px; font-weight: 500; }
+.policyMeta { color: #666; font-size: 10px; margin-top: 3px; }
+
+.statusGroup { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.pillAmber {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.pillGreen {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.chev {
+  transition: transform 0.3s ease;
+  color: #888;
+}
+.chev.open { transform: rotate(180deg); }
+
+.statRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 14px;
+  font-size: 11px;
+  color: #ccc;
+}
+.statKey { color: #888; }
+.green { color: #10b981; }
+.amber { color: #fbbf24; }
+.red { color: #ef4444; }
+
+.sheet {
+  max-height: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0d0d, #0a0a0a);
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  transition: max-height 0.4s ease, padding 0.4s ease, margin-top 0.4s ease;
+  padding: 0 16px;
+  margin-top: 0;
+}
+.sheet.open {
+  max-height: 800px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.sheetTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.sheetGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 800px) {
+  .sheetGrid { grid-template-columns: 1fr; }
+}
+
+.sectionLabel {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.dataRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid #161616;
+  font-size: 11px;
+}
+.dataRow:last-child { border-bottom: none; }
+.dataKey { color: #888; }
+.dataVal { color: #ccc; text-align: right; }
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #1f1f1f;
+  flex-wrap: wrap;
+}
+
+.summary {
+  background: #050505;
+  border-left: 3px solid #f59e0b;
+  padding: 10px 14px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: #ccc;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.summary span strong { color: #fff; font-weight: 500; }
+
+.agentLog {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.agentLog.open { max-height: 400px; margin-top: 12px; }
