@@ -1,7 +1,6 @@
-import { LayoutDashboard, TrendingUp, Droplets, Table2, FileText, Bot, Network, Calculator, LogOut } from "lucide-react";
+import { LayoutDashboard, TrendingUp, Droplets, Table2, FileText, Bot, Network, Calculator } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar,
   SidebarContent,
@@ -65,15 +64,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <div className="mt-auto p-2 border-t border-sidebar-border">
-          <button
-            onClick={() => supabase.auth.signOut()}
-            className="w-full flex items-center px-3 py-2 text-sm rounded-md hover:bg-sidebar-accent/50 text-muted-foreground transition-colors"
-          >
-            <LogOut className="mr-2 h-4 w-4 shrink-0" />
-            {!collapsed && <span>Sign out</span>}
-          </button>
-        </div>
       </SidebarContent>
     </Sidebar>
   );
