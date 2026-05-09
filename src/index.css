@@ -94,6 +94,15 @@
     animation: flash-red 600ms ease-out forwards;
   }
 
+  /* Generic flash used by useAgentSimulation flashElementIds */
+  @keyframes agent-flash {
+    0%   { background-color: rgba(16, 185, 129, 0.22); }
+    100% { background-color: transparent; }
+  }
+  .flash {
+    animation: agent-flash 1.5s ease-out;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: hsl(215 15% 22%) transparent;
