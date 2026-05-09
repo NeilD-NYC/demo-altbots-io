@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Landmark, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveEntity } from "@/lib/active-entity";
 import styles from "./EstateAndCarry.module.css";
+import { useAgentSimulation, type AgentLogLine } from "@/hooks/useAgentSimulation";
 
 type Carry = {
   id: string;
@@ -13,19 +14,17 @@ type Carry = {
   tax_delta: number | null;
 };
 
-type LogLine = { tag: "info" | "ok" | "warn"; text: string };
-
-const SCAN_LOG: LogLine[] = [
-  { tag: "info", text: "SCAN 23 carry-eligible funds" },
-  { tag: "info", text: "CHECK IRC §1061(d) 3-year hold test" },
-  { tag: "warn", text: "FAIL Helix PE IV · 2.1y avg hold" },
-  { tag: "warn", text: "CALC $1.8M LTCG → STCG" },
-  { tag: "warn", text: "WATCH Vega Special Sits · 2.8y · approaching test" },
-  { tag: "warn", text: "WATCH Arcturus II · 2.6y · approaching test" },
-  { tag: "ok",   text: "PASS Northgate V · 4.2y safe" },
-  { tag: "ok",   text: "PASS Solaris III · 5.1y safe" },
-  { tag: "info", text: "CALC Tax delta: $452K (17% spread)" },
-  { tag: "ok",   text: "DONE Recharacterization scan complete" },
+const SCAN_LOG: AgentLogLine[] = [
+  { type: "info", tag: "SCAN",  message: "23 carry-eligible funds" },
+  { type: "info", tag: "CHECK", message: "IRC §1061(d) 3-year hold test" },
+  { type: "warn", tag: "FAIL",  message: "Helix PE IV · 2.1y avg hold" },
+  { type: "warn", tag: "CALC",  message: "$1.8M LTCG → STCG" },
+  { type: "warn", tag: "WATCH", message: "Vega Special Sits · 2.8y · approaching test" },
+  { type: "warn", tag: "WATCH", message: "Arcturus II · 2.6y · approaching test" },
+  { type: "ok",   tag: "PASS",  message: "Northgate V · 4.2y safe" },
+  { type: "ok",   tag: "PASS",  message: "Solaris III · 5.1y safe" },
+  { type: "info", tag: "CALC",  message: "Tax delta: $452K (17% spread)" },
+  { type: "ok",   tag: "DONE",  message: "Recharacterization scan complete" },
 ];
 
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
@@ -67,9 +66,12 @@ function EstateCard() {
 function CarryCard() {
   const { activeEntityId } = useActiveEntity();
   const [rows, setRows] = useState<Carry[]>([]);
-  const [logOpen, setLogOpen] = useState(false);
-  const [logVisible, setLogVisible] = useState<LogLine[]>([]);
-  const runningRef = useRef(false);
+
+  const { isLogOpen, currentLogs, run: runScan } = useAgentSimulation({
+    agentKey: "s1061",
+    logSequence: SCAN_LOG,
+    flashElementIds: ["s1061-btn"],
+  });
 
   useEffect(() => {
     supabase
@@ -82,19 +84,6 @@ function CarryCard() {
 
   const totalRisk = rows.reduce((s, r) => s + (r.recharacterization_amount ?? 0), 0);
   const totalDelta = rows.reduce((s, r) => s + (r.tax_delta ?? 0), 0);
-
-  const runScan = () => {
-    if (runningRef.current) return;
-    runningRef.current = true;
-    setLogVisible([]);
-    setLogOpen(true);
-    SCAN_LOG.forEach((line, i) => {
-      setTimeout(() => {
-        setLogVisible((prev) => [...prev, line]);
-        if (i === SCAN_LOG.length - 1) runningRef.current = false;
-      }, 350 + i * 320);
-    });
-  };
 
   const holdClass = (y: number | null) => {
     if (y == null) return styles.muted;
@@ -155,13 +144,14 @@ function CarryCard() {
         <strong style={{ color: "#fff", fontWeight: 500 }}>Total recharacterization risk:</strong> {fmtM(totalRisk)} (LTCG → STCG) · Tax delta: {fmtM(totalDelta)} at 17% bracket spread · Negotiate hold extension w/ Helix GP
       </div>
 
-      <div id="s1061-log" className={`${styles.agentLog} ${logOpen ? styles.open : ""}`}>
-        {logVisible.map((l, i) => (
+      <div id="s1061-log" className={`${styles.agentLog} ${isLogOpen ? styles.open : ""}`}>
+        {currentLogs.map((l, i) => (
           <div key={i} className={styles.logLine}>
-            <span className={`${styles.logTag} ${l.tag === "ok" ? styles.tagOk : l.tag === "warn" ? styles.tagWarn : styles.tagInfo}`}>
+            <span style={{ color: "#555", marginRight: 6 }}>{l.ts}</span>
+            <span className={`${styles.logTag} ${l.type === "ok" ? styles.tagOk : l.type === "warn" ? styles.tagWarn : styles.tagInfo}`}>
               {l.tag}
             </span>
-            {l.text}
+            {l.message}
           </div>
         ))}
       </div>

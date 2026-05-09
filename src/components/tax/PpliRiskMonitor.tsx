@@ -3,6 +3,18 @@ import { ShieldCheck, ChevronDown, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveEntity } from "@/lib/active-entity";
 import styles from "./PpliRiskMonitor.module.css";
+import { useAgentSimulation, type AgentLogLine } from "@/hooks/useAgentSimulation";
+
+const PPLI_AUDIT_LOG: AgentLogLine[] = [
+  { type: "info", tag: "INIT",  message: "PPLI compliance audit · Policies A & B" },
+  { type: "info", tag: "CHECK", message: "IRC §817(h) diversification (5/25/40)" },
+  { type: "ok",   tag: "PASS",  message: "Policy A · 5 holdings · max 28%" },
+  { type: "warn", tag: "FLAG",  message: "Policy A · 3 allocation memos in 12mo" },
+  { type: "info", tag: "CHECK", message: "Investor control doctrine · Rev. Rul. 2003-91" },
+  { type: "ok",   tag: "PASS",  message: "Policy B · §7702A MEC clean" },
+  { type: "info", tag: "SCAN",  message: "Wyden S.4421 clawback exposure refresh" },
+  { type: "ok",   tag: "DONE",  message: "Audit complete · 1 flag · memo queued" },
+];
 
 type Policy = {
   id: string;
@@ -42,6 +54,12 @@ export default function PpliRiskMonitor() {
   const { activeEntityId } = useActiveEntity();
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [openLetter, setOpenLetter] = useState<string | null>(null);
+
+  const { isLogOpen, currentLogs, run: runAudit } = useAgentSimulation({
+    agentKey: "ppli",
+    logSequence: PPLI_AUDIT_LOG,
+    flashElementIds: ["ppli-btn"],
+  });
 
   useEffect(() => {
     supabase
@@ -230,7 +248,7 @@ export default function PpliRiskMonitor() {
           <button className={styles.ghostBtn} onClick={() => triggerAdvisor("wyden")}>
             Mitigation Options
           </button>
-          <button id="ppli-btn" className={styles.agentBtn}>⚡ Run Compliance Audit</button>
+          <button id="ppli-btn" className={styles.agentBtn} onClick={runAudit}>⚡ Run Compliance Audit</button>
         </div>
       </div>
 
@@ -267,7 +285,18 @@ export default function PpliRiskMonitor() {
         <span><strong>Broker:</strong> {policies[0]?.broker_name ?? "—"}</span>
       </div>
 
-      <div id="ppli-log" className={styles.agentLog} />
+      <div id="ppli-log" className={`${styles.agentLog} ${isLogOpen ? styles.open : ""}`} style={{ padding: isLogOpen ? "10px 12px" : 0 }}>
+        {currentLogs.map((l, i) => {
+          const color = l.type === "ok" ? "#10b981" : l.type === "warn" ? "#fbbf24" : l.type === "err" ? "#ef4444" : "#60a5fa";
+          return (
+            <div key={i} style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", color: "#aaa", padding: "2px 0" }}>
+              <span style={{ color: "#555", marginRight: 6 }}>{l.ts}</span>
+              <span style={{ color, fontWeight: 600, marginRight: 6 }}>[{l.tag}]</span>
+              {l.message}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

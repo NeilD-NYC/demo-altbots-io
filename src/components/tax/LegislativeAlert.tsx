@@ -48,6 +48,7 @@ export default function LegislativeAlert() {
     window.setTimeout(() => {
       setUpdatedMin(0);
       setRefreshing(false);
+      window.dispatchEvent(new CustomEvent("agent-complete", { detail: { agent_key: "legislative" } }));
     }, 900);
   }
 

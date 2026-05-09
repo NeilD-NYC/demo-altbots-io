@@ -83,10 +83,25 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        flash: {
+          "0%": { backgroundColor: "rgba(16, 185, 129, 0.18)" },
+          "100%": { backgroundColor: "transparent" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.35" },
+        },
+        spin: {
+          to: { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        flash: "flash 1.5s ease-out",
+        pulse: "pulse 2s infinite",
+        "pulse-fast": "pulse 1.2s infinite",
+        spin: "spin 0.7s linear infinite",
       },
     },
   },
