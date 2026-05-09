@@ -3,6 +3,7 @@ import TaxHeader from "@/components/tax/TaxHeader";
 import AITaxAdvisor from "@/components/tax/AITaxAdvisor";
 import LegislativeAlert from "@/components/tax/LegislativeAlert";
 import KpiGrid from "@/components/tax/KpiGrid";
+import PpliRiskMonitor from "@/components/tax/PpliRiskMonitor";
 import { useActiveEntity } from "@/lib/active-entity";
 
 export default function TaxIntelligence() {
@@ -20,6 +21,7 @@ export default function TaxIntelligence() {
         <AITaxAdvisor />
         <LegislativeAlert />
         <KpiGrid />
+        <PpliRiskMonitor />
       </div>
     </div>
   );
