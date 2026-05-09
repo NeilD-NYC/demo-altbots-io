@@ -97,7 +97,7 @@ export default function PpliRiskMonitor() {
             </div>
             <div className={styles.statusGroup}>
               <span className={flagged ? styles.pillAmber : styles.pillGreen}>
-                {flagged ? "MONITOR" : "CLEAR"}
+                {flagged ? "MONITOR" : "COMPLIANT"}
               </span>
               <ChevronDown
                 id={`pol-${p.policy_letter}-chev`}
@@ -230,7 +230,8 @@ export default function PpliRiskMonitor() {
   const totalPvShield = policies.reduce((s, p) => s + (p.lifetime_pv_shield ?? 0), 0);
   const totalClawLow = policies.reduce((s, p) => s + (p.wyden_clawback_low ?? 0), 0);
   const totalClawHigh = policies.reduce((s, p) => s + (p.wyden_clawback_high ?? 0), 0);
-  const netAtRiskPct = totalCash > 0 ? Math.round((totalClawHigh / totalCash) * 100) : 0;
+  const netAtRiskLowPct = totalPvShield > 0 ? Math.round((totalClawLow / totalPvShield) * 100) : 0;
+  const netAtRiskHighPct = totalPvShield > 0 ? Math.round((totalClawHigh / totalPvShield) * 100) : 0;
 
   return (
     <div className={styles.card}>
@@ -281,7 +282,7 @@ export default function PpliRiskMonitor() {
       <div className={styles.summary}>
         <span><strong>Lifetime PV shield:</strong> {fmtM(totalPvShield)}</span>
         <span><strong>Wyden clawback range:</strong> {fmtM(totalClawLow)} – {fmtM(totalClawHigh)}</span>
-        <span><strong>Net at risk:</strong> {netAtRiskPct}%</span>
+        <span><strong>Net at risk:</strong> {netAtRiskLowPct}–{netAtRiskHighPct}%</span>
         <span><strong>Broker:</strong> {policies[0]?.broker_name ?? "—"}</span>
       </div>
 
