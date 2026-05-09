@@ -13,6 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "3d-force-graph": "1.73.0",
     "@hookform/resolvers": "^3.10.0",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -45,7 +46,6 @@
     "@supabase/supabase-js": "^2.105.4",
     "@tanstack/query-core": "5.83.0",
     "@tanstack/react-query": "^5.83.0",
-    "3d-force-graph": "1.73.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
