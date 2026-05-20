@@ -7,6 +7,7 @@ import FlagDot from "@/components/FlagDot";
 import RiskScoreBadge from "@/components/RiskScoreBadge";
 import { ArrowLeft, FileText, CheckCircle2, XCircle, Building2, CheckCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SeoHead from "@/components/SeoHead";
 
 const tabs = ["Overview", "Identity", "Compliance", "Intelligence", "Signals"] as const;
 type Tab = typeof tabs[number];
@@ -310,6 +311,11 @@ const ManagerDetail = () => {
 
   return (
     <div className="p-6 space-y-6 max-w-[1000px] mx-auto">
+      <SeoHead
+        title={`${manager.name} — Manager Profile — AltBots`}
+        description={`Institutional due diligence on ${manager.name} (${manager.strategy}). Risk scoring, compliance, intelligence signals, and identity overview.`}
+        path={`/manager/${manager.id}`}
+      />
       {/* Back + Header */}
       <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
         <ArrowLeft className="h-4 w-4" /> Back
