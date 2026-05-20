@@ -1,0 +1,16 @@
+# AltBots
+
+> Agentic AI portfolio monitoring platform for institutional allocators — continuous risk scoring, manager intelligence, liquidity oversight, and tax intelligence across 1,500+ managers.
+
+AltBots runs autonomous agents that synthesize K-1s, 1099s, SEC filings, fund admin feeds, and legislative trackers into a single portfolio command center. This is a public demo with fictional data ("Wynfield").
+
+## Pages
+
+- [Portfolio Overview](/): Top-level KPIs, alerts, and agent activity across the portfolio.
+- [Holdings & Performance](/performance): NAV, exposure, correlation, and risk metrics for institutional analytics.
+- [Liquidity](/liquidity): Cash balances, capital waterfalls, pacing, and stress testing.
+- [Manager Grid](/managers): Searchable grid of all monitored managers with risk scoring.
+- [Manager Detail](/manager/4): Institutional deep-dive on a single manager with intelligence tabs.
+- [Tax Intelligence](/tax-intelligence): Tax KPIs, PPLI risk, residency audit, K-1 pipeline, and structural watch list.
+- [Analyst & Personas](/analyst): Claude-powered AI analyst chat for due diligence on the embedded dataset.
+- [Interconnection Map](/connections): 3D force-directed visualization of portfolio relationships.
