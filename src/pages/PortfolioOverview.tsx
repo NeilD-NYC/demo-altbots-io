@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { managers } from "@/data/managers";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
 import { AlertTriangle, TrendingUp, Shield, DollarSign } from "lucide-react";
+import SeoHead from "@/components/SeoHead";
 
 const HealthGauge = ({ score }: { score: number }) => {
   const [animated, setAnimated] = useState(0);
