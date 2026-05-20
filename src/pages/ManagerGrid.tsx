@@ -4,6 +4,7 @@ import { managers, Manager } from "@/data/managers";
 import FlagDot from "@/components/FlagDot";
 import RiskScoreBadge from "@/components/RiskScoreBadge";
 import { Search } from "lucide-react";
+import SeoHead from "@/components/SeoHead";
 
 type SortKey = keyof Manager;
 type SortDir = "asc" | "desc";
@@ -49,6 +50,11 @@ const ManagerGrid = () => {
 
   return (
     <div className="p-6 space-y-4 max-w-[1400px] mx-auto">
+      <SeoHead
+        title="Manager Grid — AltBots"
+        description="Searchable grid of all monitored managers with risk scoring, strategy filters, and compliance flags across the AltBots portfolio."
+        path="/managers"
+      />
       <h2 className="text-lg font-semibold text-foreground">Manager Grid</h2>
 
       {/* Filters */}
