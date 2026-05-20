@@ -13,11 +13,17 @@ import AgentActivityVault from "@/components/tax/AgentActivityVault";
 import TaxFooter from "@/components/tax/TaxFooter";
 import residencyStyles from "@/components/tax/ResidencyAuditCard.module.css";
 import { useActiveEntity } from "@/lib/active-entity";
+import SeoHead from "@/components/SeoHead";
 
 export default function TaxIntelligence() {
   const { isSwitching } = useActiveEntity();
   return (
     <div className={styles.taxRoot}>
+      <SeoHead
+        title="Tax Intelligence — AltBots"
+        description="Tax KPIs, PPLI risk monitoring, residency audit, K-1 pipeline, legislative tracking, and structural watch list for institutional allocators."
+        path="/tax-intelligence"
+      />
       <div
         className={styles.shell}
         style={{

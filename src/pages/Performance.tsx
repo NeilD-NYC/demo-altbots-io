@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowUp, ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useMarketSimulation } from "@/hooks/useMarketSimulation";
+import SeoHead from "@/components/SeoHead";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, CartesianGrid, Legend, ReferenceLine, ReferenceArea,
@@ -1277,6 +1278,11 @@ function StressScenariosTab() {
 export default function Performance() {
   return (
     <div className="p-3 sm:p-6 space-y-4 bg-[#0D1117] min-h-full">
+      <SeoHead
+        title="Holdings & Performance — AltBots"
+        description="NAV, exposure, correlation, and risk analytics for the AltBots monitored portfolio with live position tracking."
+        path="/performance"
+      />
       <Tabs defaultValue="positions" className="w-full">
         <TabsList className="bg-[#161B22] border border-[#30363D] flex flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="positions" className="text-[10px] sm:text-xs px-2 py-1.5 cursor-pointer transition-all duration-200 hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:scale-105 data-[state=active]:bg-[#C9A84C]/20 data-[state=active]:text-[#C9A84C] data-[state=active]:shadow-[0_0_12px_rgba(201,168,76,0.3)] data-[state=inactive]:tab-heartbeat-inactive">HOLDINGS</TabsTrigger>

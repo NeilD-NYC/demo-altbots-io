@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import SeoHead from "@/components/SeoHead";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -62,6 +63,11 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <SeoHead
+        title="Sign in — AltBots"
+        description="Sign in or create an account to access the AltBots portfolio monitoring demo."
+        path="/auth"
+      />
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-xl">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-primary gold-glow">AltBots</h1>

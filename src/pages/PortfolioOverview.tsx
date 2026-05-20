@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { managers } from "@/data/managers";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
 import { AlertTriangle, TrendingUp, Shield, DollarSign } from "lucide-react";
+import SeoHead from "@/components/SeoHead";
 
 const HealthGauge = ({ score }: { score: number }) => {
   const [animated, setAnimated] = useState(0);
@@ -180,6 +181,11 @@ const PortfolioOverview = () => {
 
   return (
     <div className="p-8 space-y-8 max-w-[1400px] mx-auto">
+      <SeoHead
+        title="Portfolio Overview — AltBots"
+        description="Real-time AUM, alerts, and agent activity across 1,500+ monitored managers in the AltBots portfolio command center."
+        path="/"
+      />
       {/* KPI Row — 3 columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[22%_1fr_23%] gap-4">
         {/* Card 1 — Total AUM */}

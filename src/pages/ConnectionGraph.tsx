@@ -2,6 +2,7 @@ import { useRef, useCallback, useState, useEffect } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 import { Search, X } from "lucide-react";
+import SeoHead from "@/components/SeoHead";
 
 // Galaxy color palette
 const GALAXY_COLORS = {
@@ -455,6 +456,11 @@ export default function ConnectionGraph() {
       position: "relative", width: "100%", height: "100%",
       background: "radial-gradient(ellipse at 30% 40%, #0d0a20 0%, #060818 40%, #020208 70%, #000005 100%)"
     }}>
+      <SeoHead
+        title="Interconnection Map — AltBots"
+        description="3D force-directed visualization of fund, holding, and custodian relationships across the AltBots portfolio."
+        path="/connections"
+      />
       <style>{`
         @keyframes focusPulse {
           0%, 100% { border-color: var(--pulse-color); box-shadow: 0 0 16px var(--pulse-color); }
