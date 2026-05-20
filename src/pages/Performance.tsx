@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowUp, ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useMarketSimulation } from "@/hooks/useMarketSimulation";
+import SeoHead from "@/components/SeoHead";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, CartesianGrid, Legend, ReferenceLine, ReferenceArea,
