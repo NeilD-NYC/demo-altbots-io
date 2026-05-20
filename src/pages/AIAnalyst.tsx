@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Bot, Send } from "lucide-react";
 import { managers } from "@/data/managers";
 import { cn } from "@/lib/utils";
+import SeoHead from "@/components/SeoHead";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -174,6 +175,11 @@ const AIAnalyst = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] max-w-[900px] mx-auto">
+      <SeoHead
+        title="AI Analyst & Personas — AltBots"
+        description="Conversational AI analyst for portfolio due diligence — chat with your data or with personas of legendary investors."
+        path="/analyst"
+      />
       {/* Header + Toggle */}
       <div className="p-6 pb-4 space-y-4">
         <div className="flex items-center gap-3 mb-1">
