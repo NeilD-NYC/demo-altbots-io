@@ -3,6 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, Check } from "lucide-react";
 import { useMarketSimulation, SimKeyConfig } from "@/hooks/useMarketSimulation";
+import SeoHead from "@/components/SeoHead";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
   AreaChart, Area, CartesianGrid, Legend, ReferenceLine, Line, ComposedChart,
@@ -698,6 +699,11 @@ function LiquidityStressTab() {
 export default function Liquidity() {
   return (
     <div className="p-3 sm:p-6 space-y-4 bg-[#0D1117] min-h-full">
+      <SeoHead
+        title="Liquidity — AltBots"
+        description="Cash balances, capital call waterfalls, commitment pacing, and liquidity stress testing across the AltBots portfolio."
+        path="/liquidity"
+      />
       <LiquidityInner />
     </div>
   );
